@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <ImageView
+        android:id="@+id/pixelimage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/pxlimage" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/pixelimage" >
+
+        <EditText
+            android:id="@+id/captionText"
+            android:layout_width="230dp"
+            android:layout_height="150dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="18dp"
+            android:background="@drawable/editbox_background_normal"
+            android:ems="10"
+            android:hint="caption"
+            android:padding="5dp"
+            android:paddingTop="20dp"
+            android:textColor="@android:color/black"
+            android:layout_marginRight="10dp"
+             >
+
+            <requestFocus />
+        </EditText>
+
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignTop="@+id/captionText"
+            android:layout_marginLeft="14dp" 
+            android:src="@drawable/user_default"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/light_blue" >
+
+        <ImageView
+            android:id="@+id/bottombtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/cameraicon" />
+
+        <ImageView
+            android:id="@+id/sendbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/ic_menu_send"
+            android:text="Button" />
+
+        <TextView
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/sendbtn"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/editbox_background_normal"
+            android:gravity="center"
+            android:text="Select Time" />
+
+        <TextView
+            android:id="@+id/date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/time"
+            android:layout_below="@+id/time"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/editbox_background_normal"
+            android:gravity="center"
+            android:text="Select Date " />
+    </RelativeLayout>
+
+</LinearLayout>

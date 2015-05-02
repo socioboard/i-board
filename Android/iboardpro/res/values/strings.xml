@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">i-boardpro</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello World!</string>
+    <string name="drawer_open">open</string>
+    <string name="drawer_close">close</string>
+
+    <plurals name="numberOfNewArticles">
+        <item quantity="one">%d new</item>
+        <item quantity="other">%d new</item>
+    </plurals>
+
+    <string-array name="drawer_titles">
+        <item>Feeds</item>
+        <item>Follows</item>
+        <item>Followed By</item>
+        <item>Photo Bucket</item>
+        <item>Non followers</item>
+        <item>Photo Que</item>
+    </string-array>
+
+    <array name="drawer_icons">
+        <item>@drawable/feed</item>
+        <item>@drawable/follow</item>
+        <item>@drawable/fan</item>
+        <item>@drawable/photo_bucket</item>
+        <item>@drawable/none_followers</item>
+        <item>@drawable/photo_bucket</item>
+    </array>
+
+    <string-array name="footer_titles">
+        <item>Settings</item>
+        <item>Feedback</item>
+    </string-array>
+
+    <array name="footer_icons">
+        <item>@drawable/ic_settings</item>
+        <item>@drawable/ic_help</item>
+    </array>
+
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="title_activity_welcome">WelcomeActivity</string>
+
+</resources>
