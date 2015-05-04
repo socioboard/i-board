@@ -19,3 +19,18 @@ Features:
 >**Mutual:** Find out who all follows you as well as you are following them. ![](http://i.imgur.com/na9FIg9.png) 
  
 >**PhotoBucket:** See your own media files ![](http://i.imgur.com/0Kozy83.png) 
+
+
+Installation guide for android:
+============================
+
+The easiest way to build is to install Android IDE, Once installed, then you can import the project into Android Studio:
+1.	Open File
+2.	Import Project
+3.	Select iboardpro, instagram library and android support library.
+4.	Click OK.
+ ![](http://i.imgur.com/d3v3MIJ.png)
+
+ ![](http://i.imgur.com/nUBibNz.png)
+ 
+ After building the project while running on your device ,you might find that your device doesn't let you install your build if you already have the version from Google Play installed. This is standard Android security as it it won't let you directly replace an app that's been signed with a different key. Manually uninstall iboardpro from your device and you will then be able to install your own built version.
