@@ -6,6 +6,6 @@ Features:
 ===========
 
 > **Multi accounts manager:** You can manage your multiple instagram accounts and easily switch between accounts without logging in again and again        ![](http://i.imgur.com/1bAINYl.png)
-    
+> **Feeds view:** You can check your all updates in this section, long press to save images in external source. ![](http://i.imgur.com/rjlzCT3.png)            
 
 
