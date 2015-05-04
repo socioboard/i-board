@@ -8,4 +8,8 @@ Features:
 > **Multi accounts manager:** You can manage your multiple instagram accounts and easily switch between accounts without logging in again and again        ![](http://i.imgur.com/1bAINYl.png)
 > **Feeds view:** You can check your all updates in this section, long press to save images in external source. ![](http://i.imgur.com/rjlzCT3.png)            
 
+> **NonFollowers:** You can check who are all not following you on instagram ![](http://i.imgur.com/1bAINYl.png)
 
+> **Photo Que:** upload photo, set time and date, sit back and relax , inboard will remind you to upload it on instagram on one tap. ![](http://i.imgur.com/rjlzCT3.png) 
+
+> **Followed By:** Tired of tracking followers  from different accounts, one tap to switch between account and check the list of recent followers in all your instagram accounts. ![](http://i.imgur.com/rjlzCT3.png) 
