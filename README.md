@@ -34,3 +34,13 @@ The easiest way to build is to install Android IDE, Once installed, then you can
  ![](http://i.imgur.com/nUBibNz.png)
  
  After building the project while running on your device ,you might find that your device doesn't let you install your build if you already have the version from Google Play installed. This is standard Android security as it it won't let you directly replace an app that's been signed with a different key. Manually uninstall iboardpro from your device and you will then be able to install your own built version.
+ 
+ Installation guide for iOS:
+============================
+
+1. Extract the downloaded i-boardpro.zip file.
+2. Open the i-boardpro folder,you will find i-boardpro.xcodeProject file and double click on that folder to open Xcode ![](http://i.imgur.com/nUBibNz.png)
+3. Click on project file from Project navigator and click on the i-boardpro under the Targets. ![](http://i.imgur.com/nUBibNz.png) 
+4. Click on General , set the proper Bundle Identifier and go to Build settings menu, change Proovisioning profile under Code Signing. ![](http://i.imgur.com/nUBibNz.png) ![](http://i.imgur.com/nUBibNz.png)
+5. Go to webViewViewController and set the client_id,redirectUrl and client_secrete. 
+6. Build and run the application. ![](http://i.imgur.com/nUBibNz.png) 
