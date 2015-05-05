@@ -10,11 +10,11 @@ Features:
 >**Follows:** You can see list of user whom you are following. ![](http://i.imgur.com/f2FfDpY.png) 
 > **NonFollowers:** You can check who are all not following you on instagram ![](http://i.imgur.com/iW4oTZ9.png)
 
-> **Photo Que:** upload photo, set time and date, sit back and relax , inboard will remind you to upload it on instagram on one tap. ![](http://i.imgur.com/epXonbP.png) 
+> **Photo Que:** upload photo, set time and date, sit back and relax , iboard will remind you to upload it on instagram on one tap. ![](http://i.imgur.com/epXonbP.png) 
 
 > **Followed By:** Tired of tracking followers  from different accounts, one tap to switch between account and check the list of recent followers in all your instagram accounts. ![](http://i.imgur.com/g2knrj7.png) 
 
->**Fans:** Check the list of users who follows you but you are not following them. Yes it is not same algorithm which instagarma shows followed-by list. ![](http://i.imgur.com/DcuhJQS.png) 
+>**Fans:** Check the list of users who follows you but you are not following them. Yes it is not same algorithm  which instagarm shows followed-by list. ![](http://i.imgur.com/DcuhJQS.png) 
 
 >**Mutual:** Find out who all follows you as well as you are following them. ![](http://i.imgur.com/na9FIg9.png) 
  
