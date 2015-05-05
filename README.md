@@ -39,8 +39,8 @@ The easiest way to build is to install Android IDE, Once installed, then you can
 ============================
 
 1. Extract the downloaded i-boardpro.zip file.
-2. Open the i-boardpro folder,you will find i-boardpro.xcodeProject file and double click on that folder to open Xcode ![](http://i.imgur.com/nUBibNz.png)
-3. Click on project file from Project navigator and click on the i-boardpro under the Targets. ![](http://i.imgur.com/nUBibNz.png) 
-4. Click on General , set the proper Bundle Identifier and go to Build settings menu, change Proovisioning profile under Code Signing. ![](http://i.imgur.com/nUBibNz.png) ![](http://i.imgur.com/nUBibNz.png)
+2. Open the i-boardpro folder,you will find i-boardpro.xcodeProject file and double click on that folder to open Xcode ![](http://i.imgur.com/lpEMsn2.png)
+3. Click on project file from Project navigator and click on the i-boardpro under the Targets. ![](http://i.imgur.com/aAnc59y.png) 
+4. Click on General , set the proper Bundle Identifier and go to Build settings menu, change Proovisioning profile under Code Signing. ![](http://i.imgur.com/YrlK4kv.png) ![](http://i.imgur.com/Ko7cI1i.png)
 5. Go to webViewViewController and set the client_id,redirectUrl and client_secrete. 
-6. Build and run the application. ![](http://i.imgur.com/nUBibNz.png) 
+6. Build and run the application. ![](http://i.imgur.com/wJZCtRk.png) 
