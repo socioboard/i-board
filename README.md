@@ -20,6 +20,7 @@ Features:
  
 >**PhotoBucket:** See your own media files ![](http://i.imgur.com/0Kozy83.png) 
 
+>**CopyFollowers/Follwed-by:**  Search any user by typing username and get all his/her followers and follwed-by list, then copy to your list by just typing on follow button. ![](http://i.imgur.com/mIoxgMa.png)
 
 Installation guide for android:
 ============================
