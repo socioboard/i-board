@@ -10,6 +10,7 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -106,30 +107,36 @@ public class Feeds_Fragments extends Fragment {
 
 					String type = data_obj.getString(ConstantTags.TAG_TYPE);
 
-					if (data_obj.isNull(ConstantTags.TAG_LOCATION)) {
-						
-					}
-					else {
+					if (!data_obj.isNull(ConstantTags.TAG_LOCATION)) {
 						JSONObject location_obj = data_obj
 								.getJSONObject(ConstantTags.TAG_LOCATION);
 						
+						
+						if (!location_obj.isNull(ConstantTags.TAG_LATITUDE)) {
+							
 							location_lattitude = location_obj
 									.getString(ConstantTags.TAG_LATITUDE);
+						}
+						
+							
 							if (location_obj.has(ConstantTags.TAG_NAME)) {
 								location_name = location_obj
 										.getString(ConstantTags.TAG_NAME);
 							}
 							
-							location_longitude = location_obj
-									.getString(ConstantTags.TAG_LONGITUDE);
+							if (location_obj.has(ConstantTags.TAG_LONGITUDE)) {
+								location_longitude = location_obj
+										.getString(ConstantTags.TAG_LONGITUDE);
+							}
+							
+							
 							
 							if (location_obj.has(ConstantTags.TAG_ID)) {
 								location_id = location_obj
 										.getString(ConstantTags.TAG_ID);
 							}
-							 
 					}
-				
+					
 				
 					JSONObject comm_obj = data_obj
 							.getJSONObject(ConstantTags.TAG_COMMENTS);
@@ -337,7 +344,12 @@ public class Feeds_Fragments extends Fragment {
 	    }
 	 
 	 
-	 
+	 @Override
+	public void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		//((ActionBarActivity)getActivity()).getActionBar().setTitle("Feeds");
+	}
 	
 
 	

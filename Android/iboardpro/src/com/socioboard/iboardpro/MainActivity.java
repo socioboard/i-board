@@ -19,6 +19,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
@@ -28,6 +29,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -51,9 +53,12 @@ import com.socioboard.iboardpro.dialog.Multi_Dialog;
 import com.socioboard.iboardpro.dialog.Radio_Dialog;
 import com.socioboard.iboardpro.dialog.Single_Dialog;
 import com.socioboard.iboardpro.dialog.Standard_Dialog;
+import com.socioboard.iboardpro.fragments.Copy_follows;
+import com.socioboard.iboardpro.fragments.Fans_Fragments;
 import com.socioboard.iboardpro.fragments.Feeds_Fragments;
 import com.socioboard.iboardpro.fragments.Followed_By;
 import com.socioboard.iboardpro.fragments.Follows_Fragment;
+import com.socioboard.iboardpro.fragments.Mutual_Fragments;
 import com.socioboard.iboardpro.fragments.Nonfollowers_Fragment;
 import com.socioboard.iboardpro.fragments.Photo_Bucket;
 import com.socioboard.iboardpro.fragments.Schedule_fragment;
@@ -65,24 +70,16 @@ import com.socioboard.iboardpro.ui.MultiSwipeRefreshLayout;
 public class MainActivity extends ActionBarActivity implements
 		MultiSwipeRefreshLayout.CanChildScrollUpCallback {
 
-	
-	
-/*
- * first configure client secret and application key in ApplicationData.java
- * 
- * 
- * 
- */
-	
-	
-	
-	
-	
+	/*
+	 * first configure client secret and application key in ApplicationData.java
+	 */
+	boolean doubleBackToExitPressedOnce;
+	public static FragmentManager mainfragmentManager;
+	FragmentManager fragmentManager;
 	private InstagramApp mApp;
 	public static Menu yoyo;
 	private String[] mDrawerTitles;
 
-	
 	private ArrayList<ModelUserDatas> accountList;
 	private TypedArray mDrawerIcons;
 	private ArrayList<Items> drawerItems;
@@ -94,7 +91,6 @@ public class MainActivity extends ActionBarActivity implements
 	private CharSequence mDrawerTitle;
 	private CharSequence mTitle;
 
-	
 	private AccountAdapter accountAdapter;
 	private static FragmentManager mManager;
 
@@ -102,7 +98,7 @@ public class MainActivity extends ActionBarActivity implements
 	// manual refresh
 	private MultiSwipeRefreshLayout mSwipeRefreshLayout;
 
-	TextView current_user_name, curret_user_username,feedbacktxt;
+	TextView current_user_name, curret_user_username, feedbacktxt;
 	ImageView curret_user_profilepic;
 
 	RelativeLayout addacount_view, settings_view, feedback_view;
@@ -111,9 +107,10 @@ public class MainActivity extends ActionBarActivity implements
 	InstagramManyLocalData db;
 
 	int selected_fragment;
-	
+
 	public static PendingIntent pendingIntent;
 	public static AlarmManager alarmManager;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -131,36 +128,36 @@ public class MainActivity extends ActionBarActivity implements
 		mDrawerIcons = getResources().obtainTypedArray(R.array.drawer_icons);
 		drawerItems = new ArrayList<Items>();
 		mDrawerList_Left = (ListView) findViewById(R.id.left_drawer);
-		 mDrawerTitles = getResources().getStringArray(R.array.drawer_titles);
+		mDrawerTitles = getResources().getStringArray(R.array.drawer_titles);
 		mDrawerList_Right = (ListView) findViewById(R.id.right_drawer);
-
+		mainfragmentManager = getSupportFragmentManager();
 		utills = new CommonUtilss();
-		
-		//initialise sqllite db
+
+		// initialise sqllite db
 		db = new InstagramManyLocalData(getApplicationContext());
 
 		accountList.clear();
 
-		//load data from sql-locallite n save in accountlist array list
+		// load data from sql-locallite n save in accountlist array list
 
-			for (int i = 0; i < MainSingleTon.useridlist.size(); i++) {
-				ModelUserDatas model = MainSingleTon.userdetails
-						.get(MainSingleTon.useridlist.get(i));
+		for (int i = 0; i < MainSingleTon.useridlist.size(); i++) {
+			ModelUserDatas model = MainSingleTon.userdetails
+					.get(MainSingleTon.useridlist.get(i));
 
-				model.setUserid(model.getUserid());
-				model.setUserAcessToken(model.getUserAcessToken());
-				model.setUserimage(model.getUserimage());
-				model.setUsername(model.getUsername());
-				accountList.add(model);
-			}
-		
-			//set left navigation  drawer item 
+			model.setUserid(model.getUserid());
+			model.setUserAcessToken(model.getUserAcessToken());
+			model.setUserimage(model.getUserimage());
+			model.setUsername(model.getUsername());
+			accountList.add(model);
+		}
 
-		for (int i = 0; i < mDrawerTitles.length; i++) 
-		  {
-		   drawerItems.add(new Items(mDrawerTitles[i], mDrawerIcons.getResourceId(i, -(i + 1))));
-		  }
-		
+		// set left navigation drawer item
+
+		for (int i = 0; i < mDrawerTitles.length; i++) {
+			drawerItems.add(new Items(mDrawerTitles[i], mDrawerIcons
+					.getResourceId(i, -(i + 1))));
+		}
+
 		mTitle = mDrawerTitle = getTitle();
 
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -197,20 +194,21 @@ public class MainActivity extends ActionBarActivity implements
 		// final ViewGroup header = (ViewGroup)
 		// inflater.inflate(R.layout.header,mDrawerList_Left, false);
 
-		/*final ViewGroup footer = (ViewGroup) inflater.inflate(R.layout.footer,
-				mDrawerList_Left, false);*/
+		/*
+		 * final ViewGroup footer = (ViewGroup)
+		 * inflater.inflate(R.layout.footer, mDrawerList_Left, false);
+		 */
 
 		final ViewGroup headerR = (ViewGroup) inflater.inflate(R.layout.header,
 				mDrawerList_Right, false);
 
 		final ViewGroup footerR = (ViewGroup) inflater.inflate(R.layout.footer,
 				mDrawerList_Right, false);
-		final ViewGroup footerL = (ViewGroup) inflater.inflate(R.layout.left_footer,
-				mDrawerList_Right, false);
-		
+		final ViewGroup footerL = (ViewGroup) inflater.inflate(
+				R.layout.left_footer, mDrawerList_Right, false);
 
-		feedback_view=(RelativeLayout) footerR.findViewById(R.id.feedback);
-		
+		feedback_view = (RelativeLayout) footerR.findViewById(R.id.feedback);
+
 		current_user_name = (TextView) headerR.findViewById(R.id.currentname);
 		curret_user_username = (TextView) headerR
 				.findViewById(R.id.currentusername);
@@ -235,27 +233,31 @@ public class MainActivity extends ActionBarActivity implements
 			}
 		});
 
-		
-		//type mail address to send feedback mail 
+		// type mail address to send feedback mail
 		feedback_view.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
-				Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-			            "mailto","xxx@xxxx.com", null));
-			emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Feedback for inBoardpro");
-			startActivity(Intent.createChooser(emailIntent, "Send email..."));
-				
+				Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri
+						.fromParts("mailto", ApplicationData.feedback_emailID,
+								null));
+				emailIntent.putExtra(Intent.EXTRA_SUBJECT,
+						"Feedback for inBoardpro");
+				startActivity(Intent
+						.createChooser(emailIntent, "Send email..."));
+
 			}
 		});
-		
-		
+
 		addacount_view.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 
-				mApp = new InstagramApp(MainActivity.this, ApplicationData.CLIENT_ID,ApplicationData.CLIENT_SECRET, ApplicationData.CALLBACK_URL);
+				mApp = new InstagramApp(MainActivity.this,
+						ApplicationData.CLIENT_ID,
+						ApplicationData.CLIENT_SECRET,
+						ApplicationData.CALLBACK_URL);
 				mApp.setListener(listener);
 				mApp.authorize();
 
@@ -265,9 +267,9 @@ public class MainActivity extends ActionBarActivity implements
 		// Give your Toolbar a subtitle!
 		/* mToolbar.setSubtitle("Subtitle"); */
 
-		
 		// clickable
-		mDrawerList_Left.addFooterView(footerL, null, false); // true = clickable
+		mDrawerList_Left.addFooterView(footerL, null, false); // true =
+																// clickable
 
 		mDrawerList_Right.addHeaderView(headerR, null, true); // true =
 																// clickable
@@ -293,18 +295,19 @@ public class MainActivity extends ActionBarActivity implements
 		mDrawerList_Left.setOnItemClickListener(new DrawerItemClickListener());
 
 		// Set the adapter for the list view
-		mDrawerList_Right.setAdapter(new AccountAdapter(
-				MainActivity.this, accountList));
+		mDrawerList_Right.setAdapter(new AccountAdapter(MainActivity.this,
+				accountList));
 		// Set the list's click listener
-		mDrawerList_Right.setOnItemClickListener(new RightDrawerItemClickListener());
+		mDrawerList_Right
+				.setOnItemClickListener(new RightDrawerItemClickListener());
 
 		/*
 		 * Initialise broadcast intent
 		 * 
-		 * using alaram manager service for getting local notification for reminding user to send photo
-		 * 
+		 * using alaram manager service for getting local notification for
+		 * reminding user to send photo
 		 */
-		
+
 		Intent myIntent = new Intent(MainActivity.this,
 				SchedulerCustomReceiver.class);
 		pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0,
@@ -316,23 +319,21 @@ public class MainActivity extends ActionBarActivity implements
 						this.getApplicationContext().NOTIFICATION_SERVICE);
 		mNotificationManager.cancelAll();
 		alarmManager.cancel(pendingIntent);
-		
-		 FragmentManager fragmentManager = getSupportFragmentManager();
-		   fragmentManager.beginTransaction().replace(R.id.main_content, new Feeds_Fragments())
-		   .commit();
-		
+
+		mainfragmentManager = getSupportFragmentManager();
+		mainfragmentManager.beginTransaction()
+				.replace(R.id.main_content, new Feeds_Fragments()).commit();
+
 	}
 
 	/*
 	 * call back listener to instgram
 	 */
-	
+
 	OAuthAuthenticationListener listener = new OAuthAuthenticationListener() {
 
 		@Override
 		public void onSuccess() {
-
-			
 
 			new Setuserdata().execute(mApp.getProfileimageUrl());
 
@@ -359,83 +360,77 @@ public class MainActivity extends ActionBarActivity implements
 		System.out.println(" + + + + +   onConfigurationChanged + + + + +");
 	}
 
-	 /**
-	  * Swaps fragments in the main content view
-	  */
-	
-	
-	
-	
-	 private void selectItem(int position)
-	 {
-	  Fragment fragment = null;
+	/**
+	 * Swaps fragments in the main content view
+	 */
 
-	  selected_fragment=position;
-	  switch (position)
-	  {
-	  
-	  
-	  
-	  case 0:
-	   fragment = new Feeds_Fragments();
+	private void selectItem(int position) {
+		Fragment fragment = null;
 
-	   
-	   break;
-	  case 1:
-	  
-	   fragment = new Follows_Fragment();
-	   break;
-	  case 2:
-	 
-	   fragment = new Followed_By();
-	   break;
-	  case 3:
-	  
-		  fragment = new Photo_Bucket();
-	   break;
-	  case 4:
-		  fragment = new Nonfollowers_Fragment();
-	   
-	   break;
-	   
-	   case 5:
-		   fragment=new Schedule_fragment();
-	 
-	  }
+		selected_fragment = position;
+		switch (position) {
 
-	  if (fragment != null)
-	  {
-	   // Insert the fragment by replacing any existing fragment
-	   FragmentManager fragmentManager = getSupportFragmentManager();
-	   fragmentManager.beginTransaction().replace(R.id.main_content, fragment)
-	   .commit();
-	  }
+		case 0:
+			fragment = new Feeds_Fragments();
 
-	  // Highlight the selected item, update the title, and close the drawer
-	  if(mDrawerList_Left.isEnabled())
-	  {
-	   mDrawerList_Left.setItemChecked(position, true);
-	 
-	    setTitle(mDrawerTitles[position]);
-	    updateView(position, position, true,mDrawerList_Left);
-	  
-	   mDrawerLayout.closeDrawer(mDrawerList_Left);
-	  }
-	  else
-	  {
-	   mDrawerList_Right.setItemChecked(position, true);
-	   if (position != 0)
-	   {
-	    setTitle(mDrawerTitles[position - 1]);
-	    updateView(position, position, true,mDrawerList_Right);
-	   }
-	   mDrawerLayout.closeDrawer(mDrawerList_Right);
-	  }
+			break;
+		case 1:
 
-	 }
-	 
-	 
-	 
+			fragment = new Follows_Fragment();
+			break;
+		case 2:
+
+			fragment = new Followed_By();
+			break;
+		case 3:
+
+			fragment = new Photo_Bucket();
+			break;
+		case 4:
+			fragment = new Nonfollowers_Fragment();
+
+			break;
+
+		case 5:
+			fragment = new Schedule_fragment();
+			break;
+
+		case 6:
+			fragment = new Fans_Fragments();
+			break;
+		case 7:
+			fragment = new Mutual_Fragments();
+			break;	
+		case 8:
+			fragment = new Copy_follows();
+			break;
+		}
+		if (fragment != null) {
+			// Insert the fragment by replacing any existing fragment
+			mainfragmentManager = getSupportFragmentManager();
+			mainfragmentManager.beginTransaction()
+					.replace(R.id.main_content, fragment).addToBackStack(null)
+					.commit();
+		}
+
+		// Highlight the selected item, update the title, and close the drawer
+		if (mDrawerList_Left.isEnabled()) {
+			mDrawerList_Left.setItemChecked(position, true);
+
+			setTitle(mDrawerTitles[position]);
+			updateView(position, position, true, mDrawerList_Left);
+
+			mDrawerLayout.closeDrawer(mDrawerList_Left);
+		} else {
+			mDrawerList_Right.setItemChecked(position, true);
+			if (position != 0) {
+				setTitle(mDrawerTitles[position - 1]);
+				updateView(position, position, true, mDrawerList_Right);
+			}
+			mDrawerLayout.closeDrawer(mDrawerList_Right);
+		}
+
+	}
 
 	private class RightDrawerItemClickListener implements
 			ListView.OnItemClickListener {
@@ -448,80 +443,92 @@ public class MainActivity extends ActionBarActivity implements
 
 	private void selectItemRight(final int position) {
 
-		System.out.println("position==="+position);
-		if (position>0) {
-			
-		
+		System.out.println("position===" + position);
+		if (position > 0) {
+
 			runOnUiThread(new Runnable() {
-				
+
 				@Override
 				public void run() {
-					
-					/*after selecting account store all data in public variable to use it everywhere.
-					 * 
-					 * 
+
+					/*
+					 * after selecting account store all data in public variable
+					 * to use it everywhere.
 					 */
-					
-					
-					
-					ModelUserDatas model = MainSingleTon.userdetails.get(accountList.get(position-1).getUserid());
-					MainSingleTon.userid=model.getUserid();
-					MainSingleTon.username=model.getUsername();
-					MainSingleTon.userimage=model.getUserimage();
-					MainSingleTon.accesstoken=model.getUserAcessToken();
-					
-					//store current profile in shared preference to reuse after restarting app
-					
+
+					ModelUserDatas model = MainSingleTon.userdetails
+							.get(accountList.get(position - 1).getUserid());
+					MainSingleTon.userid = model.getUserid();
+					MainSingleTon.username = model.getUsername();
+					MainSingleTon.userimage = model.getUserimage();
+					MainSingleTon.accesstoken = model.getUserAcessToken();
+
+					// store current profile in shared preference to reuse after
+					// restarting app
+
 					MainSingleTon.userdetails.put(MainSingleTon.userid, model);
 					MainSingleTon.useridlist.add(MainSingleTon.userid);
-					SharedPreferences lifesharedpref=getSharedPreferences("FacebookBoard", Context.MODE_PRIVATE);
-					SharedPreferences.Editor editor=lifesharedpref.edit();
+					SharedPreferences lifesharedpref = getSharedPreferences(
+							"FacebookBoard", Context.MODE_PRIVATE);
+					SharedPreferences.Editor editor = lifesharedpref.edit();
 					editor.putString("userid", MainSingleTon.userid);
 					editor.commit();
-					
+
 					curret_user_username.setText(MainSingleTon.username);
 					curret_user_profilepic.setImageBitmap(utills
 							.getBitmapFromString(MainSingleTon.userimage));
-					
-					 Fragment fragment = null;
-					
-					 switch (selected_fragment)
-					  {
-					  case 0:
-					   fragment = new Feeds_Fragments();
-					   break;
-					  case 1:
-					  
-					   fragment = new Follows_Fragment();
-					   break;
-					  case 2:
-					 
-					   fragment = new Followed_By();
-					   break;
-					  case 3:
-					  
-						  fragment = new Photo_Bucket();
-					   break;
-					  case 4:
-						  fragment = new Nonfollowers_Fragment();
-					   
-					   break;
-					 
-					  }
 
-					  if (fragment != null)
-					  {
-					   // Insert the fragment by replacing any existing fragment
-					   FragmentManager fragmentManager = getSupportFragmentManager();
-					   fragmentManager.beginTransaction().replace(R.id.main_content, fragment)
-					   .commit();
-					  }
-					  
-					  mDrawerLayout.closeDrawer(mDrawerList_Right);
+					Fragment fragment = null;
+
+					switch (selected_fragment) {
+					case 0:
+						fragment = new Feeds_Fragments();
+						break;
+					case 1:
+
+						fragment = new Follows_Fragment();
+						break;
+					case 2:
+
+						fragment = new Followed_By();
+						break;
+					case 3:
+
+						fragment = new Photo_Bucket();
+						break;
+					case 4:
+						fragment = new Nonfollowers_Fragment();
+
+						break;
+
+					case 5:
+						fragment = new Schedule_fragment();
+						break;
+					case 6:
+						fragment = new Fans_Fragments();
+						break;
+					case 7:
+						fragment = new Mutual_Fragments();
+						break;	
+					case 8:
+						fragment = new Copy_follows();
+						break;
+					}
+
+					if (fragment != null) {
+						// Insert the fragment by replacing any existing
+						// fragment
+						mainfragmentManager = getSupportFragmentManager();
+						mainfragmentManager.beginTransaction()
+								.replace(R.id.main_content, fragment)
+								.addToBackStack(null).commit();
+					}
+
+					mDrawerLayout.closeDrawer(mDrawerList_Right);
 				}
 			});
 		}
-}
+	}
 
 	@Override
 	public void setTitle(CharSequence title) {
@@ -637,9 +644,8 @@ public class MainActivity extends ActionBarActivity implements
 		}
 
 		someText.setText(articlesFound);
-		if (visible)
-		{
-			//someText.setVisibility(View.VISIBLE);
+		if (visible) {
+			// someText.setVisibility(View.VISIBLE);
 		}
 	}
 
@@ -654,7 +660,8 @@ public class MainActivity extends ActionBarActivity implements
 			mSwipeRefreshLayout.setColorSchemeResources(
 					R.color.refresh_progress_1, R.color.refresh_progress_2,
 					R.color.refresh_progress_3);
-			mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+			mSwipeRefreshLayout
+					.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 						@Override
 						public void onRefresh() {
 							Toast.makeText(getApplication(), "Refresh!",
@@ -830,32 +837,25 @@ public class MainActivity extends ActionBarActivity implements
 			db.addNewUserAccount(datas);
 
 			accountList.add(datas);
-			
-			accountAdapter=new AccountAdapter(MainActivity.this, accountList);
+
+			accountAdapter = new AccountAdapter(MainActivity.this, accountList);
 			// Set the adapter for the list view
 			mDrawerList_Right.setAdapter(accountAdapter);
-			
+
 			MainSingleTon.userdetails.put(mApp.getId(), datas);
 			MainSingleTon.useridlist.add(mApp.getId());
-			
-			
-			 
 
 			Toast.makeText(MainActivity.this, "sucess", Toast.LENGTH_SHORT)
 					.show();
 		}
 
 	}
-	
-	
-	public void notifyadapter(){
-		
-		
-		//after removing account notify the account list adapter
-		
-		accountList.clear();
 
-		
+	public void notifyadapter() {
+
+		// after removing account notify the account list adapter
+
+		accountList.clear();
 
 		for (int i = 0; i < MainSingleTon.useridlist.size(); i++) {
 			ModelUserDatas model = MainSingleTon.userdetails
@@ -869,4 +869,35 @@ public class MainActivity extends ActionBarActivity implements
 		}
 		accountAdapter.notifyDataSetChanged();
 	}
+
+	@Override
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
+
+		if (mDrawerLayout.isDrawerOpen(Gravity.RIGHT)) {
+			mDrawerLayout.closeDrawer(Gravity.RIGHT);
+		} else if (mainfragmentManager.getBackStackEntryCount() < 1) {
+
+			if (doubleBackToExitPressedOnce) {
+				super.onBackPressed();
+				return;
+			}
+
+			this.doubleBackToExitPressedOnce = true;
+			Toast.makeText(this, "Please click BACK again to exit",
+					Toast.LENGTH_SHORT).show();
+
+			new Handler().postDelayed(new Runnable() {
+
+				@Override
+				public void run() {
+					doubleBackToExitPressedOnce = false;
+				}
+			}, 2000);
+		} else {
+			mainfragmentManager.popBackStack();
+		}
+
+	}
+
 }

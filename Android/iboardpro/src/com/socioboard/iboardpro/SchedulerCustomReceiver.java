@@ -20,7 +20,7 @@ public class SchedulerCustomReceiver extends BroadcastReceiver
 		NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
 		mBuilder.setSmallIcon(R.drawable.ic_launcher);
 		mBuilder.setContentIntent(pIntent);
-		mBuilder.setContentTitle("gramboardpro");
+		mBuilder.setContentTitle("i-boardpro");
 		
 		mBuilder.setContentText("Time to post photos now");
 		Uri alarmSound = RingtoneManager

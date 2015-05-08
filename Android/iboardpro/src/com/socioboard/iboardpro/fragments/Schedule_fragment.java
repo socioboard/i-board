@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
@@ -54,13 +55,13 @@ public class Schedule_fragment extends Fragment {
 		View rootView = inflater.inflate(R.layout.schedule_layout, container,
 				false);
 
-		ImageView uploadbtn = (ImageView) rootView.findViewById(R.id.bottombtn);
-		ImageView sendbtn = (ImageView) rootView.findViewById(R.id.sendbtn);
+		
+		ImageView sendbtn = (ImageView) rootView.findViewById(R.id.bottombtn);
 		pickedImage = (ImageView) rootView.findViewById(R.id.image);
 		caption = (EditText) rootView.findViewById(R.id.captionText);
 		schedulbtn = (TextView) rootView.findViewById(R.id.date);
 		timebtn = (TextView) rootView.findViewById(R.id.time);
-		uploadbtn.setOnClickListener(new OnClickListener() {
+		pickedImage.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
@@ -234,7 +235,7 @@ public class Schedule_fragment extends Fragment {
 		if (requestCode == RESULT_LOAD_IMG
 				&& resultCode == getActivity().RESULT_OK && data != null) {
 			// Let's read picked image data - its URI
-			Uri pickedImageuri = data.getData();
+			/*Uri pickedImageuri = data.getData();
 			// Let's read picked image path using content resolver
 			String[] filePath = { MediaStore.Images.Media.DATA };
 			Cursor cursor = getActivity().getContentResolver().query(
@@ -242,14 +243,104 @@ public class Schedule_fragment extends Fragment {
 			cursor.moveToFirst();
 			imagePath = cursor.getString(cursor.getColumnIndex(filePath[0]));
 
-			// Now we need to set the GUI ImageView data with data read from the
-			// picked file.
+			
+			
+			
+			String  picturePath = cursor.getString(columnIndex);
+			   cursor.close();
+			   
+			   //image.setImageURI(selectedImage);
+			        
+			        
+			        
+			   String selectedImagePath = getPath(selectedImage);
+			   
+			   Bitmap bitmap=decodeSampledBitmapFromResource(selectedImagePath,  200, 200);
+			   //Bitmap bitmap=BitmapFactory.decodeFile(selectedImagePath);
+			   bitmap=Bitmap.createScaledBitmap(bitmap, 100, 100, true);
+			   ByteArrayOutputStream bmpStream = new ByteArrayOutputStream();
+			        
+			   bitmap.compress(Bitmap.CompressFormat.PNG, 100, bmpStream);
 			pickedImage.setImageBitmap(BitmapFactory.decodeFile(imagePath));
 
 			// At the end remember to close the cursor or you will end with the
 			// RuntimeException!
-			cursor.close();
+			cursor.close();*/
+			
+			
+			Uri selectedImage = data.getData();
+			   String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+			   Cursor cursor = getActivity().getContentResolver().query(selectedImage,
+			     filePathColumn, null, null, null);
+			   cursor.moveToFirst();
+
+			   int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+			   String  picturePath = cursor.getString(columnIndex);
+			   cursor.close();
+			   
+			   //image.setImageURI(selectedImage);
+			        
+			        
+			        
+			   String selectedImagePath = getPath(selectedImage);
+			   
+			   Bitmap bitmap=decodeSampledBitmapFromResource(selectedImagePath,  200, 200);
+			   //Bitmap bitmap=BitmapFactory.decodeFile(selectedImagePath);
+			   bitmap=Bitmap.createScaledBitmap(bitmap, 100, 100, true);
+			   pickedImage.setImageBitmap(bitmap);
+			   
 		}
 
 	}
+	
+	public String getPath(Uri uri) {
+		   String[] projection = { MediaStore.Images.Media.DATA };
+		   Cursor cursor=getActivity().getContentResolver().query(uri, projection, null, null, null);
+		   //Cursor cursor = managedQuery(uri, projection, null, null, null);
+		   int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+		   cursor.moveToFirst();
+		   return cursor.getString(column_index);
+		  }
+
+
+
+		public  Bitmap decodeSampledBitmapFromResource(String res,  int reqWidth, int reqHeight) {
+
+		    // First decode with inJustDecodeBounds=true to check dimensions
+		    final BitmapFactory.Options options = new BitmapFactory.Options();
+		    options.inJustDecodeBounds = true;
+		    BitmapFactory.decodeFile(res,  options);
+
+		    // Calculate inSampleSize
+		    options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+		    // Decode bitmap with inSampleSize set
+		    options.inJustDecodeBounds = false;
+		    return BitmapFactory.decodeFile(res,  options);
+		}
+		public  int calculateInSampleSize(
+		        BitmapFactory.Options options, int reqWidth, int reqHeight) {
+		// Raw height and width of image
+		final int height = options.outHeight;
+		final int width = options.outWidth;
+		int inSampleSize = 1;
+
+		if (height > reqHeight || width > reqWidth) {
+
+		    final int halfHeight = height / 2;
+		    final int halfWidth = width / 2;
+
+		    // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+		    // height and width larger than the requested height and width.
+		    while ((halfHeight / inSampleSize) > reqHeight
+		            && (halfWidth / inSampleSize) > reqWidth) {
+		        inSampleSize *= 2;
+		    }
+		}
+
+		return inSampleSize;
+		}
+	
+	
 }

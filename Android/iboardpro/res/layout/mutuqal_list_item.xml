@@ -7,7 +7,7 @@
 
   
     <com.socioboard.iboardpro.ui.AccountImageView
-        android:id="@+id/profile_pic"
+        android:id="@+id/current_profile_pic"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginBottom="5dp"
@@ -20,23 +20,24 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:text="sirejs"
+        android:layout_toLeftOf="@+id/follow_button"
         android:ellipsize="end"
         android:paddingLeft="@dimen/drawer_text_with_icon"
         android:paddingRight="@dimen/drawer_right"
-        android:layout_alignParentLeft="@+id/settings"
         android:textColor="@color/text"
-        android:textSize="12sp" />
+        android:textSize="14sp" />
 
     <ImageView
-        android:id="@+id/settings"
+        android:id="@+id/unfollow_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/item_text"
         android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="31dp"
+        android:background="@drawable/unfollow"
         android:padding="3dp"
-         android:layout_centerVertical="true"
-        android:src="@drawable/ic_settings"
+        android:text="Unfollow"
         android:textColor="@color/google_white"
-        android:layout_marginRight="@dimen/drawer_right"/>
+        android:textSize="10dp" />
 
 </RelativeLayout>

@@ -12,8 +12,6 @@ import android.widget.TextView;
 import com.socioboard.iboardpro.R;
 
 
-
-
 /**
  * Created by d4ddy-lild4rk on 11/8/14.
  */

@@ -19,6 +19,9 @@
         <item>Photo Bucket</item>
         <item>Non followers</item>
         <item>Photo Que</item>
+        <item>Fans</item>
+        <item>Mutual</item>
+        <item>Copy Follows/Followed by</item>
     </string-array>
 
     <array name="drawer_icons">
@@ -28,8 +31,16 @@
         <item>@drawable/photo_bucket</item>
         <item>@drawable/none_followers</item>
         <item>@drawable/photo_bucket</item>
+        <item>@drawable/find_friend</item>
+        <item>@drawable/followedby</item>
+        <item>@drawable/followedby</item>
     </array>
 
+    <string-array name="chooselist">
+        <item>Follows</item>
+        <item>Followed By</item>
+     </string-array>
+    
     <string-array name="footer_titles">
         <item>Settings</item>
         <item>Feedback</item>

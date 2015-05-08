@@ -15,4 +15,6 @@ public class MainSingleTon {
 	public static boolean isPAgesLoaded;
 
 	public static String NextUrl;
+	public static String photo_url;
+	
 }
