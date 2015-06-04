@@ -28,13 +28,13 @@ Installation guide for android:
 ============================
 
 The easiest way to build is to install Android IDE, Once installed, then you can import the project into Android Studio:
-1.	Open File
+1. Open File
 2.	Import Project
 3.	Select iboardpro, instagram library and android support library.
-4.	Click OK.
- ![](http://i.imgur.com/d3v3MIJ.png)
+4.	Click OK.![](http://i.imgur.com/d3v3MIJ.png)  ![](http://i.imgur.com/nUBibNz.png)
+   
 
- ![](http://i.imgur.com/nUBibNz.png)
+
  
  After building the project while running on your device ,you might find that your device doesn't let you install your build if you already have the version from Google Play installed. This is standard Android security as it it won't let you directly replace an app that's been signed with a different key. Manually uninstall iboardpro from your device and you will then be able to install your own built version.
  
@@ -52,15 +52,12 @@ The easiest way to build is to install Android IDE, Once installed, then you can
 
 Guide to create app in Instagram developer console:
 ==================================================
-1.Go to https://instagram.com/developer/
-2.Click on Manage clients
-![](http://i.imgur.com/ya3i3O5.png)
-3.Click on "Register new Client" 
-![](http://i.imgur.com/xsoZnHQ.png)
+1. Go to https://instagram.com/developer/
+2. Click on Manage clients  ![](http://i.imgur.com/ya3i3O5.png)
+3. Click on "Register new Client" ![](http://i.imgur.com/xsoZnHQ.png)
+4. Fill the dtails of your application in given form and click on register. ![](http://i.imgur.com/P86z2to.png)
+5. Copy client id,client-secret and redirect url and paste it in ApplicationData.java file inside android application.
+   ![](http://i.imgur.com/NVlwoNu.png)
+   ![](http://i.imgur.com/COH5zJP.png) 
 
-4.Fill the dtails of your application in given form and click on register.
-![](http://i.imgur.com/P86z2to.png)
 
-5.Copy client id,client-secret and redirect url and paste it in ApplicationData.java file inside android application.
-![](http://i.imgur.com/NVlwoNu.png)
-![](http://i.imgur.com/COH5zJP.png)
