@@ -22,6 +22,8 @@ Features:
 
 >**CopyFollowers/Follwed-by:**  Search any user by typing username and get all his/her followers and follwed-by list, then copy to your list by just typing on follow button. ![](http://i.imgur.com/mIoxgMa.png)
 
+
+
 Installation guide for android:
 ============================
 
@@ -45,3 +47,20 @@ The easiest way to build is to install Android IDE, Once installed, then you can
 4. Click on General , set the proper Bundle Identifier and go to Build settings menu, change Provisioning profile under Code Signing. ![](http://i.imgur.com/YrlK4kv.png) ![](http://i.imgur.com/Ko7cI1i.png)
 5. Go to webViewViewController and set the client_id,redirectUrl and client_secrete. 
 6. Build and run the application. ![](http://i.imgur.com/wJZCtRk.png) 
+
+
+
+Guide to create app in Instagram developer console:
+==================================================
+1.Go to https://instagram.com/developer/
+2.Click on Manage clients
+![](http://i.imgur.com/ya3i3O5.png)
+3.Click on "Register new Client" 
+![](http://i.imgur.com/xsoZnHQ.png)
+
+4.Fill the dtails of your application in given form and click on register.
+![](http://i.imgur.com/P86z2to.png)
+
+5.Copy client id,client-secret and redirect url and paste it in ApplicationData.java file inside android application.
+![](http://i.imgur.com/NVlwoNu.png)
+![](http://i.imgur.com/COH5zJP.png)
