@@ -36,7 +36,7 @@ public class ImageLoader {
         executorService=Executors.newFixedThreadPool(5);
     }
     
-    final int stub_id=R.drawable.stub;
+    final int stub_id=R.drawable.default_image;
     public void DisplayImage(String url, ImageView imageView)
     {
         imageViews.put(imageView, url);
@@ -109,6 +109,9 @@ public class ImageLoader {
                 height_tmp/=2;
                 scale*=2;
             }
+            
+            
+            
             
             //decode with inSampleSize
             BitmapFactory.Options o2 = new BitmapFactory.Options();

@@ -26,14 +26,14 @@
 
     <array name="drawer_icons">
         <item>@drawable/feed</item>
-        <item>@drawable/follow</item>
+        <item>@drawable/followers</item>
+        <item>@drawable/followed</item>
+        <item>@drawable/photo_bucket</item>
+        <item>@drawable/non_follower</item>
+        <item>@drawable/photo_que</item>
         <item>@drawable/fan</item>
-        <item>@drawable/photo_bucket</item>
-        <item>@drawable/none_followers</item>
-        <item>@drawable/photo_bucket</item>
-        <item>@drawable/find_friend</item>
-        <item>@drawable/followedby</item>
-        <item>@drawable/followedby</item>
+        <item>@drawable/mutual</item>
+        <item>@drawable/copy_follower</item>
     </array>
 
     <string-array name="chooselist">

@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.ProgressDialog;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -29,43 +33,51 @@ import com.socioboard.iboardpro.models.CommentsModel;
 import com.socioboard.iboardpro.models.FeedsModel;
 import com.socioboard.iboardpro.models.LikesModel;
 import com.socioboard.iboardpro.models.UserInPhotoModel;
+import com.socioboard.iboardpro.ui.WaveDrawable;
 
 /**
- * fragment is used for  fetching recent feed list of user and showing in list view
+ * fragment is used for fetching recent feed list of user and showing in list
+ * view
  */
 public class Feeds_Fragments extends Fragment {
 
-	ArrayList<String> tag_list=new ArrayList<String>();
+	ArrayList<String> tag_list = new ArrayList<String>();
 	ArrayList<CommentsModel> comments_arraylist = new ArrayList<CommentsModel>();
 	ArrayList<LikesModel> likes_arraylist = new ArrayList<LikesModel>();
 	ArrayList<UserInPhotoModel> user_in_photo_list = new ArrayList<UserInPhotoModel>();
-	ArrayList<FeedsModel> user_feeds_list=new ArrayList<FeedsModel>();
-	
+	ArrayList<FeedsModel> user_feeds_list = new ArrayList<FeedsModel>();
+
 	JSONParser jParser = new JSONParser();
 
 	ListView feedlistview;
-	private ProgressDialog mSpinner;
+	private WaveDrawable waveDrawable;
+	ImageView progressimage;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View rootView = inflater.inflate(R.layout.fragment_feed, container,
 				false);
-		feedlistview=(ListView) rootView.findViewById(R.id.feed_listview);
-		
+		feedlistview = (ListView) rootView.findViewById(R.id.feed_listview);
 
-		mSpinner = new ProgressDialog(getActivity());
-		mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		
-		mSpinner.setMessage("Loading...");
-		
-		ConnectionDetector detector=new ConnectionDetector(getActivity());
+		progressimage = (ImageView) rootView.findViewById(R.id.image);
+
+		waveDrawable = new WaveDrawable(Color.parseColor("#8DD2FA"), 500);
+		progressimage.setBackground(waveDrawable);
+
+		Interpolator interpolator = new LinearInterpolator();
+
+		waveDrawable.setWaveInterpolator(interpolator);
+		waveDrawable.startAnimation();
+
+		ConnectionDetector detector = new ConnectionDetector(getActivity());
 		if (detector.isConnectingToInternet()) {
 			new getUserFeeds().execute();
+		} else {
+			Toast.makeText(getActivity(), "Please connect to internet!",
+					Toast.LENGTH_LONG).show();
 		}
-		else {
-			Toast.makeText(getActivity(), "Please connect to internet!", Toast.LENGTH_LONG).show();
-		}
-		
+
 		return rootView;
 	}
 
@@ -75,8 +87,9 @@ public class Feeds_Fragments extends Fragment {
 		protected void onPreExecute() {
 			// TODO Auto-generated method stub
 			super.onPreExecute();
-			mSpinner.show();
+			progressimage.setVisibility(View.VISIBLE);
 		}
+
 		@Override
 		protected Void doInBackground(Void... params) {
 			JSONObject json = jParser.getJSONFromUrlByGet(ConstantUrl.URL_Feeds
@@ -85,12 +98,11 @@ public class Feeds_Fragments extends Fragment {
 				JSONArray data = json.getJSONArray(ConstantTags.TAG_DATA);
 				for (int data_i = 0; data_i < data.length(); data_i++) {
 
-					
 					String location_lattitude = "";
 					String location_name = "";
 					String location_longitude = "";
 					String location_id = "";
-					String captiontext="";
+					String captiontext = "";
 					String captionid = "";
 					Boolean islike = false;
 					JSONObject data_obj = data.getJSONObject(data_i);
@@ -100,8 +112,6 @@ public class Feeds_Fragments extends Fragment {
 
 					for (int i = 0; i < tag_jsonarray.length(); i++) {
 
-						
-
 						tag_list.add(tag_jsonarray.getString(i));
 					}
 
@@ -110,34 +120,29 @@ public class Feeds_Fragments extends Fragment {
 					if (!data_obj.isNull(ConstantTags.TAG_LOCATION)) {
 						JSONObject location_obj = data_obj
 								.getJSONObject(ConstantTags.TAG_LOCATION);
-						
-						
+
 						if (!location_obj.isNull(ConstantTags.TAG_LATITUDE)) {
-							
+
 							location_lattitude = location_obj
 									.getString(ConstantTags.TAG_LATITUDE);
 						}
-						
-							
-							if (location_obj.has(ConstantTags.TAG_NAME)) {
-								location_name = location_obj
-										.getString(ConstantTags.TAG_NAME);
-							}
-							
-							if (location_obj.has(ConstantTags.TAG_LONGITUDE)) {
-								location_longitude = location_obj
-										.getString(ConstantTags.TAG_LONGITUDE);
-							}
-							
-							
-							
-							if (location_obj.has(ConstantTags.TAG_ID)) {
-								location_id = location_obj
-										.getString(ConstantTags.TAG_ID);
-							}
+
+						if (location_obj.has(ConstantTags.TAG_NAME)) {
+							location_name = location_obj
+									.getString(ConstantTags.TAG_NAME);
+						}
+
+						if (location_obj.has(ConstantTags.TAG_LONGITUDE)) {
+							location_longitude = location_obj
+									.getString(ConstantTags.TAG_LONGITUDE);
+						}
+
+						if (location_obj.has(ConstantTags.TAG_ID)) {
+							location_id = location_obj
+									.getString(ConstantTags.TAG_ID);
+						}
 					}
-					
-				
+
 					JSONObject comm_obj = data_obj
 							.getJSONObject(ConstantTags.TAG_COMMENTS);
 					System.out.println("7");
@@ -173,13 +178,13 @@ public class Feeds_Fragments extends Fragment {
 
 						comments_model.setCreated_time(createdTime);
 						comments_model.setText(text);
-						
+
 						comments_model.setUsername(from_username);
 						comments_model
 								.setProfile_picture_url(from_profile_picture_url);
 						comments_model.setUserid(from_use_id);
 						comments_model.setFullname(from_full_name);
-						
+
 						comments_arraylist.add(comments_model);
 
 					}
@@ -267,28 +272,34 @@ public class Feeds_Fragments extends Fragment {
 					}
 
 					if (data_obj.isNull(ConstantTags.TAG_CAPTION)) {
-						
+
+					} else {
+						JSONObject caption_obj = data_obj
+								.getJSONObject(ConstantTags.TAG_CAPTION);
+						captiontext = caption_obj
+								.getString(ConstantTags.TAG_TEXT);
+						captionid = caption_obj.getString(ConstantTags.TAG_ID);
 					}
-					else {
-						JSONObject caption_obj = data_obj.getJSONObject(ConstantTags.TAG_CAPTION);
-						captiontext=caption_obj.getString(ConstantTags.TAG_TEXT);
-						captionid=caption_obj.getString(ConstantTags.TAG_ID);
-					}
-					
+
 					islike = data_obj
 							.getBoolean(ConstantTags.TAG_USER_HAS_LIKED);
-					String createdtime=data_obj.getString(ConstantTags.TAG_CREATED_TIME);
-					JSONObject fromuserObj=data_obj.getJSONObject(ConstantTags.TAG_USER);
-					String username=fromuserObj.getString(ConstantTags.TAG_USERNAME);
-					String usernid=fromuserObj.getString(ConstantTags.TAG_ID);
-					
-					String profilepicurl=fromuserObj.getString(ConstantTags.TAG_PROFILE_PICTURE);
-					String fullname=fromuserObj.getString(ConstantTags.TAG_FULL_NAME);
-					
-					
-					String feed_post_id=data_obj.getString(ConstantTags.TAG_ID);
-					
-					FeedsModel feedsModel=new FeedsModel();
+					String createdtime = data_obj
+							.getString(ConstantTags.TAG_CREATED_TIME);
+					JSONObject fromuserObj = data_obj
+							.getJSONObject(ConstantTags.TAG_USER);
+					String username = fromuserObj
+							.getString(ConstantTags.TAG_USERNAME);
+					String usernid = fromuserObj.getString(ConstantTags.TAG_ID);
+
+					String profilepicurl = fromuserObj
+							.getString(ConstantTags.TAG_PROFILE_PICTURE);
+					String fullname = fromuserObj
+							.getString(ConstantTags.TAG_FULL_NAME);
+
+					String feed_post_id = data_obj
+							.getString(ConstantTags.TAG_ID);
+
+					FeedsModel feedsModel = new FeedsModel();
 					feedsModel.setTag_array(tag_list);
 					feedsModel.setType(type);
 					feedsModel.setLocation_id(location_id);
@@ -329,28 +340,24 @@ public class Feeds_Fragments extends Fragment {
 		protected void onPostExecute(Void result) {
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
-			mSpinner.hide();
-			
-			 setAdapter();
+			progressimage.setVisibility(View.INVISIBLE);
+
+			setAdapter();
 		}
 
 	}
-	
-	 void setAdapter()
-	    {
-		 FeedsAdapter adapter=new FeedsAdapter(getActivity(), user_feeds_list);
-	    	
-	    	feedlistview.setAdapter(adapter);
-	    }
-	 
-	 
-	 @Override
+
+	void setAdapter() {
+		FeedsAdapter adapter = new FeedsAdapter(getActivity(), user_feeds_list);
+
+		feedlistview.setAdapter(adapter);
+	}
+
+	@Override
 	public void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		//((ActionBarActivity)getActivity()).getActionBar().setTitle("Feeds");
+		// ((ActionBarActivity)getActivity()).getActionBar().setTitle("Feeds");
 	}
-	
 
-	
 }

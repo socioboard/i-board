@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:paddingLeft="@dimen/drawer_left"
-            android:src="@drawable/ic_community" />
+            android:src="@drawable/add_account" />
 
         <TextView
             android:id="@+id/footer_text3"
@@ -56,7 +56,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:paddingLeft="@dimen/drawer_left"
-            android:src="@drawable/ic_help" />
+            android:src="@drawable/feedback" />
 
         <TextView
             android:id="@+id/feedback_text"

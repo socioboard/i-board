@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.ProgressDialog;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -26,8 +30,11 @@ import com.socioboard.iboardpro.adapter.FansAdapter;
 import com.socioboard.iboardpro.adapter.FollowsAdapter;
 import com.socioboard.iboardpro.database.util.MainSingleTon;
 import com.socioboard.iboardpro.models.FollowModel;
+import com.socioboard.iboardpro.ui.WaveDrawable;
 
-/**fragment is used for  fetching nonfollowers  list of user and showing in list viewCreated by Daniel on 09.11.2014.
+/**
+ * fragment is used for fetching nonfollowers list of user and showing in list
+ * viewCreated by Daniel on 09.11.2014.
  */
 public class Fans_Fragments extends Fragment {
 
@@ -37,27 +44,34 @@ public class Fans_Fragments extends Fragment {
 	ArrayList<FollowModel> Fans_arraylist = new ArrayList<FollowModel>();
 	FansAdapter adapter;
 	ListView list;
-	private ProgressDialog mSpinner;
+	private WaveDrawable waveDrawable;
+	ImageView progressimage;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.fan_fragments,
-				container, false);
+		View rootView = inflater.inflate(R.layout.fan_fragments, container,
+				false);
 
 		list = (ListView) rootView.findViewById(R.id.listView);
-		mSpinner = new ProgressDialog(getActivity());
-		mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		mSpinner.setMessage("Loading...");
-		
-		
-		ConnectionDetector detector=new ConnectionDetector(getActivity());
+		progressimage = (ImageView) rootView.findViewById(R.id.image);
+
+		waveDrawable = new WaveDrawable(Color.parseColor("#8DD2FA"), 500);
+		progressimage.setBackground(waveDrawable);
+
+		Interpolator interpolator = new LinearInterpolator();
+
+		waveDrawable.setWaveInterpolator(interpolator);
+		waveDrawable.startAnimation();
+
+		ConnectionDetector detector = new ConnectionDetector(getActivity());
 		if (detector.isConnectingToInternet()) {
 			new getUserFollowers().execute();
+		} else {
+			Toast.makeText(getActivity(), "Please connect to internet!",
+					Toast.LENGTH_LONG).show();
 		}
-		else {
-			Toast.makeText(getActivity(), "Please connect to internet!", Toast.LENGTH_LONG).show();
-		}
-		
+
 		return rootView;
 	}
 
@@ -67,13 +81,16 @@ public class Fans_Fragments extends Fragment {
 		protected void onPreExecute() {
 			// TODO Auto-generated method stub
 			super.onPreExecute();
-			mSpinner.show();
+			progressimage.setVisibility(View.VISIBLE);
 		}
+
 		@Override
 		protected Void doInBackground(Void... params) {
 
 			Follows_arrayList.clear();
-			JSONObject json = jParser.getJSONFromUrlByGet(ConstantUrl.URL_Follows+ MainSingleTon.accesstoken);
+			JSONObject json = jParser
+					.getJSONFromUrlByGet(ConstantUrl.URL_Follows
+							+ MainSingleTon.accesstoken);
 			System.out.println("jsonresponse" + json);
 			try {
 
@@ -185,17 +202,18 @@ public class Fans_Fragments extends Fragment {
 							.equals(Follows_arrayList.get(j).getUserid())) {
 						isContain = true;
 					}
-					
 
 				}
 
 				if (!isContain) {
 					FollowModel model = new FollowModel();
-					model.setFull_name(Followed_by_arrayList.get(i).getFull_name());
+					model.setFull_name(Followed_by_arrayList.get(i)
+							.getFull_name());
 					model.setProfile_pic_url(Followed_by_arrayList.get(i)
 							.getProfile_pic_url());
 					model.setUserid(Followed_by_arrayList.get(i).getUserid());
-					model.setUsername(Followed_by_arrayList.get(i).getUsername());
+					model.setUsername(Followed_by_arrayList.get(i)
+							.getUsername());
 					Fans_arraylist.add(model);
 				}
 
@@ -208,19 +226,17 @@ public class Fans_Fragments extends Fragment {
 	}
 
 	void setAdapter() {
-		 adapter = new FansAdapter(getActivity(),
-				 Fans_arraylist);
+		adapter = new FansAdapter(getActivity(), Fans_arraylist);
 
 		list.setAdapter(adapter);
-		mSpinner.hide();
+		progressimage.setVisibility(View.INVISIBLE);
 	}
 
-	
-	 @Override
-		public void onDestroy() {
-			// TODO Auto-generated method stub
-			super.onDestroy();
-			list.setAdapter(null);
-			adapter.imageLoader.clearCache();
-		}
+	@Override
+	public void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		list.setAdapter(null);
+		adapter.imageLoader.clearCache();
+	}
 }

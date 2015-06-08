@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.ProgressDialog;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -25,9 +29,11 @@ import com.socioboard.iboardpro.R;
 import com.socioboard.iboardpro.adapter.FollowByAdapter;
 import com.socioboard.iboardpro.database.util.MainSingleTon;
 import com.socioboard.iboardpro.models.FollowModel;
+import com.socioboard.iboardpro.ui.WaveDrawable;
 
 /**
- * fragment is used for  fetching followed by   list of user and showing in list view
+ * fragment is used for fetching followed by list of user and showing in list
+ * view
  */
 public class Followed_By extends Fragment {
 
@@ -35,7 +41,8 @@ public class Followed_By extends Fragment {
 	JSONParser jParser = new JSONParser();
 	FollowByAdapter adapter;
 	ListView list;
-	private ProgressDialog mSpinner;
+	private WaveDrawable waveDrawable;
+	ImageView progressimage;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -44,18 +51,23 @@ public class Followed_By extends Fragment {
 				container, false);
 		list = (ListView) rootView.findViewById(R.id.listView);
 
-		mSpinner = new ProgressDialog(getActivity());
-		mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		mSpinner.setMessage("Loading...");
-		
-		ConnectionDetector detector=new ConnectionDetector(getActivity());
+		progressimage = (ImageView) rootView.findViewById(R.id.image);
+
+		waveDrawable = new WaveDrawable(Color.parseColor("#8DD2FA"), 500);
+		progressimage.setBackground(waveDrawable);
+
+		Interpolator interpolator = new LinearInterpolator();
+
+		waveDrawable.setWaveInterpolator(interpolator);
+		waveDrawable.startAnimation();
+
+		ConnectionDetector detector = new ConnectionDetector(getActivity());
 		if (detector.isConnectingToInternet()) {
 			new getUserFollowers().execute();
+		} else {
+			Toast.makeText(getActivity(), "Please connect to internet!",
+					Toast.LENGTH_LONG).show();
 		}
-		else {
-			Toast.makeText(getActivity(), "Please connect to internet!", Toast.LENGTH_LONG).show();
-		}
-		
 
 		return rootView;
 	}
@@ -66,7 +78,7 @@ public class Followed_By extends Fragment {
 		protected void onPreExecute() {
 			// TODO Auto-generated method stub
 			super.onPreExecute();
-			mSpinner.show();
+			progressimage.setVisibility(View.VISIBLE);
 		}
 
 		@Override
@@ -120,13 +132,13 @@ public class Followed_By extends Fragment {
 			super.onPostExecute(result);
 
 			setAdapter();
-			mSpinner.hide();
+			progressimage.setVisibility(View.INVISIBLE);
 		}
 
 	}
 
 	void setAdapter() {
-		 adapter = new FollowByAdapter(getActivity(), arrayList);
+		adapter = new FollowByAdapter(getActivity(), arrayList);
 
 		list.setAdapter(adapter);
 	}

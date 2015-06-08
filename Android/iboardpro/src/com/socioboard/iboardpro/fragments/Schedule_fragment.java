@@ -276,7 +276,7 @@ public class Schedule_fragment extends Fragment {
 			   cursor.moveToFirst();
 
 			   int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-			   String  picturePath = cursor.getString(columnIndex);
+			   imagePath = cursor.getString(columnIndex);
 			   cursor.close();
 			   
 			   //image.setImageURI(selectedImage);

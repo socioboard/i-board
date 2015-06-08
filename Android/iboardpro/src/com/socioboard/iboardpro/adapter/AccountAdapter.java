@@ -71,7 +71,7 @@ public class AccountAdapter extends BaseAdapter
 
       
        profilePic.setImageBitmap(utilss.getBitmapFromString(navDrawerItems.get(position).getUserimage()));
-        settingspic.setImageResource(R.drawable.ic_settings);
+       
         text.setText(navDrawerItems.get(position).getUsername());
 
         settingspic.setOnClickListener(new OnClickListener() {

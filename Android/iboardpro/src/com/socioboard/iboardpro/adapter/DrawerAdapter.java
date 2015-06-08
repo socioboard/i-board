@@ -6,6 +6,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -56,6 +58,7 @@ public class DrawerAdapter extends BaseAdapter {
         image.setImageResource(navDrawerItems.get(position).getIcon());
         text.setText(navDrawerItems.get(position).getTitle());
 
+        
         return convertView;
     }
 }

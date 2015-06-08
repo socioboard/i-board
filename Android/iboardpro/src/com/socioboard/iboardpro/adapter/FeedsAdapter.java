@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -26,7 +28,7 @@ public class FeedsAdapter extends BaseAdapter {
 	Context context;
 	public ImageLoader imageLoader;
 	CommonUtilss commonUtilss;
-
+	private int lastPosition = -1;
 	public FeedsAdapter(Context context, ArrayList<FeedsModel> arrayList) {
 		this.arrayList = arrayList;
 		this.context = context;
@@ -88,6 +90,8 @@ public class FeedsAdapter extends BaseAdapter {
 
 		imageLoader.DisplayImage(model.getLow_resolution_url(),
 				profile_imagView);
+		
+		System.out.println("IMAGE URL"+model.getLow_resolution_url());
 
 		imageLoader.DisplayImage(model.getFrom_profilepicture(),
 				user_profile_pic);
@@ -111,6 +115,10 @@ public class FeedsAdapter extends BaseAdapter {
 			}
 		});
 
+
+		 Animation animation = AnimationUtils.loadAnimation(context, (position > lastPosition) ? R.anim.up_from_bottom : R.anim.down_from_top);
+		    convertView.startAnimation(animation);
+		    lastPosition = position;
 		return convertView;
 	}
 

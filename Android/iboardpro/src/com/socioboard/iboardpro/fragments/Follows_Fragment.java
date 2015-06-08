@@ -7,13 +7,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.ProgressDialog;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
+import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.socioboard.iboardpro.ConstantTags;
@@ -23,9 +26,10 @@ import com.socioboard.iboardpro.R;
 import com.socioboard.iboardpro.adapter.FollowsAdapter;
 import com.socioboard.iboardpro.database.util.MainSingleTon;
 import com.socioboard.iboardpro.models.FollowModel;
+import com.socioboard.iboardpro.ui.WaveDrawable;
 
 /**
- * fragment is used for  fetching follows list of user and showing in list view
+ * fragment is used for fetching follows list of user and showing in list view
  */
 public class Follows_Fragment extends Fragment {
 
@@ -33,7 +37,9 @@ public class Follows_Fragment extends Fragment {
 	JSONParser jParser = new JSONParser();
 	FollowsAdapter adapter;
 	ListView list;
-	private ProgressDialog mSpinner;
+
+	private WaveDrawable waveDrawable;
+	ImageView progressimage;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -41,9 +47,17 @@ public class Follows_Fragment extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_followers,
 				container, false);
 		list = (ListView) rootView.findViewById(R.id.listView);
-		mSpinner = new ProgressDialog(getActivity());
-		mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		mSpinner.setMessage("Loading...");
+
+		progressimage=(ImageView) rootView.findViewById(R.id.image);
+		
+		waveDrawable = new WaveDrawable(Color.parseColor("#8DD2FA"), 500);
+		progressimage.setBackground(waveDrawable);
+
+		Interpolator interpolator = new LinearInterpolator();
+
+		waveDrawable.setWaveInterpolator(interpolator);
+		waveDrawable.startAnimation();
+
 		new getUserFollowers().execute();
 		return rootView;
 	}
@@ -52,9 +66,9 @@ public class Follows_Fragment extends Fragment {
 
 		@Override
 		protected void onPreExecute() {
-			// TODO Auto-generated method stub
+			progressimage.setVisibility(View.VISIBLE);
 			super.onPreExecute();
-			mSpinner.show();
+
 		}
 
 		@Override
@@ -108,7 +122,8 @@ public class Follows_Fragment extends Fragment {
 			super.onPostExecute(result);
 
 			setAdapter();
-			mSpinner.hide();
+			progressimage.setVisibility(View.INVISIBLE);
+
 		}
 
 	}

@@ -44,6 +44,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.flurry.android.FlurryAgent;
 import com.socioboard.iboardpro.adapter.AccountAdapter;
 import com.socioboard.iboardpro.adapter.DrawerAdapter;
 import com.socioboard.iboardpro.database.util.InstagramManyLocalData;
@@ -324,6 +325,9 @@ public class MainActivity extends ActionBarActivity implements
 		mainfragmentManager.beginTransaction()
 				.replace(R.id.main_content, new Feeds_Fragments()).commit();
 
+		
+		
+
 	}
 
 	/*
@@ -400,7 +404,7 @@ public class MainActivity extends ActionBarActivity implements
 			break;
 		case 7:
 			fragment = new Mutual_Fragments();
-			break;	
+			break;
 		case 8:
 			fragment = new Copy_follows();
 			break;
@@ -509,7 +513,7 @@ public class MainActivity extends ActionBarActivity implements
 						break;
 					case 7:
 						fragment = new Mutual_Fragments();
-						break;	
+						break;
 					case 8:
 						fragment = new Copy_follows();
 						break;
@@ -900,4 +904,17 @@ public class MainActivity extends ActionBarActivity implements
 
 	}
 
+	@Override
+	protected void onStart() {
+		// TODO Auto-generated method stub
+		super.onStart();
+		FlurryAgent.onStartSession(MainActivity.this);
+	}
+
+	@Override
+	protected void onStop() {
+		// TODO Auto-generated method stub
+		super.onStop();
+		FlurryAgent.onEndSession(MainActivity.this);
+	}
 }

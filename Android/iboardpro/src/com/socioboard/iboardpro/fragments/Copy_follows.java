@@ -16,6 +16,7 @@ import com.socioboard.iboardpro.adapter.FollowByAdapter;
 import com.socioboard.iboardpro.adapter.FollowsAdapter;
 import com.socioboard.iboardpro.database.util.MainSingleTon;
 import com.socioboard.iboardpro.models.FollowModel;
+import com.socioboard.iboardpro.ui.WaveDrawable;
 
 import android.app.ProgressDialog;
 import android.graphics.Color;
@@ -25,6 +26,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -41,7 +44,7 @@ public class Copy_follows extends Fragment {
 
 	String getUserIDURl = "https://api.instagram.com/v1/users/search?q=";
 
-	private ProgressDialog mSpinner;
+	
 	private String[] choose_category;
 	JSONParser jParser = new JSONParser();
 	int mainposition = 0;
@@ -49,6 +52,10 @@ public class Copy_follows extends Fragment {
 	TextView alerttext;
 	ArrayList<FollowModel> follows_arrayList = new ArrayList<FollowModel>();
 
+	private WaveDrawable waveDrawable;
+	ImageView progressimage;
+
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -71,9 +78,16 @@ public class Copy_follows extends Fragment {
 				choose_category);
 		dataAdapter
 				.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		mSpinner = new ProgressDialog(getActivity());
-		mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		mSpinner.setMessage("Loading...");
+		progressimage = (ImageView) rootView.findViewById(R.id.image);
+
+		waveDrawable = new WaveDrawable(Color.parseColor("#8DD2FA"), 500);
+		progressimage.setBackground(waveDrawable);
+
+		Interpolator interpolator = new LinearInterpolator();
+
+		waveDrawable.setWaveInterpolator(interpolator);
+		waveDrawable.startAnimation();
+
 		spinner.setAdapter(dataAdapter);
 
 		spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -132,7 +146,7 @@ public class Copy_follows extends Fragment {
 		protected void onPreExecute() {
 			// TODO Auto-generated method stub
 			super.onPreExecute();
-			mSpinner.show();
+			progressimage.setVisibility(View.VISIBLE);
 		}
 
 		@Override
@@ -154,7 +168,7 @@ public class Copy_follows extends Fragment {
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				mSpinner.hide();
+				progressimage.setVisibility(View.INVISIBLE);
 			}
 
 			return null;
@@ -163,7 +177,7 @@ public class Copy_follows extends Fragment {
 		@Override
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
-			mSpinner.hide();
+			progressimage.setVisibility(View.INVISIBLE);
 			String url;
 
 			if (id != null) {
@@ -250,7 +264,7 @@ public class Copy_follows extends Fragment {
 		@Override
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
-			mSpinner.hide();
+			progressimage.setVisibility(View.INVISIBLE);
 			if (follows_arrayList.size()>0) {
 				list.setVisibility(View.VISIBLE);
 				SetAdapter();

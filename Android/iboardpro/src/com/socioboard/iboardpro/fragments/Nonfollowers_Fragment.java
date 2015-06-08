@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.ProgressDialog;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -25,8 +29,11 @@ import com.socioboard.iboardpro.R;
 import com.socioboard.iboardpro.adapter.FollowsAdapter;
 import com.socioboard.iboardpro.database.util.MainSingleTon;
 import com.socioboard.iboardpro.models.FollowModel;
+import com.socioboard.iboardpro.ui.WaveDrawable;
 
-/**fragment is used for  fetching nonfollowers  list of user and showing in list viewCreated by Daniel on 09.11.2014.
+/**
+ * fragment is used for fetching nonfollowers list of user and showing in list
+ * viewCreated by Daniel on 09.11.2014.
  */
 public class Nonfollowers_Fragment extends Fragment {
 
@@ -36,7 +43,9 @@ public class Nonfollowers_Fragment extends Fragment {
 	ArrayList<FollowModel> Non_follwer_arraylist = new ArrayList<FollowModel>();
 	FollowsAdapter adapter;
 	ListView list;
-	private ProgressDialog mSpinner;
+	private WaveDrawable waveDrawable;
+	ImageView progressimage;
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -44,19 +53,24 @@ public class Nonfollowers_Fragment extends Fragment {
 				container, false);
 
 		list = (ListView) rootView.findViewById(R.id.listView);
-		mSpinner = new ProgressDialog(getActivity());
-		mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		mSpinner.setMessage("Loading...");
-		
-		
-		ConnectionDetector detector=new ConnectionDetector(getActivity());
+		progressimage = (ImageView) rootView.findViewById(R.id.image);
+
+		waveDrawable = new WaveDrawable(Color.parseColor("#8DD2FA"), 500);
+		progressimage.setBackground(waveDrawable);
+
+		Interpolator interpolator = new LinearInterpolator();
+
+		waveDrawable.setWaveInterpolator(interpolator);
+		waveDrawable.startAnimation();
+
+		ConnectionDetector detector = new ConnectionDetector(getActivity());
 		if (detector.isConnectingToInternet()) {
 			new getUserFollowers().execute();
+		} else {
+			Toast.makeText(getActivity(), "Please connect to internet!",
+					Toast.LENGTH_LONG).show();
 		}
-		else {
-			Toast.makeText(getActivity(), "Please connect to internet!", Toast.LENGTH_LONG).show();
-		}
-		
+
 		return rootView;
 	}
 
@@ -66,8 +80,9 @@ public class Nonfollowers_Fragment extends Fragment {
 		protected void onPreExecute() {
 			// TODO Auto-generated method stub
 			super.onPreExecute();
-			mSpinner.show();
+			progressimage.setVisibility(View.VISIBLE);
 		}
+
 		@Override
 		protected Void doInBackground(Void... params) {
 
@@ -208,19 +223,17 @@ public class Nonfollowers_Fragment extends Fragment {
 	}
 
 	void setAdapter() {
-		 adapter = new FollowsAdapter(getActivity(),
-				Non_follwer_arraylist);
+		adapter = new FollowsAdapter(getActivity(), Non_follwer_arraylist);
 
 		list.setAdapter(adapter);
-		mSpinner.hide();
+		progressimage.setVisibility(View.INVISIBLE);
 	}
 
-	
-	 @Override
-		public void onDestroy() {
-			// TODO Auto-generated method stub
-			super.onDestroy();
-			list.setAdapter(null);
-			adapter.imageLoader.clearCache();
-		}
+	@Override
+	public void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		list.setAdapter(null);
+		adapter.imageLoader.clearCache();
+	}
 }

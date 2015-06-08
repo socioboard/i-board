@@ -3,16 +3,15 @@ package com.socioboard.iboardpro;
 public class ApplicationData {
 	
 	//Instgram app client id 
-	public static final String CLIENT_ID = "XXXXXXXXXXXXXXXXXXXXXXXXXX";
+	public static final String CLIENT_ID = "xxxxxxxxxxxxx";
 	//Instgram app SECRET id 
-	public static final String CLIENT_SECRET = "XXXXXXXXXXXXXXXXXXXXXXXXXX";
+	public static final String CLIENT_SECRET = "xxxxxxxxxxxxxxxxxx";
 	
 	//Instgram app call back URL
-	public static final String CALLBACK_URL = "http://www.socioboard.com";
+	public static final String CALLBACK_URL = "xxxxxxxxxxxxxxxxxxx";
 	
-	public static final String feedback_emailID="XXXXXXXX@go.com";
-	
-	
+
 	
 	
+
 }

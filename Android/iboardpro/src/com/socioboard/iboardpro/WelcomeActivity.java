@@ -110,7 +110,7 @@ public class WelcomeActivity extends Activity {
 			
 			MainSingleTon.userdetails.put(mApp.getId(), datas);
 			MainSingleTon.useridlist.add(mApp.getId());
-			SharedPreferences lifesharedpref=getSharedPreferences("FacebookBoard", Context.MODE_PRIVATE);
+			SharedPreferences lifesharedpref=getSharedPreferences("iboardpro", Context.MODE_PRIVATE);
 			SharedPreferences.Editor editor=lifesharedpref.edit();
 			editor.putString("userid", mApp.getId());
 			editor.commit();

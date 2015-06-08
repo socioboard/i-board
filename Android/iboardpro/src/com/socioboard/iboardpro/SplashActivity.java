@@ -56,7 +56,7 @@ public class SplashActivity extends Activity {
 		{
 			//if app is lunched for 2nd time , get saved data from shared prefernce and sql lite db.
 			
-			SharedPreferences lifesharedpref=getSharedPreferences("FacebookBoard", Context.MODE_PRIVATE);
+			SharedPreferences lifesharedpref=getSharedPreferences("iboardpro", Context.MODE_PRIVATE);
 			MainSingleTon.userid= lifesharedpref.getString("userid", null);
 			if(MainSingleTon.userid!=null)
 			{
