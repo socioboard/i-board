@@ -1,10 +1,4 @@
-//
-//  WebViewViewController.m
-//  Board
-//
-//  Created by Sumit Ghosh on 21/04/15.
-//  Copyright (c) 2015 Sumit Ghosh. All rights reserved.
-//
+
 
 #import "WebViewViewController.h"
 #import "SingletonClass.h"
@@ -12,25 +6,41 @@
 
 @interface WebViewViewController ()
 {
-    NSString * client_id ;
-    NSString * redirectUri;
-    NSString * client_screte;
+
+    UILabel * noInternetConnnection;
 }
 @end
 
 @implementation WebViewViewController
+-(void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:YES];
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
+}
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:YES];
+    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(firedNotification) name:@"firedNotification" object:nil];
 
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
+    windowSize=[UIScreen mainScreen].bounds.size;
     
-    
-     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(firedNotification) name:@"firedNotification" object:nil];
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(loadAllFollowedBy) name:@"loadAllFollowedBy" object:nil];
     
-    UIView * headerView=[[UIView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 55)];
+    UIView * headerView=[[UIView alloc]initWithFrame:CGRectMake(0, 0, windowSize.width, 55)];
     headerView.backgroundColor=[UIColor colorWithRed:55.0f/255.0f green:105.0f/255.0f blue:147.0f/255.0f alpha:1.0f];
     [self.view addSubview:headerView];
+    
+    UILabel *titleLabel=[[UILabel alloc]initWithFrame:CGRectMake(60, 20, windowSize.width-120, 25)];
+    titleLabel.text=@"Login";
+    titleLabel.textColor=[UIColor whiteColor];
+    titleLabel.font=[UIFont boldSystemFontOfSize:20];
+    titleLabel.textAlignment = NSTextAlignmentCenter;
+    [headerView addSubview:titleLabel];
     
     UIButton * cancelBtn=[UIButton buttonWithType:UIButtonTypeCustom];
     cancelBtn.frame=CGRectMake(15, 25, 50, 25);
@@ -41,7 +51,24 @@
     cancelBtn.titleLabel.font=[UIFont systemFontOfSize:12];
     [headerView addSubview:cancelBtn];
     
-    [self createUI];
+    [noInternetConnnection removeFromSuperview];
+    [[NSNotificationCenter defaultCenter]postNotificationName:@"reachability" object:nil];
+    if ([SingletonClass shareSinglton].isActivenetworkConnection==YES) {
+        [self createUI];
+    }
+    else{
+        if (noInternetConnnection) {
+            [noInternetConnnection removeFromSuperview];
+            noInternetConnnection=nil;
+        }
+        noInternetConnnection=[[UILabel alloc]initWithFrame:CGRectMake(30, windowSize.height/2-50, windowSize.width-50, 50)];
+        noInternetConnnection.text=@"Please check your InterNet connection.";
+        noInternetConnnection.numberOfLines=0;
+        noInternetConnnection.textAlignment=NSTextAlignmentCenter;
+        noInternetConnnection.lineBreakMode=NSLineBreakByWordWrapping;
+        [self.view addSubview:noInternetConnnection];
+    }
+
     // Do any additional setup after loading the view from its nib.
 }
 
@@ -65,10 +92,7 @@
     
     
     windowSize=[UIScreen mainScreen].bounds.size;
-    
-    client_id = @"xxxxxxxxxxxxxxxxxxxxxxxxxx";
-    redirectUri=@"http://xxxxxxxxxx.com";
-    client_screte=@"xxxxxxxxxxxxxxxxxxxxxxxxxxx";
+
 
     
     NSString * url=[NSString stringWithFormat:@"https://api.instagram.com/oauth/authorize/?client_id=%@&redirect_uri=%@&response_type=code&scope=relationships",client_id,redirectUri];
@@ -107,7 +131,7 @@
     return YES;
 }
 
-#pragma mark- get profile data
+#pragma mark- loadAllFollowers data
 
 -(void)loadAllFollowers
 {
@@ -115,9 +139,9 @@
     [SingletonClass shareSinglton].profile_picture=[[NSMutableArray alloc]init];
     NSString * accessToken=[[ NSUserDefaults standardUserDefaults]                                                                                                                                               valueForKey:@"access_token"];
     NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://api.instagram.com/v1/users/self/follows?access_token=%@",accessToken]]];
-    // Here we can handle response as well
+
     NSDictionary *dictResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
-    // NSLog(@"Response : %@",dictResponse);
+  
     
     NSArray * resultArr=(NSArray*)[dictResponse objectForKey:@"data"];
     NSLog(@"Result arr %@ ==--%lu",resultArr,(unsigned long)resultArr.count);
@@ -136,10 +160,6 @@
     NSError * error=nil;
     NSURLResponse * urlResponse=nil;
     
-    client_id = @"585520b8070e49d49b50d59ff57ec463";
-    redirectUri=@"http://www.socioboard.com";
-    client_screte=@"4e61cfd6a80f426295c8b2d6d5b30e61";
-   
     NSString * code=[[ NSUserDefaults standardUserDefaults]                                                                                                                                               valueForKey:@"code"];
     
     NSURL * postUrl=[NSURL URLWithString:[NSString stringWithFormat:@"https://api.instagram.com/oauth/access_token"]];
@@ -215,8 +235,10 @@
         dataDic=[response objectForKey:@"data"];
         countsDic=[dataDic objectForKey:@"counts"];
         
-        [SingletonClass shareSinglton].followed_by=[countsDic objectForKey:@"followed_by"];
-        [SingletonClass shareSinglton].follows=[countsDic objectForKey:@"follows"];
+        
+        [SingletonClass shareSinglton].follows=[NSString stringWithFormat:@"%@",[countsDic objectForKey:@"follows"]];
+        [SingletonClass shareSinglton].followed_by=[NSString stringWithFormat:@"%@",[countsDic objectForKey:@"followed_by"]];
+        [SingletonClass shareSinglton].medaiCnt=[NSString stringWithFormat:@"%@",[countsDic objectForKey:@"media"]];
         
         [self createSqliteTable];
         
@@ -241,7 +263,7 @@
              if (sqlite3_open([databasePath UTF8String], &_database)==SQLITE_OK) {
                  
                  char * errormsg;
-                 const char *sqlStatement = "CREATE TABLE  InstaBoard (ID INTEGER PRIMARY KEY AUTOINCREMENT,UserId TEXT, UserFullName TEXT, ProfilePic TEXT,AccessToken TEXT)";
+                 const char *sqlStatement = "CREATE TABLE  InstaBoard (ID INTEGER PRIMARY KEY AUTOINCREMENT,UserId TEXT, UserFullName TEXT, ProfilePic TEXT,AccessToken TEXT,Followers TEXT,Following TEXT,Media TEXT)";
                  
                  if (sqlite3_exec(_database, sqlStatement, NULL, NULL, &errormsg)!=SQLITE_OK) {
                      NSLog(@"Failed to create table");
@@ -290,7 +312,7 @@
      {
          NSString * access_token=[[NSUserDefaults standardUserDefaults]objectForKey:@"access_token"];
  
-          NSString *insertSQL=[NSString stringWithFormat:@"INSERT INTO InstaBoard (UserId ,UserFullName ,ProfilePic ,AccessToken) values(\"%@\",\"%@\",\"%@\",\"%@\")",[SingletonClass shareSinglton].userID,[SingletonClass shareSinglton].user_full_name,[SingletonClass shareSinglton].user_pic,access_token];
+          NSString *insertSQL=[NSString stringWithFormat:@"INSERT INTO InstaBoard (UserId ,UserFullName ,ProfilePic ,AccessToken,Followers,Following,Media) values(\"%@\",\"%@\",\"%@\",\"%@\",\"%@\",\"%@\",\"%@\")",[SingletonClass shareSinglton].userID,[SingletonClass shareSinglton].user_full_name,[SingletonClass shareSinglton].user_pic,access_token,[SingletonClass shareSinglton].follows,[SingletonClass shareSinglton].followed_by,[SingletonClass shareSinglton].medaiCnt];
  
  
  const char *insert_stmt=[insertSQL UTF8String];
@@ -300,8 +322,10 @@
          }
  
          if (sqlite3_prepare_v2(_database, insert_stmt, -1, &statement, NULL)!=SQLITE_OK) {
+               NSLog(@"ERRor %s",sqlite3_errmsg(_database));
              return;
          }
+       
  
  
          if(sqlite3_step(statement)==SQLITE_DONE)
@@ -350,6 +374,9 @@
                 char *userfullname = (char *) sqlite3_column_text(compiledStmt,2);
                 char *profilepic = (char *) sqlite3_column_text(compiledStmt,3);
                 char * accesstoken=(char *)sqlite3_column_text(compiledStmt,4);
+                char * media=(char *)sqlite3_column_text(compiledStmt,5);
+                char * followers=(char *)sqlite3_column_text(compiledStmt,6);
+                char * following=(char *)sqlite3_column_text(compiledStmt,7);
                 
                 NSString *userId= [NSString  stringWithUTF8String:userid];
                 
@@ -357,12 +384,19 @@
                 NSString *profilePic  = [NSString stringWithUTF8String:profilepic];
                 NSString * accessToken=[NSString stringWithUTF8String:accesstoken];
                 
+                NSString *mediaCnt  = [NSString stringWithUTF8String:media];
+                NSString *Followers  = [NSString stringWithUTF8String:followers];
+                NSString * Following=[NSString stringWithUTF8String:following];
+                
+                
                 NSMutableDictionary * temp=[[NSMutableDictionary alloc]init];
                 [temp setObject:userId forKey:@"userId"];
                 [temp setObject:userFullName forKey:@"userFullName"];
                 [temp setObject:profilePic forKey:@"profilePic"];
                 [temp setObject:accessToken forKey:@"accessToken"];
-                
+                [temp setObject:mediaCnt forKey:@"mediaCnt"];
+                [temp setObject:Followers forKey:@"followers"];
+                [temp setObject:Following forKey:@"following"];
                 [[SingletonClass shareSinglton].allData addObject:temp];
             }
             
@@ -371,14 +405,14 @@
     }
     sqlite3_close(_database);
     [[NSNotificationCenter defaultCenter]postNotificationName:@"reloadData" object:nil];
-    NSLog(@"count from data base  %lu",[SingletonClass shareSinglton].allData.count);
+    NSLog(@"count from data base  %@",[SingletonClass shareSinglton].allData);
 }
 
 
 
 -(void)firedNotification {
     
-    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
+    //[[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
     
     CGRect rect = CGRectMake(0 ,0 ,120, 60);
     NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://media?id=%@",[SingletonClass shareSinglton].imageId]];

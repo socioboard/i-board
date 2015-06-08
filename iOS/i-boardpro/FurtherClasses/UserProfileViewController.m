@@ -1,10 +1,4 @@
-//
-//  UserProfileViewController.m
-//  Board
-//
-//  Created by Sumit Ghosh on 24/04/15.
-//  Copyright (c) 2015 Sumit Ghosh. All rights reserved.
-//
+
 
 #import "UserProfileViewController.h"
 #import "CustomCell.h"
@@ -18,15 +12,28 @@
     CustomCell * customCellView;
     CollectionReusableHeaderView * reuseableView;
     UIActivityIndicatorView  * activityView;
+    UILabel * noInternetConnnection;
 }
 @end
 
 @implementation UserProfileViewController
+-(void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:YES];
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
+}
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:YES];
+    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(firedNotification) name:@"firedNotification" object:nil];
+    
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(firedNotification) name:@"firedNotification" object:nil];
+   
     windowSize=[UIScreen mainScreen].bounds.size;
     
     imageUrl=[[NSMutableArray alloc]init];
@@ -43,15 +50,35 @@
     [self.view addSubview:activityView];
     [self.view bringSubviewToFront:activityView];
     [activityView startAnimating];
-
+    
+    [noInternetConnnection removeFromSuperview];
+    [[NSNotificationCenter defaultCenter]postNotificationName:@"reachability" object:nil];
+    if ([SingletonClass shareSinglton].isActivenetworkConnection==YES) {
+        
     dispatch_async(dispatch_get_global_queue(0, 0),^{
-        [self loadAllFollowers];
+        [self getUserProfile];
         [self fetchUserPhotos ];
         dispatch_async(dispatch_get_main_queue(),^{
             [activityView stopAnimating];
             [self createUIForProfile];
         });
     });
+    
+}
+else{
+    [activityView stopAnimating];
+    if (noInternetConnnection) {
+        [noInternetConnnection removeFromSuperview];
+        noInternetConnnection=nil;
+    }
+    noInternetConnnection=[[UILabel alloc]initWithFrame:CGRectMake(30, windowSize.height/2-50, windowSize.width-50, 50)];
+    noInternetConnnection.text=@"Please check your InterNet connection.";
+    noInternetConnnection.numberOfLines=0;
+    noInternetConnnection.textAlignment=NSTextAlignmentCenter;
+    noInternetConnnection.lineBreakMode=NSLineBreakByWordWrapping;
+    [self.view addSubview:noInternetConnnection];
+ }
+
     // Do any additional setup after loading the view from its nib.
 }
 
@@ -133,26 +160,28 @@
 
     
     //-------------------
-    
+    NSString * mediaStr=[self abbreviateNumber:[mediaCountStr intValue]];
     mediaCountLbl=[[UILabel alloc]init];
     mediaCountLbl.frame=CGRectMake(30, 170, 40, 10);
-    mediaCountLbl.text=mediaCountStr;
+    mediaCountLbl.text=mediaStr;
     mediaCountLbl.font=[UIFont boldSystemFontOfSize:10];
     mediaCountLbl.textAlignment=NSTextAlignmentCenter;
     mediaCountLbl.textColor=[UIColor colorWithRed:(CGFloat)235/255 green:(CGFloat)235/255 blue:(CGFloat)235/255 alpha:(CGFloat)1];
     [self.view addSubview:mediaCountLbl];
     
+     NSString * followsStr=[self abbreviateNumber:[followsCountStr intValue]];
     followsCountLbl=[[UILabel alloc]init];
     followsCountLbl.frame=CGRectMake(windowSize.width/2-30, 170, 60, 10);
-    followsCountLbl.text=followsCountStr;
+    followsCountLbl.text=followsStr;
     followsCountLbl.textAlignment=NSTextAlignmentCenter;
     followsCountLbl.font=[UIFont boldSystemFontOfSize:10];
     followsCountLbl.textColor=[UIColor colorWithRed:(CGFloat)235/255 green:(CGFloat)235/255 blue:(CGFloat)235/255 alpha:(CGFloat)1];
     [self.view addSubview:followsCountLbl];
     
+    NSString * followingStr=[self abbreviateNumber:[followingCountStr intValue]];
     followingCountLbl=[[UILabel alloc]init];
-    followingCountLbl.frame=CGRectMake(windowSize.width-90, 170, 40, 10);
-    followingCountLbl.text=followingCountStr;
+    followingCountLbl.frame=CGRectMake(windowSize.width-80, 170, 40, 10);
+    followingCountLbl.text=followingStr;
     followingCountLbl.textAlignment=NSTextAlignmentCenter;
     followingCountLbl.font=[UIFont boldSystemFontOfSize:10];
     followingCountLbl.textColor=[UIColor colorWithRed:(CGFloat)235/255 green:(CGFloat)235/255 blue:(CGFloat)235/255 alpha:(CGFloat)1];
@@ -246,10 +275,9 @@
     
 }
 
-#pragma  mark-  load Followers
--(void)loadAllFollowers{
+#pragma  mark-  get user profile
+-(void)getUserProfile{
     
-  
    
     NSString * accessToken=[[ NSUserDefaults standardUserDefaults]                                                                                                                                               valueForKey:@"access_token"];
     
@@ -327,7 +355,7 @@
 
 -(void)firedNotification {
     
-    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
+   // [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
     
     CGRect rect = CGRectMake(0 ,0 ,120, 60);
     NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://media?id=%@",[SingletonClass shareSinglton].imageId]];
@@ -342,6 +370,57 @@
         
     }
     
+}
+
+#pragma mark- abrevation
+
+-(NSString *)abbreviateNumber:(int)num {
+    
+    NSString *abbrevNum;
+    float number = (float)num;
+    
+    //Prevent numbers smaller than 1000 to return NULL
+    if (num >= 1000) {
+        NSArray * abbrev = @[@"K", @"M", @"B"];
+        
+        for (int i = abbrev.count - 1; i >= 0; i--) {
+            
+            // Convert array index to "1000", "1000000", etc
+            int size = pow(10,(i+1)*3);
+            
+            if(size <= number) {
+                // Removed the round and dec to make sure small numbers are included like: 1.1K instead of 1K
+                number = number/size;
+                NSString *numberString = [self floatToString:number];
+                
+                // Add the letter for the abbreviation
+                abbrevNum = [NSString stringWithFormat:@"%@%@", numberString, [abbrev objectAtIndex:i]];
+            }
+            
+        }
+    } else {
+        
+        // Numbers like: 999 returns 999 instead of NULL
+        abbrevNum = [NSString stringWithFormat:@"%d", (int)number];
+    }
+    return abbrevNum;
+}
+
+- (NSString *) floatToString:(float) val {
+    NSString *ret = [NSString stringWithFormat:@"%.1f", val];
+    unichar c = [ret characterAtIndex:[ret length] - 1];
+    
+    while (c == 48) { // 0
+        ret = [ret substringToIndex:[ret length] - 1];
+        c = [ret characterAtIndex:[ret length] - 1];
+        
+        //After finding the "." we know that everything left is the decimal number, so get a substring excluding the "."
+        if(c == 46) { // .
+            ret = [ret substringToIndex:[ret length] - 1];
+        }
+    }
+    
+    return ret;
 }
 
 

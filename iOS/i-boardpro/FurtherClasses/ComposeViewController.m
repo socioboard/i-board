@@ -1,10 +1,4 @@
-//
-//  ComposeViewController.m
-//  Board
-//
-//  Created by Sumit Ghosh on 28/04/15.
-//  Copyright (c) 2015 Sumit Ghosh. All rights reserved.
-//
+
 
 #import "ComposeViewController.h"
 #import <sqlite3.h>
@@ -20,10 +14,20 @@
 
 @implementation ComposeViewController
 
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:YES];
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(firedNotification) name:@"firedNotification"  object:nil];
+}
+-(void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:YES];
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(firedNotification) name:@"firedNotification" object:nil];
+    
     windowSize=[UIScreen mainScreen].bounds.size;
     
     [SingletonClass shareSinglton].notfyArr=[[NSMutableArray alloc]init];
@@ -44,7 +48,7 @@
     self.headerView.layer.shadowPath = [UIBezierPath bezierPathWithRect:self.headerView.bounds].CGPath;
     
     UIButton * cancelButton=[UIButton buttonWithType:UIButtonTypeCustom];
-    cancelButton.frame=CGRectMake(15, 25, 50, 25);
+    cancelButton.frame=CGRectMake(15, 20, 50, 25);
     cancelButton.layer.cornerRadius=5;
     cancelButton.clipsToBounds=YES;
     [cancelButton setTitle:@"Back" forState:UIControlStateNormal];
@@ -53,7 +57,7 @@
     [self.headerView addSubview:cancelButton];
     
     UIButton * postButton=[UIButton buttonWithType:UIButtonTypeCustom];
-    postButton.frame=CGRectMake(windowSize.width-70, 25, 50, 25);
+    postButton.frame=CGRectMake(windowSize.width-70, 20, 50, 25);
     postButton.layer.cornerRadius=5;
     postButton.clipsToBounds=YES;
     [postButton setTitle:@"Post" forState:UIControlStateNormal];
@@ -71,21 +75,25 @@
 // create UI for to compose message
 -(void)createUI{
     CALayer * layer=[[CALayer alloc]init];
-    layer.frame=CGRectMake(20, 60, windowSize.width-40, 150);
-    layer.backgroundColor=[UIColor lightGrayColor].CGColor;
+    layer.frame=CGRectMake(0, 55, windowSize.width, windowSize.height/2+80);
+    layer.backgroundColor=[UIColor colorWithRed:(CGFloat)3/255 green:(CGFloat)132/255 blue:(CGFloat)254/255 alpha:(CGFloat)1].CGColor;
     [self.view.layer insertSublayer:layer atIndex:0];
     
-    UIImageView * imageView=[[UIImageView alloc]initWithFrame:CGRectMake(30, 75, 65, 65)];
+    UIImageView * imageView=[[UIImageView alloc]initWithFrame:CGRectMake(30, 75, windowSize.width-60, windowSize.height/2-80)];
     imageView.image=self.img;
     imageView.layer.cornerRadius=5;
     imageView.clipsToBounds=YES;
     [self.view addSubview:imageView];
     
-     composeTextView=[[UITextView alloc]initWithFrame:CGRectMake(105, 75, windowSize.width-150, 100)];
+     composeTextView=[[UITextView alloc]initWithFrame:CGRectMake(105, windowSize.height/2, windowSize.width-140, 100)];
     composeTextView.font=[UIFont systemFontOfSize:12];
     composeTextView.textColor=[UIColor blackColor];
     composeTextView.text=@"Enter your caption here.";
     composeTextView.delegate=self;
+    composeTextView.layer.borderWidth=0.7;
+    composeTextView.layer.borderColor=[UIColor blackColor].CGColor;
+    composeTextView.layer.cornerRadius=5;
+    composeTextView.clipsToBounds=YES;
     [self.view addSubview:composeTextView];
     
     
@@ -99,15 +107,16 @@
     
     
      dateButton=[UIButton buttonWithType:UIButtonTypeCustom];
-    dateButton.frame=CGRectMake(40, 260, 120, 30);
-    [dateButton setTitle:@"Date" forState:UIControlStateNormal];
-    [dateButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    dateButton.tag=2;
-    dateButton.titleLabel.font=[UIFont systemFontOfSize:13];
-    dateButton.layer.borderColor=[UIColor whiteColor].CGColor;
-    dateButton.layer.borderWidth=0.7;
+    dateButton.frame=CGRectMake(10,windowSize.height/2+30, 80, 50);
+
+    //[dateButton setBackgroundImage:[UIImage imageNamed:@"timer.png"] forState:UIControlStateNormal];
+    [dateButton setTitle:@"Set date" forState:UIControlStateNormal];
     dateButton.layer.cornerRadius=5;
     dateButton.clipsToBounds=YES;
+    dateButton.tag=2;
+    dateButton.backgroundColor=[UIColor colorWithRed:(CGFloat)3/255 green:(CGFloat)132/255 blue:(CGFloat)254/255 alpha:(CGFloat)1];
+    dateButton.titleLabel.font=[UIFont boldSystemFontOfSize:15];
+    dateButton.layer.borderColor=[UIColor whiteColor].CGColor;
     [dateButton addTarget:self action:@selector(pickDateAndTime:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:dateButton];
 }
@@ -115,6 +124,7 @@
 
 // Pick date
 -(void)pickDateAndTime:(UIButton*)sender{
+    [composeTextView resignFirstResponder];
     if (self.datePicker) {
          [self.datePicker removeFromSuperview];
         self.datePicker=nil;
@@ -141,10 +151,11 @@
 -(void)creatBottomUI{
     if(self.tabView)
     {
+        [self.tabView removeFromSuperview];
         self.tabView=nil;
     }
      self.tabView=[[UIView alloc]init ];
-    self.tabView.frame =CGRectMake(0.0,windowSize.height-280, windowSize.width, 40);
+    self.tabView.frame =CGRectMake(0.0,windowSize.height-180, windowSize.width, 40);
     [self.view addSubview:self.tabView];
     self.tabView.hidden=NO;
     
@@ -182,13 +193,18 @@
     [self.tabView addSubview:cancelButton];
     
 }
+-(void)cancelButtonClicked:(UIButton *)sender{
+    [self.tabView removeFromSuperview];
+    self.tabView=nil;
+    [self.datePicker removeFromSuperview];
+    self.datePicker=nil;
+}
 
 -(void)doneButtonClicked:(UIButton *)sender{
     if (isDate==YES) {
         
     dateFire=self.datePicker.date;
-    NSDateFormatter * dateFormate=[[NSDateFormatter alloc]init];
-    NSString * dateString=[NSString stringWithFormat:@"%@",[dateFormate stringFromDate:dateFire]];
+  
     }
    
     [self.tabView removeFromSuperview];
@@ -198,11 +214,14 @@
 }
 
 -(void)postButtonAction{
-    
+    if (dateFire==0) {
+        UIAlertView * alertView=[[UIAlertView alloc]initWithTitle:@"Please select the date" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
+        [alertView show];
+        return;
+    }
     
     // Schedule the notification
     UILocalNotification* localNotification = [[UILocalNotification alloc] init];
-    NSDate * now=[NSDate date];
     unixTime=(time_t) [dateFire timeIntervalSince1970];
     localNotification.fireDate = dateFire ;
     localNotification.alertBody =@"i-board" ;
@@ -215,14 +234,14 @@
 
     
     NSDictionary *userDict = [NSDictionary dictionaryWithObjectsAndKeys:unix_time, @"unixTime", access_token, @"access_token", nil];
-    
+    NSLog(@"%@ dictionary",userDict);
     [[SingletonClass shareSinglton].notfyArr addObject:userDict];
     localNotification.userInfo = userDict;
     
     [[UIApplication sharedApplication] scheduleLocalNotification:localNotification];
     
-    NSLog(@"set scheduler");
     // Dismiss the view controller
+    [self dismissViewControllerAnimated:YES completion:nil];
     [self createSqliteTable];
     
    }
@@ -230,7 +249,7 @@
 //create UI after getting notication
 -(void)firedNotification {
     
-        [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
+    //    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
     
     CGRect rect = CGRectMake(0 ,0 ,120, 60);
     NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://media?id=%@",[SingletonClass shareSinglton].imageId]];
@@ -240,9 +259,9 @@
         self.dic = [UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClass shareSinglton].imagePath]];
         self.dic.delegate = self;
         self.dic.UTI = @"com.instagram.photo";
-        [self.dic setAnnotation:@{@"InstagramCaption" :composeTextView.text}];
+        //[self.dic setAnnotation:@{@"InstagramCaption" :[SingletonClass shareSinglton].captionStr}];
         self.dic=[UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClass shareSinglton].imagePath]];
-        [self.dic presentOpenInMenuFromRect: rect    inView:self.view animated: YES ];
+        [self.dic presentOpenInMenuFromRect:CGRectZero    inView:self.view animated: YES ];
         
     }
     
@@ -268,17 +287,22 @@
     NSArray * path=NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     
     NSString * documentoryPath=[path objectAtIndex:0];
-    NSString *databasePath = [documentoryPath stringByAppendingPathComponent:@"board12.sqlite"];
+    NSString *databasePath = [documentoryPath stringByAppendingPathComponent:@"board21.sqlite"];
     NSLog(@"database path %@",databasePath);
-    NSFileManager *mgr=[NSFileManager defaultManager];
+        
+    NSString * firstTime=[[NSUserDefaults standardUserDefaults]objectForKey:@"firstTime"];
+    if (!firstTime) {
+        [[NSUserDefaults standardUserDefaults]setObject:@"0" forKey:@"firstTime"];
+        [[NSUserDefaults standardUserDefaults]synchronize];
     
-    if([mgr fileExistsAtPath:databasePath]==NO)
-    {
+    
+   // if([mgr fileExistsAtPath:databasePath]==NO)
+   // {
         
         if (sqlite3_open([databasePath UTF8String], &database)==SQLITE_OK) {
             
             char * errormsg;
-            const char *sqlStatement = "CREATE TABLE  Schedule (ID INTEGER PRIMARY KEY AUTOINCREMENT, ProfilePic TEXT,ImageId TEXT,Image BLOB,Time TEXT,AccessToken TEXT)";
+            const char *sqlStatement = "CREATE TABLE  Schedule (ID INTEGER PRIMARY KEY AUTOINCREMENT, ProfilePic TEXT,ImageId TEXT,Image BLOB,Time TEXT,AccessToken TEXT,Caption TEXT)";
             
             if (sqlite3_exec(database, sqlStatement, NULL, NULL, &errormsg)!=SQLITE_OK) {
                 NSLog(@"Failed to create table");
@@ -299,7 +323,7 @@
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSLog(@"%@",paths);
     NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *databasePath = [documentsDirectory stringByAppendingPathComponent:@"board12.sqlite"];
+    NSString *databasePath = [documentsDirectory stringByAppendingPathComponent:@"board21.sqlite"];
     
     sqlite3_stmt *statement;
     
@@ -316,9 +340,12 @@
         
         NSString * path=[NSString stringWithFormat:@"%@",self.imgPath];
         NSString * unix_time=[NSString stringWithFormat:@"%ld",unixTime];
+        NSString * composeText=composeTextView.text;
+        if (!composeText) {
+            composeText=@"";
+        }
         
-        
-        NSString *insertSQL=[NSString stringWithFormat:@"INSERT INTO Schedule (ProfilePic,ImageId,Image,Time,AccessToken ) values(\"%@\",\"%@\",?,\"%@\",\"%@\")",path,self.imgId,unix_time,access_token];
+        NSString *insertSQL=[NSString stringWithFormat:@"INSERT INTO Schedule (ProfilePic,ImageId,Image,Time,AccessToken,Caption ) values(\"%@\",\"%@\",?,\"%@\",\"%@\",\"%@\")",path,self.imgId,unix_time,access_token,composeText];
         
         
         const char *insert_stmt=[insertSQL UTF8String];
@@ -357,8 +384,11 @@
     
     NSLog(@"%@",paths);
     NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *databasePath = [documentsDirectory stringByAppendingPathComponent:@"board12.sqlite"];
-    NSString *query = [NSString stringWithFormat:@"select * from Schedule"];
+    NSString *databasePath = [documentsDirectory stringByAppendingPathComponent:@"board21.sqlite"];
+    
+    NSString * accessToken=[[NSUserDefaults standardUserDefaults]objectForKey:@"access_token"];
+    
+    NSString *query = [NSString stringWithFormat:@"select * from Schedule where AccessToken =\"%@\"",accessToken];
     
     
     sqlite3_stmt *compiledStmt=nil;
@@ -382,6 +412,7 @@
                 data=[NSData dataWithBytes:sqlite3_column_blob(compiledStmt, 3) length:length];
                 
                 char * time=(char *) sqlite3_column_text(compiledStmt,4);
+                char * caption=(char*)sqlite3_column_text(compiledStmt,6);
                 
                 NSString *profilePic  = [NSString stringWithUTF8String:profilepic];
                 NSString *imageId  = [NSString stringWithUTF8String:imgId];
@@ -395,6 +426,7 @@
                 
                 [temp setObject:uTime forKey:@"unixTime"];
                 
+                
                 [[SingletonClass shareSinglton].postData addObject:temp];
                 
                 [SingletonClass shareSinglton].imagePath=profilePic;
@@ -402,10 +434,15 @@
             }
             
         }
+        else{
+            NSLog(@"ERROR %s",sqlite3_errmsg(database));
+        }
+        
         sqlite3_finalize(compiledStmt);
     }
     sqlite3_close(database);
     [[NSNotificationCenter defaultCenter]postNotificationName:@"scheduleReload" object:nil userInfo:nil];
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"scheduleReload" object:nil];
 }
 
 

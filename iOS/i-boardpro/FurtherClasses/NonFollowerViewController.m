@@ -1,30 +1,39 @@
-//
-//  NonFollowerViewController.m
-//  Board
-//
-//  Created by Sumit Ghosh on 23/04/15.
-//  Copyright (c) 2015 Sumit Ghosh. All rights reserved.
-//
+
 
 #import "NonFollowerViewController.h"
 #import "SingletonClass.h"
 #import "TableCustomCell.h"
 #import "UserProfileViewController.h"
+#import "UIImageView+WebCache.h"
 
 @interface NonFollowerViewController ()
 {
     NSMutableArray * userId;
     UserProfileViewController * userProfile;
     UIActivityIndicatorView * activityIndicator;
+    UILabel * noInternetConnnection;
+  
 }
 @end
 
 @implementation NonFollowerViewController
+-(void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:YES];
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
+}
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:YES];
+    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(firedNotification) name:@"firedNotification" object:nil];
+    
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(firedNotification) name:@"firedNotification" object:nil];
+    
     windowSize=[UIScreen mainScreen].bounds.size;
     
     activityIndicator=[[UIActivityIndicatorView alloc]init];
@@ -34,7 +43,8 @@
     activityIndicator.alpha=1.0;
     [self.view addSubview:activityIndicator];
     [self.view bringSubviewToFront:activityIndicator];
-    
+    full_name=[[NSMutableArray alloc]init];
+    profilePic=[[NSMutableArray alloc]init];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(loadUI) name:@"loadNonFollower" object:nil];
     
     
@@ -43,9 +53,17 @@
 }
 
 -(void)loadUI{
+    
     self.view.backgroundColor=[UIColor colorWithRed:(CGFloat)128/255 green:(CGFloat)128/255 blue:(CGFloat)128/255 alpha:1.0];
+    
+    //self.view.backgroundColor=[UIColor whiteColor];
     [nonFollowTbl removeFromSuperview];
     [activityIndicator startAnimating];
+    [noInternetConnnection removeFromSuperview];
+    [[NSNotificationCenter defaultCenter]postNotificationName:@"reachability" object:nil];
+    if ([SingletonClass shareSinglton].isActivenetworkConnection==YES) {
+
+    
     dispatch_async(dispatch_get_global_queue(0, 0),^{
         
         [self compareAndFetchNonFollowers];
@@ -55,8 +73,21 @@
         });
         
     });
-    
-    
+}
+else{
+    [activityIndicator stopAnimating];
+    if (noInternetConnnection) {
+        [noInternetConnnection removeFromSuperview];
+        noInternetConnnection=nil;
+    }
+    noInternetConnnection=[[UILabel alloc]initWithFrame:CGRectMake(30, windowSize.height/2-50, windowSize.width-50, 50)];
+    noInternetConnnection.text=@"Please check your InterNet connection.";
+    noInternetConnnection.numberOfLines=0;
+    noInternetConnnection.textAlignment=NSTextAlignmentCenter;
+    noInternetConnnection.lineBreakMode=NSLineBreakByWordWrapping;
+    [self.view addSubview:noInternetConnnection];
+}
+
 }
 
 //create UI to show non followers
@@ -82,6 +113,9 @@
     nonFollowTbl.delegate=self;
     nonFollowTbl.backgroundColor=[UIColor whiteColor];
     [self.view addSubview:nonFollowTbl];
+        UIView * view=[[UIView alloc]initWithFrame:CGRectMake(0, 0, windowSize.width, 40)];
+        view.backgroundColor=[UIColor clearColor];
+        nonFollowTbl.tableFooterView=view;
     }
 }
 
@@ -94,16 +128,15 @@
     
     userId=[[NSMutableArray alloc]init];
     
-    if ([SingletonClass shareSinglton].followeBy.count<1 &&  [SingletonClass shareSinglton].follower.count<1) {
+   
         [self loadAllFollowedBy];
         [self loadAllFollowers];
-        [self compareAndFetchNonFollowers];
-    }
-    else{
-        NSMutableArray *  checkID=[[NSMutableArray alloc]init];
-         full_name=[[NSMutableArray alloc]init];
-         profilePic=[[NSMutableArray alloc]init];
-        
+   
+    
+    
+    [full_name removeAllObjects];
+    [profilePic removeAllObjects];
+    [userId removeAllObjects];
         NSMutableDictionary * followDict=[NSMutableDictionary dictionary];
         NSMutableDictionary * followedByDict=[NSMutableDictionary dictionary];
         
@@ -124,7 +157,7 @@
                
             }
             if (contain==NO) {
-                [full_name addObject:[followDict objectForKey:@"full_name"]];
+                [full_name addObject:[followDict objectForKey:@"username"]];
                 [profilePic addObject:[followDict objectForKey:@"profile_picture"]];
                 [userId addObject:[followDict objectForKey:@"id"]];
             }
@@ -132,7 +165,7 @@
         NSLog(@" count of non follow %lu",(unsigned long)full_name.count);
         
     }
-}
+//}
 
 
 #pragma  mark-  load Followers
@@ -165,7 +198,7 @@
         dict=[resultArr objectAtIndex:i];
         [[SingletonClass shareSinglton].follower addObject:dict];
         
-        [[SingletonClass shareSinglton].full_name addObject:[dict objectForKey:@"full_name"]];
+        [[SingletonClass shareSinglton].full_name addObject:[dict objectForKey:@"username"]];
         [[SingletonClass shareSinglton].profile_picture addObject:[dict objectForKey:@"profile_picture"]];
     }
     
@@ -202,7 +235,7 @@
     for (int i=0; i<resultArr.count; i++) {
         dict=[resultArr objectAtIndex:i];
         [[SingletonClass shareSinglton].followeBy addObject:dict];
-        [[SingletonClass shareSinglton].full_name addObject:[dict objectForKey:@"full_name"]];
+        [[SingletonClass shareSinglton].full_name addObject:[dict objectForKey:@"username"]];
         [[SingletonClass shareSinglton].profile_picture addObject:[dict objectForKey:@"profile_picture"]];
         
     }
@@ -225,13 +258,13 @@
         
         cell.add_minusButton.tag=indexPath.row;
         [cell.add_minusButton addTarget:self action:@selector(unfollowActions:) forControlEvents:UIControlEventTouchUpInside];
+        [cell.add_minusButton setBackgroundImage:[UIImage imageNamed:@"unfollow.png"] forState:UIControlStateNormal];
         
     }
     cell.commentBtn.hidden=YES;
-    NSURL * url=[NSURL URLWithString:[profilePic objectAtIndex:indexPath.row]];
-    NSData * imageData=[NSData dataWithContentsOfURL:url];
-    cell.userImage.image=[UIImage imageWithData:imageData];
+     cell.likesBtn.hidden=YES;
     
+     [cell.userImage sd_setImageWithURL:[profilePic objectAtIndex:indexPath.row]];
     cell.userNameDesc.text=[full_name objectAtIndex:indexPath.row];
     
     return cell;
@@ -298,7 +331,7 @@
 
 -(void)firedNotification {
     
-    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
+   // [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
     
     CGRect rect = CGRectMake(0 ,0 ,120, 60);
     NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://media?id=%@",[SingletonClass shareSinglton].imageId]];

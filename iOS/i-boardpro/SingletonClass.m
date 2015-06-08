@@ -1,10 +1,4 @@
-//
-//  SingletonClass.m
-//  TwitterBoard
-//
-//  Created by Sumit Ghosh on 18/04/15.
-//  Copyright (c) 2015 globussoft. All rights reserved.
-//
+
 
 #import "SingletonClass.h"
 

@@ -1,10 +1,4 @@
-//
-//  CollectionReusableHeaderView.m
-//  Board
-//
-//  Created by Sumit Ghosh on 23/04/15.
-//  Copyright (c) 2015 Sumit Ghosh. All rights reserved.
-//
+
 
 #import "CollectionReusableHeaderView.h"
 
@@ -27,7 +21,7 @@
         self.headerTitleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, frame.size.height-25, frame.size.width, 25)];
         self.headerTitleLabel.textColor = [UIColor blackColor];
         self.headerTitleLabel.font = [UIFont systemFontOfSize:14];
-        [self.headerTitleLabel.layer insertSublayer:layer atIndex:0];
+        //[self.headerTitleLabel.layer insertSublayer:layer atIndex:0];
         [self addSubview:self.headerTitleLabel];
     }
     return self;

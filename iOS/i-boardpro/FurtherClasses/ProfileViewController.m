@@ -1,10 +1,4 @@
-//
-//  ProfileViewController.m
-//  TwitterBoard
-//
-//  Created by GLB-254 on 4/18/15.
-//  Copyright (c) 2015 globussoft. All rights reserved.
-//
+
 
 #import "ProfileViewController.h"
 #import "SingletonClass.h"
@@ -18,17 +12,30 @@
     sqlite3 * database;
     UIActivityIndicatorView  * activityView;
     CustomMenuViewController * customMenu;
+    UILabel * noInternetConnnection;
 }
 @end
 
 @implementation ProfileViewController
+-(void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:YES];
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
+}
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:YES];
+    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(firedNotification) name:@"firedNotification" object:nil];
+    
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
     windowSize=[UIScreen mainScreen].bounds.size;
     
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(firedNotification) name:@"firedNotification" object:nil];
+   
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(loadDataFetch) name:@"getDataForProfile" object:nil];
     
     activityView=[[UIActivityIndicatorView alloc]init];
@@ -44,7 +51,11 @@
 }
 
 -(void)loadDataFetch{
-  
+  [noInternetConnnection removeFromSuperview];
+    [[NSNotificationCenter defaultCenter]postNotificationName:@"reachability" object:nil];
+    if ([SingletonClass shareSinglton].isActivenetworkConnection==YES) {
+
+    
     dispatch_async(dispatch_get_global_queue(0, 0),^{
         [self getDataForProfile :self.accessToken];
         dispatch_async(dispatch_get_main_queue(),^{
@@ -52,6 +63,20 @@
             [self createUIForProfile];
         });
     });
+}
+    else{
+        [activityView stopAnimating];
+        if (noInternetConnnection) {
+            [noInternetConnnection removeFromSuperview];
+            noInternetConnnection=nil;
+        }
+        noInternetConnnection=[[UILabel alloc]initWithFrame:CGRectMake(30, windowSize.height/2-50, windowSize.width-50, 50)];
+        noInternetConnnection.text=@"Please check your InterNet connection.";
+        noInternetConnnection.numberOfLines=0;
+        noInternetConnnection.textAlignment=NSTextAlignmentCenter;
+        noInternetConnnection.lineBreakMode=NSLineBreakByWordWrapping;
+        [self.view addSubview:noInternetConnnection];
+    }
 }
 
 // create UI of  user prifle to user data.
@@ -102,26 +127,56 @@
     [closeBtn setBackgroundColor:[UIColor colorWithRed:(CGFloat)54/255 green:(CGFloat)54/255 blue:(CGFloat)54/255 alpha:(CGFloat)1]];
     closeBtn.layer.cornerRadius=7;
     closeBtn.clipsToBounds=YES;
-     [closeBtn addTarget:self action:@selector(closeAccount) forControlEvents:UIControlEventTouchUpInside];
+    [closeBtn addTarget:self action:@selector(closeAccount) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:closeBtn];
     
+    //-------------------
+    NSString * media=[self abbreviateNumber:[[SingletonClass shareSinglton].followed_by intValue]];
+    mediaCountLbl=[[UILabel alloc]init];
+    mediaCountLbl.frame=CGRectMake(30, 100, 40, 10);
+    mediaCountLbl.text=media;
+    mediaCountLbl.font=[UIFont boldSystemFontOfSize:10];
+    mediaCountLbl.textAlignment=NSTextAlignmentCenter;
+    mediaCountLbl.textColor=[UIColor colorWithRed:(CGFloat)235/255 green:(CGFloat)235/255 blue:(CGFloat)235/255 alpha:(CGFloat)1];
+    [self.view addSubview:mediaCountLbl];
     
-    UILabel * mediaCount=[[UILabel alloc]init];
-    mediaCount.frame=CGRectMake(40, 120, 80, 10);
-    mediaCount.text=@"Media";
-    mediaCount.font=[UIFont boldSystemFontOfSize:10];
-    mediaCount.textColor=[UIColor colorWithRed:(CGFloat)235/255 green:(CGFloat)235/255 blue:(CGFloat)235/255 alpha:(CGFloat)1];
-    [self.view addSubview:mediaCount];
+    
+    NSString * follws=[self abbreviateNumber:[[SingletonClass shareSinglton].follows intValue]];
+    followsCountLbl=[[UILabel alloc]init];
+    followsCountLbl.frame=CGRectMake(windowSize.width/2-30, 100, 60, 10);
+    followsCountLbl.text=follws;
+    followsCountLbl.textAlignment=NSTextAlignmentCenter;
+    followsCountLbl.font=[UIFont boldSystemFontOfSize:10];
+    followsCountLbl.textColor=[UIColor colorWithRed:(CGFloat)235/255 green:(CGFloat)235/255 blue:(CGFloat)235/255 alpha:(CGFloat)1];
+    [self.view addSubview:followsCountLbl];
+    
+    NSString * follwing=[self abbreviateNumber:[[SingletonClass shareSinglton].medaiCnt intValue]];
+    followingCountLbl=[[UILabel alloc]init];
+    followingCountLbl.frame=CGRectMake(windowSize.width-90, 100, 40, 10);
+    followingCountLbl.text=follwing;
+    followingCountLbl.textAlignment=NSTextAlignmentCenter;
+    followingCountLbl.font=[UIFont boldSystemFontOfSize:10];
+    followingCountLbl.textColor=[UIColor colorWithRed:(CGFloat)235/255 green:(CGFloat)235/255 blue:(CGFloat)235/255 alpha:(CGFloat)1];
+    [self.view addSubview:followingCountLbl];
+    
+
+    
+    UILabel * mediaLabel=[[UILabel alloc]init];
+    mediaLabel.frame=CGRectMake(40, 120, 80, 10);
+    mediaLabel.text=@"Media";
+    mediaLabel.font=[UIFont boldSystemFontOfSize:10];
+    mediaLabel.textColor=[UIColor colorWithRed:(CGFloat)235/255 green:(CGFloat)235/255 blue:(CGFloat)235/255 alpha:(CGFloat)1];
+    [self.view addSubview:mediaLabel];
     
     UILabel * Follower=[[UILabel alloc]init];
-    Follower.frame=CGRectMake(self.view.frame.size.width/2-20, 120, 80, 10);
+    Follower.frame=CGRectMake(windowSize.width/2-20, 120, 80, 10);
     Follower.text=@"Followers";
     Follower.font=[UIFont boldSystemFontOfSize:10];
     Follower.textColor=[UIColor colorWithRed:(CGFloat)235/255 green:(CGFloat)235/255 blue:(CGFloat)235/255 alpha:(CGFloat)1];
     [self.view addSubview:Follower];
     
     UILabel * following=[[UILabel alloc]init];
-    following.frame=CGRectMake(self.view.frame.size.width-80, 120, 80, 10);
+    following.frame=CGRectMake(windowSize.width-80, 120, 80, 10);
     following.text=@"Following";
     following.font=[UIFont boldSystemFontOfSize:10];
     following.textColor=[UIColor colorWithRed:(CGFloat)235/255 green:(CGFloat)235/255 blue:(CGFloat)235/255 alpha:(CGFloat)1];
@@ -131,7 +186,7 @@
     UIButton * disconnect=[UIButton buttonWithType:UIButtonTypeCustom];
     disconnect.frame=CGRectMake(20, windowSize.height-100, windowSize.width-40, 40);
     [disconnect setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [disconnect setTitle:@"Discconnet Account" forState:UIControlStateNormal];
+    [disconnect setTitle:@"Disconnet Account" forState:UIControlStateNormal];
     [disconnect setBackgroundColor:[UIColor colorWithRed:(CGFloat)60/255 green:(CGFloat)111/255 blue:(CGFloat)151/255 alpha:(CGFloat)1]];
     disconnect.layer.cornerRadius=7;
     disconnect.clipsToBounds=YES;
@@ -153,9 +208,9 @@
     
     if(sqlite3_open([databasePath UTF8String], &database) == SQLITE_OK)
     {
-        NSString * accessToken=[[NSUserDefaults standardUserDefaults]objectForKey:@"access_token"];
+       
         
-       NSString * query= [NSString stringWithFormat:@"DELETE FROM InstaBoard where AccessToken=\"%@\"",accessToken];
+       NSString * query= [NSString stringWithFormat:@"DELETE FROM InstaBoard where AccessToken=\"%@\"",self.accessToken];
         
         const char *sql =[query UTF8String];
         sqlite3_stmt *statement;
@@ -192,6 +247,9 @@
             [SingletonClass shareSinglton].user_pic=[dict objectForKey:@"profilePic"];
             //[SingletonClass shareSinglton].user_name=[dict objectForKey:@"username"];
             [SingletonClass shareSinglton].userID=[dict objectForKey:@"userId"];
+            [SingletonClass shareSinglton].medaiCnt=[dict objectForKey:@"mediaCnt"];
+            [SingletonClass shareSinglton].followed_by=[dict objectForKey:@"following"];
+            [SingletonClass shareSinglton].follows=[dict objectForKey:@"followers"];
         }
     }
     
@@ -272,7 +330,7 @@
 
 -(void)firedNotification {
     
-    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
+   // [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
     
     CGRect rect = CGRectMake(0 ,0 ,120, 60);
     NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://media?id=%@",[SingletonClass shareSinglton].imageId]];
@@ -289,6 +347,58 @@
     }
     
 }
+
+
+#pragma mark- abrevation
+
+-(NSString *)abbreviateNumber:(int)num {
+    
+    NSString *abbrevNum;
+    float number = (float)num;
+    
+    //Prevent numbers smaller than 1000 to return NULL
+    if (num >= 1000) {
+        NSArray * abbrev = @[@"K", @"M", @"B"];
+        
+        for (int i = abbrev.count - 1; i >= 0; i--) {
+            
+            // Convert array index to "1000", "1000000", etc
+            int size = pow(10,(i+1)*3);
+            
+            if(size <= number) {
+                // Removed the round and dec to make sure small numbers are included like: 1.1K instead of 1K
+                number = number/size;
+                NSString *numberString = [self floatToString:number];
+                
+                // Add the letter for the abbreviation
+                abbrevNum = [NSString stringWithFormat:@"%@%@", numberString, [abbrev objectAtIndex:i]];
+            }
+            
+        }
+    } else {
+        
+        // Numbers like: 999 returns 999 instead of NULL
+        abbrevNum = [NSString stringWithFormat:@"%d", (int)number];
+    }
+    return abbrevNum;
+}
+
+- (NSString *) floatToString:(float) val {
+        NSString *ret = [NSString stringWithFormat:@"%.1f", val];
+        unichar c = [ret characterAtIndex:[ret length] - 1];
+        
+        while (c == 48) { // 0
+            ret = [ret substringToIndex:[ret length] - 1];
+            c = [ret characterAtIndex:[ret length] - 1];
+            
+            //After finding the "." we know that everything left is the decimal number, so get a substring excluding the "."
+            if(c == 46) { // .
+                ret = [ret substringToIndex:[ret length] - 1];
+            }
+        }
+        
+        return ret;
+    }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

@@ -1,10 +1,4 @@
-//
-//  CommentsViewController.m
-//  Board
-//
-//  Created by Sumit Ghosh on 30/04/15.
-//  Copyright (c) 2015 Sumit Ghosh. All rights reserved.
-//
+
 
 #import "CommentsViewController.h"
 #import "TableCustomCell.h"
@@ -12,15 +6,30 @@
 #import "SingletonClass.h"
 
 @interface CommentsViewController ()
-
+{
+    UILabel * noComments;
+}
 @end
 
 @implementation CommentsViewController
+-(void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:YES];
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
+}
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:YES];
+    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(firedNotification) name:@"firedNotification" object:nil];
+    
+}
 
-- (void)viewDidLoad {
+- (void)viewDidLoad
+{
     [super viewDidLoad];
     windowSize=[UIScreen mainScreen].bounds.size;
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(firedNotification) name:@"firedNotification" object:nil];
+    
     // Create header View and title and back button here.
     self.headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, windowSize.width, 55)];
     
@@ -69,6 +78,18 @@
 
 // create comments Table here
 -(void)createTable{
+    [noComments removeFromSuperview];
+    [commentsTbl removeFromSuperview];
+    if (cmtTextArr.count<1) {
+        noComments=[[UILabel alloc]initWithFrame:CGRectMake(40, windowSize.height/2-30, windowSize.width-60, 50)];
+        noComments.text=@"No comments are there..!";
+        noComments.textAlignment=NSTextAlignmentCenter;
+        noComments.font=[UIFont boldSystemFontOfSize:13];
+        noComments.textColor=[UIColor blackColor];
+        [self.view addSubview:noComments];
+    }
+    else{
+    
     if (commentsTbl) {
             commentsTbl=nil;
         }
@@ -81,7 +102,7 @@
     }
 
     [self.view addSubview:commentsTbl];
-
+    }
 }
 
 
@@ -111,7 +132,8 @@
         cell.jokeTxtView.backgroundColor=[UIColor clearColor];
         
         cell.commentBtn.hidden=YES;
-        
+        cell.likesBtn.hidden=YES;
+    
         NSURL * url=[NSURL URLWithString:[cmtUserImgArr objectAtIndex:indexPath.row]];
         [cell.cmtUserImage sd_setImageWithURL:url];
         cell.add_minusButton.hidden=YES;
@@ -217,7 +239,7 @@
 
 -(void)firedNotification {
     
-    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
+  //  [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
     
     CGRect rect = CGRectMake(0 ,0 ,120, 60);
     NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://media?id=%@",[SingletonClass shareSinglton].imageId]];

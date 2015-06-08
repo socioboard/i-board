@@ -1,15 +1,10 @@
-//
-//  AppDelegate.m
-//  Board
-//
-//  Created by Sumit Ghosh on 21/04/15.
-//  Copyright (c) 2015 Sumit Ghosh. All rights reserved.
-//
+
 
 #import "AppDelegate.h"
 #import <sqlite3.h>
 #import "ComposeViewController.h"
 #import "SingletonClass.h"
+#import "Flurry.h"
 
 @interface AppDelegate ()
 
@@ -22,12 +17,20 @@
     
     UILocalNotification *localNotification = [launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
     
-    
+    [Flurry startSession:@"RRCNMX72TCQH7VX8R2JB"];
     
     if (localNotification)
     {
         
-        //[[NSNotificationCenter defaultCenter]postNotificationName:@"firedNotification" object:nil userInfo:nil];
+        for (int i=0; i<[SingletonClass shareSinglton].notfyArr.count; i++) {
+            NSMutableDictionary * dict=[[SingletonClass shareSinglton].notfyArr objectAtIndex:i];
+            if ([[localNotification.userInfo objectForKey:@"unixTime"] isEqualToString:[dict objectForKey:@"unixTime"]] && [[localNotification.userInfo objectForKey:@"access_token"] isEqualToString:[dict objectForKey:@"access_token"]]) {
+                [self fetchNotificationData : [localNotification.userInfo objectForKey:@"unixTime"] andAccesToken:[localNotification.userInfo objectForKey:@"access_token"]];
+                
+            }
+            
+        }
+
         
     }
     
@@ -35,12 +38,12 @@
         [application registerUserNotificationSettings:[UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert|UIUserNotificationTypeBadge|UIUserNotificationTypeSound categories:nil]];
     }
     [self checkNetworkStatus];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reachabilityChanged:) name:kReachabilityChangedNotification object:nil];// Override point for customization after application launch.
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(checkNetworkStatus) name:@"reachability" object:nil];// Override point for customization after application launch.
     return YES;
 }
 
 -(void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification{
-    // [self firedNotification];
+    
     application.applicationIconBadgeNumber=0;
     
     if ([[UIApplication sharedApplication] applicationState] == UIApplicationStateActive)
@@ -51,19 +54,19 @@
                                                            delegate:nil
                                                   cancelButtonTitle:@"Ok"
                                                   otherButtonTitles:nil];
-        [alertView show];
+        //[alertView show];
     }
     
     for (int i=0; i<[SingletonClass shareSinglton].notfyArr.count; i++) {
         NSMutableDictionary * dict=[[SingletonClass shareSinglton].notfyArr objectAtIndex:i];
         if ([[notification.userInfo objectForKey:@"unixTime"] isEqualToString:[dict objectForKey:@"unixTime"]] && [[notification.userInfo objectForKey:@"access_token"] isEqualToString:[dict objectForKey:@"access_token"]]) {
             [self fetchNotificationData : [notification.userInfo objectForKey:@"unixTime"] andAccesToken:[notification.userInfo objectForKey:@"access_token"]];
-            [self deleteNotificationData : [notification.userInfo objectForKey:@"unixTime"] andAccesToken:[notification.userInfo objectForKey:@"access_token"]];
+        
         }
         
     }
     
-    //[self retreiveDataFromSqlite];
+    
     
 }
 
@@ -72,23 +75,20 @@
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSLog(@"%@",paths);
     NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *databasePath = [documentsDirectory stringByAppendingPathComponent:@"board12.sqlite"];
-    
-    sqlite3_stmt *statement;
-    
+    NSString *databasePath = [documentsDirectory stringByAppendingPathComponent:@"board21.sqlite"];
     
     
     if(sqlite3_open([databasePath UTF8String], &database)==SQLITE_OK)
     {
-        NSString *querySQL=[NSString stringWithFormat:@"SELECT * FROM InstaBoard WHERE AccessToken=\"%@\" AND Time=\"%@\"",accessToken,time];
+        NSString *querySQL=[NSString stringWithFormat:@"select * from Schedule WHERE AccessToken=\"%@\" AND Time=\"%@\"",accessToken,time];
         
         sqlite3_stmt *compiledStmt=nil;
         const char *query_stmt=[querySQL UTF8String];
         NSLog(@"QuerySQL in appdelegate :%@",querySQL);
         NSData * data;
         
-        if (sqlite3_prepare_v2(database, query_stmt, -1, &statement, NULL)==SQLITE_OK);
-        if(sqlite3_step(statement)==SQLITE_ROW)
+        if (sqlite3_prepare_v2(database, query_stmt, -1, &compiledStmt, NULL)==SQLITE_OK){
+        if(sqlite3_step(compiledStmt)==SQLITE_ROW)
         {
             char *profilepic = (char *) sqlite3_column_text(compiledStmt,1);
             
@@ -97,86 +97,82 @@
             int length = sqlite3_column_bytes(compiledStmt, 3);
             data=[NSData dataWithBytes:sqlite3_column_blob(compiledStmt, 3) length:length];
             
-            NSString *profilePic  = [NSString stringWithUTF8String:profilepic];
+            char * time=(char *) sqlite3_column_text(compiledStmt,4);
+            char * caption=(char*)sqlite3_column_text(compiledStmt,6);            NSString *profilePic  = [NSString stringWithUTF8String:profilepic];
             NSString *imageId  = [NSString stringWithUTF8String:imgId];
-            
+             NSString *captionStr  = [NSString stringWithUTF8String:caption];
             NSMutableDictionary * temp=[[NSMutableDictionary alloc]init];
             
             [temp setObject:profilePic forKey:@"profilePic"];
             [temp setObject:data forKey:@"image"];
             
             
-            //[[SingletonClass shareSinglton].postData addObject:temp];
-            
+            [SingletonClass shareSinglton].captionStr=captionStr;
             [SingletonClass shareSinglton].imagePath=profilePic;
             [SingletonClass shareSinglton].imageId=imageId;
+        }
+        }
+        else{
+          NSLog( @"SaveBody: Failed from sqlite3_prepare_v2. Error is:  %s", sqlite3_errmsg(database) );
         }
         sqlite3_finalize(compiledStmt);
         
     }
     sqlite3_close(database);
-    [[NSNotificationCenter defaultCenter]postNotificationName:@"firedNotification" object:nil userInfo:nil];
-    //[self firedNotification];
+      [self deleteNotificationData : time andAccesToken:accessToken];
+    
+    [self performSelector:@selector(fireNotification) withObject:nil afterDelay:2];
+    
+    
     
 }
+-(void)fireNotification{
+    [[NSNotificationCenter defaultCenter]postNotificationName:@"firedNotification" object:nil userInfo:nil];
+}
+
+
+
+
 
 -(void)deleteNotificationData :(NSString *)time andAccesToken:(NSString *) accessToken {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSLog(@"%@",paths);
     NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *databasePath = [documentsDirectory stringByAppendingPathComponent:@"board12.sqlite"];
-    
-    sqlite3_stmt *statement;
-    
+    NSString *databasePath = [documentsDirectory stringByAppendingPathComponent:@"board21.sqlite"];
+     
     
     
     if(sqlite3_open([databasePath UTF8String], &database)==SQLITE_OK)
     {
-        NSString *querySQL=[NSString stringWithFormat:@"DELETE * FROM InstaBoard WHERE AccessToken=\"%@\" AND Time=\"%@\"",accessToken,time];
+        NSString *querySQL=[NSString stringWithFormat:@"DELETE FROM Schedule where AccessToken=\"%@\" AND Time=\"%@\"",accessToken,time];
         
         sqlite3_stmt *compiledStmt=nil;
         const char *query_stmt=[querySQL UTF8String];
         NSLog(@"QuerySQL in appdelegate :%@",querySQL);
-        NSData * data;
+       
         
-        if (sqlite3_prepare_v2(database, query_stmt, -1, &statement, NULL)==SQLITE_OK);
-        if(sqlite3_step(statement)==SQLITE_ROW)
+        if (sqlite3_prepare_v2(database, query_stmt, -1, &compiledStmt, NULL)==SQLITE_OK){
+        if(sqlite3_step(compiledStmt)==SQLITE_DONE)
         {
             NSLog(@"Deleted Successfull");
+        }
+        else{
+            NSLog(@"ERROR %s",sqlite3_errmsg(database));
+        }
+    }
+        else{
+            NSLog(@"ERROR %s",sqlite3_errmsg(database));
         }
         sqlite3_finalize(compiledStmt);
         
     }
     sqlite3_close(database);
-    
+//    [[NSNotificationCenter defaultCenter]postNotificationName:@"scheduleReload" object:nil userInfo:nil];
 }
 
 
 
-// Notification method called when network statu Changed
-- (void) reachabilityChanged:(NSNotification *)note
-{
-    Reachability* curReach = [note object];
-    NSParameterAssert([curReach isKindOfClass:[Reachability class]]);
-    
-    NetworkStatus netStatus = [curReach currentReachabilityStatus];
-    
-    //NSLog(@"current Status = %d",netStatus);
-    if (netStatus == 0) {
-        NSLog(@"No InternetConeection");
-        [SingletonClass shareSinglton].isActivenetworkConnection = NO;
-    }
-    else if (netStatus>2){
-        NSLog(@"Unknown Status");
-        [SingletonClass shareSinglton].isActivenetworkConnection = NO;
-    }
-    else{
-        NSLog(@"Active network coneection");
-        [SingletonClass shareSinglton].isActivenetworkConnection = YES;
-    }
-    
-    // [[NSNotificationCenter defaultCenter] postNotificationName:NetworkStatusChangeNotification object:nil];
-}
+
 
 
 #pragma  mark -

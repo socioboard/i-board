@@ -1,10 +1,4 @@
-//
-//  PhotosViewController.m
-//  Board
-//
-//  Created by Sumit Ghosh on 23/04/15.
-//  Copyright (c) 2015 Sumit Ghosh. All rights reserved.
-//
+
 
 #import "PhotosViewController.h"
 #import "CustomCell.h"
@@ -17,27 +11,45 @@
     CustomCell * customCellView;
     CollectionReusableHeaderView * reuseableView;
     UIActivityIndicatorView * activityIndicator;
+    UILabel * noPhotos,*noInternetConnnection;
 }
 @end
 
 @implementation PhotosViewController
+-(void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:YES];
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
+}
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:YES];
+    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(firedNotification) name:@"firedNotification" object:nil];
+    
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(firedNotification) name:@"firedNotification" object:nil];
+   
     windowSize=[UIScreen mainScreen].bounds.size;
     
     self.imageUrl=[[NSMutableArray alloc]init];
     
+    self.view.backgroundColor=[UIColor colorWithRed:(CGFloat)128/255 green:(CGFloat)128/255 blue:(CGFloat)128/255 alpha:1.0];
+     //self.view.backgroundColor=[UIColor whiteColor];
     activityIndicator=[[UIActivityIndicatorView alloc]init];
     activityIndicator.frame=CGRectMake(windowSize.width/2-20, 150, 40, 40);
     activityIndicator.activityIndicatorViewStyle=UIActivityIndicatorViewStyleWhiteLarge;
-    activityIndicator.color=[UIColor blackColor];
+    activityIndicator.color=[UIColor whiteColor];
     activityIndicator.alpha=1.0;
     [self.view addSubview:activityIndicator];
     [self.view bringSubviewToFront:activityIndicator];
-         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(createUI) name:@"getUserPhotos" object:nil];
+    
+    
+    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(createUI) name:@"getUserPhotos" object:nil];
     
     
     
@@ -46,21 +58,53 @@
 
 -(void)createUI{
     [self.mainCollectionView removeFromSuperview];
-
+    [noPhotos removeFromSuperview];
+    
     [activityIndicator startAnimating];
+    [noInternetConnnection removeFromSuperview];
+    [[NSNotificationCenter defaultCenter]postNotificationName:@"reachability" object:nil];
+    if ([SingletonClass shareSinglton].isActivenetworkConnection==YES) {
+        
+
+    
     dispatch_async(dispatch_get_global_queue(0, 0),^{
        
         [self fetchUserPhotos];
         dispatch_async(dispatch_get_main_queue(),^{
             [activityIndicator stopAnimating];
+            
             [self createCollectionView];
         });
     });
+    }
+    else{
+        [activityIndicator stopAnimating];
+        if (noInternetConnnection) {
+            [noInternetConnnection removeFromSuperview];
+            noInternetConnnection=nil;
+        }
+        noInternetConnnection=[[UILabel alloc]initWithFrame:CGRectMake(30, windowSize.height/2-50, windowSize.width-50, 50)];
+        noInternetConnnection.text=@"Please check your InterNet connection.";
+        noInternetConnnection.numberOfLines=0;
+        noInternetConnnection.textAlignment=NSTextAlignmentCenter;
+        noInternetConnnection.lineBreakMode=NSLineBreakByWordWrapping;
+        [self.view addSubview:noInternetConnnection];
+    }
 }
 
 -(void)createCollectionView{
     
-   
+    if (self.imageUrl.count<1) {
+        noPhotos=[[UILabel alloc]initWithFrame:CGRectMake(30, windowSize.height/2-50, windowSize.width-50, 50)];
+        noPhotos.text=@"Photos are not avilable.";
+        noPhotos.textAlignment=NSTextAlignmentCenter;
+        noPhotos.font=[UIFont boldSystemFontOfSize:14];
+        noPhotos.numberOfLines=0;
+        noPhotos.lineBreakMode=NSLineBreakByWordWrapping;
+        [self.view addSubview:noPhotos];
+        
+    }
+    else{
     //---------
     UICollectionViewFlowLayout *flowLayOut= [[UICollectionViewFlowLayout alloc] init];
     flowLayOut.minimumInteritemSpacing = (CGFloat)2.0;
@@ -76,12 +120,13 @@
     [self.mainCollectionView setAutoresizingMask:UIViewAutoresizingFlexibleHeight];
     self.mainCollectionView.dataSource = self;
     self.mainCollectionView.delegate = self;
-    self.mainCollectionView.backgroundColor = [UIColor clearColor];
+    self.mainCollectionView.backgroundColor = [UIColor whiteColor];
     [self.mainCollectionView registerClass:[CustomCell class] forCellWithReuseIdentifier:@"CustomCollectionCell"];
     
     [self.view addSubview:self.mainCollectionView];
     //self.mainCollectionView.scrollEnabled = NO;
     [self.mainCollectionView registerClass:[CollectionReusableHeaderView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"HeaderView"];
+    }
     
 }
 
@@ -191,7 +236,7 @@
 
 -(void)firedNotification {
     
-    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
+   // [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
     
     CGRect rect = CGRectMake(0 ,0 ,120, 60);
     NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://media?id=%@",[SingletonClass shareSinglton].imageId]];

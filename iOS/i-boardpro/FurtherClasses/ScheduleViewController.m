@@ -1,10 +1,4 @@
-//
-//  ScheduleViewController.m
-//  Board
-//
-//  Created by Sumit Ghosh on 28/04/15.
-//  Copyright (c) 2015 Sumit Ghosh. All rights reserved.
-//
+
 
 #import "ScheduleViewController.h"
 #import "ScheduleCell.h"
@@ -23,21 +17,47 @@
 @end
 
 @implementation ScheduleViewController
-
+-(void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:YES];
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
+}
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:YES];
+      [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(firedNotification) name:@"firedNotification"  object:nil];
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(scheduleReload) name:@"scheduleReload" object:nil];
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(firedNotification) name:@"firedNotification" object:nil];
+      
+     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(fetchSchedule) name:@"schedulePhoto" object:nil];
     
     [SingletonClass shareSinglton].postData=[[NSMutableArray alloc]init];
     windowSize=[UIScreen mainScreen].bounds.size;
-    [self createTableUI];
+    
     // Do any additional setup after loading the view from its nib.
 }
 
+-(void)fetchSchedule{
+    dispatch_async(dispatch_get_global_queue(0, 0),^{
+//        NSString * first=[[NSUserDefaults standardUserDefaults]objectForKey:@"checkFirst"];
+//        if (!first) {
+//            [[NSUserDefaults standardUserDefaults]setObject:@"0" forKey:@"checkFirst"];
+//            [[NSUserDefaults standardUserDefaults]synchronize];
+            [self retreiveDataFromSqliteOfSchedule];
+        //}
+        
+        dispatch_async(dispatch_get_main_queue(),^{
+            [self createTableUI];
+        });
+    });
+
+}
+
 -(void)scheduleReload{
-    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"scheduleReload" object:nil];
+    
     [scheduleTbl reloadData];
 }
 
@@ -46,13 +66,13 @@
 -(void)createTableUI{
     
     UIButton * addPhotoBtn=[UIButton buttonWithType:UIButtonTypeCustom];
-    addPhotoBtn.frame=CGRectMake(windowSize.width/2-40,windowSize.height-130, 50, 50);
+    addPhotoBtn.frame=CGRectMake(windowSize.width/2-20,windowSize.height-130, 50, 50);
 
     [addPhotoBtn setBackgroundImage:[UIImage imageNamed:@"blue_inner_follow.png"] forState:UIControlStateNormal];
     [addPhotoBtn addTarget:self action:@selector(addPhotosAction) forControlEvents:UIControlEventTouchUpInside];
     
     [self.view addSubview:addPhotoBtn];
-    
+    [scheduleTbl removeFromSuperview];
     if (scheduleTbl) {
         scheduleTbl=nil;
     }
@@ -106,7 +126,18 @@
     }
     NSMutableDictionary * dict=[[SingletonClass shareSinglton].postData objectAtIndex:indexPath.row];
     cell.cellImgView.image=[UIImage imageWithData:[dict objectForKey:@"image"]];
-    cell.topLabel.text=@"Schedule Time";
+    
+    NSMutableDictionary * timeDict=[[SingletonClass shareSinglton].postData objectAtIndex:indexPath.row];
+    NSString * unixTimeStampStr =[timeDict objectForKey:@"unixTime"];
+    double  unixTimeStamp=[unixTimeStampStr doubleValue];
+    NSTimeInterval _interval=unixTimeStamp;
+    NSDate *date = [NSDate dateWithTimeIntervalSince1970:_interval];
+    NSDateFormatter *formatter= [[NSDateFormatter alloc] init];
+    [formatter setLocale:[NSLocale currentLocale]];
+    [formatter setDateFormat:@"dd-MM-yyyy HH:mm:ss"];
+    NSString *dateString = [formatter stringFromDate:date];
+    
+    cell.topLabel.text=dateString;
     
     return cell;
 }
@@ -175,7 +206,7 @@
 
 -(void)firedNotification {
     
-    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
+   // [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
     
     CGRect rect = CGRectMake(0 ,0 ,120, 60);
     NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://media?id=%@",[SingletonClass shareSinglton].imageId]];
@@ -186,11 +217,75 @@
         self.dic.delegate = self;
         self.dic.UTI = @"com.instagram.photo";
         self.dic=[UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClass shareSinglton].imagePath]];
-        [self.dic presentOpenInMenuFromRect: CGRectZero    inView:self.view animated: YES ];
+        // [self.dic setAnnotation:[NSDictionary dictionaryWithObject:[SingletonClass shareSinglton].captionStr forKey:@"InstagramCaption"]];
+            [self.dic presentOpenInMenuFromRect: CGRectZero    inView:self.view animated: YES ];
         
     }
     
 }
+
+
+// Retrive Data from schedule table to show scheduled images
+-(void)retreiveDataFromSqliteOfSchedule{
+    
+    
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    
+    NSLog(@"%@",paths);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *databasePath = [documentsDirectory stringByAppendingPathComponent:@"board21.sqlite"];
+    NSString * accessToken=[[NSUserDefaults standardUserDefaults]objectForKey:@"access_token"];
+    
+    NSString *query = [NSString stringWithFormat:@"select * from Schedule where AccessToken =\"%@\"",accessToken];
+    
+    
+    sqlite3_stmt *compiledStmt=nil;
+    if(sqlite3_open([databasePath UTF8String], &database)!=SQLITE_OK)
+        NSLog(@"error to open");
+    {
+        if (sqlite3_prepare_v2(database, [query UTF8String], -1, &compiledStmt, NULL)== SQLITE_OK)
+        {
+            NSLog(@"prepared");
+            NSData * data=nil;
+            
+            [[SingletonClass shareSinglton].postData removeAllObjects];
+            while(sqlite3_step(compiledStmt)==SQLITE_ROW)
+            {
+                
+                char *profilepic = (char *) sqlite3_column_text(compiledStmt,1);
+                
+                char *imgId = (char *) sqlite3_column_text(compiledStmt,2);
+                
+                int length = sqlite3_column_bytes(compiledStmt, 3);
+                data=[NSData dataWithBytes:sqlite3_column_blob(compiledStmt, 3) length:length];
+                
+                char * time=(char *) sqlite3_column_text(compiledStmt,4);
+                
+                NSString *profilePic  = [NSString stringWithUTF8String:profilepic];
+                NSString *imageId  = [NSString stringWithUTF8String:imgId];
+                NSString *uTime  = [NSString stringWithUTF8String:time];
+                
+                NSMutableDictionary * temp=[[NSMutableDictionary alloc]init];
+                
+                [temp setObject:profilePic forKey:@"profilePic"];
+                
+                [temp setObject:data forKey:@"image"];
+                
+                [temp setObject:uTime forKey:@"unixTime"];
+                
+                [[SingletonClass shareSinglton].postData addObject:temp];
+                
+                [SingletonClass shareSinglton].imagePath=profilePic;
+                [SingletonClass shareSinglton].imageId=imageId;
+            }
+            
+        }
+        sqlite3_finalize(compiledStmt);
+    }
+    sqlite3_close(database);
+    [scheduleTbl reloadData];
+}
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

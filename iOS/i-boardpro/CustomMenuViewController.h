@@ -1,10 +1,4 @@
-//
-//  CustomMenuViewController.h
-//  MOVYT
-//
-//  Created by Sumit Ghosh on 27/05/14.
-//  Copyright (c) 2014 Sumit Ghosh. All rights reserved.
-//
+
 
 #import <UIKit/UIKit.h>
 

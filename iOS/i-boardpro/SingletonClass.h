@@ -1,10 +1,4 @@
-//
-//  SingletonClass.h
-//  TwitterBoard
-//
-//  Created by Sumit Ghosh on 18/04/15.
-//  Copyright (c) 2015 globussoft. All rights reserved.
-//
+
 
 #import <Foundation/Foundation.h>
 
@@ -13,7 +7,7 @@
 +(SingletonClass*)shareSinglton;
 
 @property(nonatomic,strong)NSMutableArray * full_name,* profile_picture,* userId;
-@property(nonatomic,strong)NSString * followed_by,* follows,* media,* user_full_name,* user_pic,* user_name;
+@property(nonatomic,strong)NSString * followed_by,* follows,* media,* user_full_name,* user_pic,* user_name,* medaiCnt;
 
 // feeds Data
 
@@ -40,6 +34,7 @@
 @property(nonatomic,strong)NSString * imagePath,* imageId;
 @property(nonatomic,strong)NSData * data;
 @property(nonatomic,strong)NSMutableArray * postData;
+@property(nonatomic,strong)NSString * captionStr;
 
 //
 

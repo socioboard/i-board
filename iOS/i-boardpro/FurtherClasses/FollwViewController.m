@@ -1,24 +1,33 @@
-//
-//  FollwViewController.m
-//  TwitterBoard
-//
-//  Created by GLB-254 on 4/18/15.
-//  Copyright (c) 2015 globussoft. All rights reserved.
-//
+
 
 #import "FollwViewController.h"
 #import "TableCustomCell.h"
 #import "SingletonClass.h"
 #import "UserProfileViewController.h"
+#import "UIImageView+WebCache.h"
 
 @interface FollwViewController ()
 {
     UserProfileViewController * userProfile;
     UIActivityIndicatorView * activityIndicator;
+    UILabel * noInternetConnnection;
+    CGSize winsowSize;
 }
 @end
 
 @implementation FollwViewController
+-(void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:YES];
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
+}
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:YES];
+    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(firedNotification) name:@"firedNotification" object:nil];
+    
+}
 
 - (void)viewDidLoad
 {
@@ -26,7 +35,8 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(firedNotification) name:@"firedNotification" object:nil];
+    winsowSize=[UIScreen mainScreen].bounds.size;
+   
     
     [SingletonClass shareSinglton].follower=[[NSMutableArray alloc]init];
     [SingletonClass shareSinglton].full_name=[[NSMutableArray alloc]init];
@@ -34,7 +44,7 @@
     usreId=[[NSMutableArray alloc]init];
     
     activityIndicator=[[UIActivityIndicatorView alloc]init];
-    activityIndicator.frame=CGRectMake(self.view.frame.size.width/2-20, 150, 40, 40);
+    activityIndicator.frame=CGRectMake(winsowSize.width/2-20, 150, 40, 40);
     activityIndicator.activityIndicatorViewStyle=UIActivityIndicatorViewStyleWhiteLarge;
     activityIndicator.color=[UIColor whiteColor];
     activityIndicator.alpha=1.0;
@@ -44,15 +54,7 @@
     
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(createFollowByTable) name:@"loadAllFollowers" object:nil];
-    NSString * firstRun=[[NSUserDefaults standardUserDefaults]objectForKey:@"firstRun"];
-    if (!firstRun) {
-        [self createFollowByTable];
-        [[NSUserDefaults standardUserDefaults]setObject:@"0" forKey:@"firstRun"];
-        [[NSUserDefaults standardUserDefaults]synchronize];
-    }
-    else{
-        [self createFollowByTable];
-    }
+
 }
 
 
@@ -65,13 +67,17 @@
     
     [followTableView removeFromSuperview];
     [activityIndicator startAnimating];
+    [noInternetConnnection removeFromSuperview];
+    [[NSNotificationCenter defaultCenter]postNotificationName:@"reachability" object:nil];
+    if ([SingletonClass shareSinglton].isActivenetworkConnection==YES) {
+
     dispatch_async(dispatch_get_global_queue(0, 0),^{
         [self loadAllFollowers];// call LoadAllFollwers method
         dispatch_async(dispatch_get_main_queue(),^{
             [activityIndicator stopAnimating];
             if ([SingletonClass shareSinglton].full_name.count<1) {
                 UILabel * label=[[UILabel alloc]init];
-                label.frame=CGRectMake(40, 150, self.view.frame.size.width-60, 50);
+                label.frame=CGRectMake(40, 150, winsowSize.width-60, 50);
                 label.text=@"You are not following anyone.";
                 label.font=[UIFont boldSystemFontOfSize:15];
                 label.lineBreakMode=NSLineBreakByWordWrapping;
@@ -84,16 +90,34 @@
               {
                   followTableView=nil;
               }
-                followTableView=[[UITableView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width,self.view.frame.size.height) style:UITableViewStylePlain];
+                followTableView=[[UITableView alloc]initWithFrame:CGRectMake(0, 0, winsowSize.width,winsowSize.height) style:UITableViewStylePlain];
                 followTableView.dataSource=self;
                 followTableView.delegate=self;
                 followTableView.backgroundColor=[UIColor whiteColor];
                 [self.view addSubview:followTableView];
+                UIView * view=[[UIView alloc]initWithFrame:CGRectMake(0, 0, winsowSize.width, 40)];
+                view.backgroundColor=[UIColor clearColor];
+                followTableView.tableFooterView=view;
             }
             
             
         });
     });
+}
+    else{
+        [activityIndicator stopAnimating];
+        if (noInternetConnnection) {
+            [noInternetConnnection removeFromSuperview];
+            noInternetConnnection=nil;
+        }
+        noInternetConnnection=[[UILabel alloc]initWithFrame:CGRectMake(30, winsowSize.height/2-50, winsowSize.width-50, 50)];
+        noInternetConnnection.text=@"Please check your InterNet connection.";
+        noInternetConnnection.textAlignment=NSTextAlignmentCenter;
+        noInternetConnnection.numberOfLines=0;
+        noInternetConnnection.lineBreakMode=NSLineBreakByWordWrapping;
+        [self.view addSubview:noInternetConnnection];
+    }
+
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -109,7 +133,7 @@
     static NSString *CellIdentifier = @"Follow";
     
     TableCustomCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    UIButton * unfollow;
+   
     if (cell == nil)
     {
         cell = [[TableCustomCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
@@ -117,11 +141,13 @@
        
         [cell.add_minusButton addTarget:self action:@selector(unfollowAction:) forControlEvents:UIControlEventTouchUpInside];
         cell.add_minusButton.tag=indexPath.row;
+        [cell.add_minusButton setBackgroundImage:[UIImage imageNamed:@"unfollow.png"] forState:UIControlStateNormal];
     }
       cell.commentBtn.hidden=YES;
-    NSURL * url=[NSURL URLWithString:[[SingletonClass shareSinglton].profile_picture objectAtIndex:indexPath.row]];
-    NSData * imageData=[NSData dataWithContentsOfURL:url];
-    cell.userImage.image=[UIImage imageWithData:imageData];
+     cell.likesBtn.hidden=YES;
+
+
+    [cell.userImage sd_setImageWithURL:[[SingletonClass shareSinglton].profile_picture objectAtIndex:indexPath.row]];
     
     cell.userNameDesc.text=[[SingletonClass shareSinglton].full_name objectAtIndex:indexPath.row];
     
@@ -180,7 +206,6 @@
         return;
     }
     id response=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];
-    NSLog(@" response of unfollow %@",response);
     [self loadAllFollowers];
     [followTableView reloadData];
     
@@ -225,7 +250,7 @@
         dict=[resultArr objectAtIndex:i];
         [[SingletonClass shareSinglton].follower addObject:dict];
         
-        [[SingletonClass shareSinglton].full_name addObject:[dict objectForKey:@"full_name"]];
+        [[SingletonClass shareSinglton].full_name addObject:[dict objectForKey:@"username"]];
         [[SingletonClass shareSinglton].profile_picture addObject:[dict objectForKey:@"profile_picture"]];
         [usreId addObject:[dict objectForKey:@"id"]];
     }
@@ -236,7 +261,7 @@
 
 -(void)firedNotification {
     
-    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
+   // [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
     
     CGRect rect = CGRectMake(0 ,0 ,120, 60);
     NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://media?id=%@",[SingletonClass shareSinglton].imageId]];

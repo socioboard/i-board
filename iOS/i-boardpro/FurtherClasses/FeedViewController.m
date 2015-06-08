@@ -1,10 +1,4 @@
-//
-//  FeedViewController.m
-//  TwitterBoard
-//
-//  Created by Sumit Ghosh on 19/04/15.
-//  Copyright (c) 2015 globussoft. All rights reserved.
-//
+
 
 #import "FeedViewController.h"
 #import "SingletonClass.h"
@@ -21,67 +15,201 @@
     NSMutableArray * cmtTextArr,* cmtUserImgArr,* cmtUserName,*cmtMediaId;
     UITableView * commentsTbl;
     CommentsViewController * commentsVc;
+    UILabel * noInternetConnnection;
+    
+    BOOL inAnimation;
+    CALayer *waveLayer;
 }
 @end
 
 @implementation FeedViewController
+-(void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:YES];
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
+}
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:YES];
+    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(firedNotification) name:@"firedNotification" object:nil];
+    
+}
+
+
+
+-(void)waveAnimation:(CALayer*)aLayer
+{
+    CABasicAnimation *transformAnimation = [CABasicAnimation animationWithKeyPath:@"transform"];
+    transformAnimation.duration = 1;
+    transformAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+    transformAnimation.removedOnCompletion = YES;
+    transformAnimation.fillMode = kCAFillModeRemoved;
+    [aLayer setTransform:CATransform3DMakeScale( 10, 10, 1.0)];
+    [transformAnimation setDelegate:self];
+    
+    CATransform3D xform = CATransform3DIdentity;
+    xform = CATransform3DScale(xform, 40, 40, 1.0);
+    transformAnimation.toValue = [NSValue valueWithCATransform3D:xform];
+    [aLayer addAnimation:transformAnimation forKey:@"transformAnimation"];
+    
+    
+    UIColor *fromColor = [UIColor colorWithRed:255 green:120 blue:0 alpha:1];
+    UIColor *toColor = [UIColor colorWithRed:255 green:120 blue:0 alpha:0.1];
+    CABasicAnimation *colorAnimation = [CABasicAnimation animationWithKeyPath:@"backgroundColor"];
+    colorAnimation.duration = 1;
+    colorAnimation.fromValue = (id)fromColor.CGColor;
+    colorAnimation.toValue = (id)toColor.CGColor;
+    
+    [aLayer addAnimation:colorAnimation forKey:@"colorAnimationBG"];
+    
+    
+    UIColor *fromColor1 = [UIColor colorWithRed:0 green:255 blue:0 alpha:1];
+    UIColor *toColor1 = [UIColor colorWithRed:0 green:255 blue:0 alpha:0.1];
+    CABasicAnimation *colorAnimation1 = [CABasicAnimation animationWithKeyPath:@"borderColor"];
+    colorAnimation1.duration = 1;
+    colorAnimation1.fromValue = (id)fromColor1.CGColor;
+    colorAnimation1.toValue = (id)toColor1.CGColor;
+    
+    [aLayer addAnimation:colorAnimation1 forKey:@"colorAnimation"];
+}
+
+-(void)startAnimation
+{
+    if (inAnimation == YES)
+  {
+        return;
+    }
+    inAnimation = YES;
+    [self waveAnimation:waveLayer];
+}
+
+- (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag
+{
+    inAnimation = NO;
+    [self performSelectorInBackground:@selector(startAnimation) withObject:nil];
+}
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(firedNotification) name:@"firedNotification" object:nil];
+   
+    waveLayer=[CALayer layer];
+    waveLayer.frame = CGRectMake(150, 200, 10, 10);
+    
+    //waveLayer.borderWidth =0.2;
+    waveLayer.cornerRadius =5.0;
+    [self.view.layer addSublayer:waveLayer];
+    
+    
+
     [SingletonClass shareSinglton].commentsCount=[[NSMutableArray alloc]init];
     [SingletonClass shareSinglton].likesCount=[[NSMutableArray alloc]init];
     [SingletonClass shareSinglton].feedPic=[[NSMutableArray alloc]init];
     [SingletonClass shareSinglton].feedUserPic=[[NSMutableArray alloc]init];
     [SingletonClass shareSinglton].feedUserName=[[NSMutableArray alloc]init];
-
-    
+    cmtMediaId=[[NSMutableArray alloc]init];
+    userId=[[NSMutableArray alloc]init];
    
     windowSize=[UIScreen mainScreen].bounds.size;
     
     activityView =[[UIActivityIndicatorView alloc]init];
-    activityView.frame=CGRectMake(windowSize.width/2-20, 150, 40, 40);
+    activityView.frame=CGRectMake(windowSize.width/2-20, windowSize.height/2-50, 40, 40);
     activityView.activityIndicatorViewStyle=UIActivityIndicatorViewStyleWhiteLarge;
     activityView.color=[UIColor whiteColor];
     activityView.alpha=1.0;
     [self.view addSubview:activityView];
     [self.view bringSubviewToFront:activityView];
-    [activityView startAnimating];
+   
     
-    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(loadUI) name:@"loadFeeds" object:nil];
+     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(loadUI) name:@"loadFeeds" object:nil];
+    NSString * firstRun=[[NSUserDefaults standardUserDefaults]objectForKey:@"firstRun"];
+    if (!firstRun) {
+        [self loadUI];
+         [activityView startAnimating];
+        [[NSUserDefaults standardUserDefaults]setObject:@"0" forKey:@"firstRun"];
+        [[NSUserDefaults standardUserDefaults]synchronize];
+    }
+    else{
+        [self loadUI];
+    }
     // Do any additional setup after loading the view from its nib.
 }
 
+
+
+
 -(void)loadUI{
-    
+     [feedTableView removeFromSuperview];
+     [activityView startAnimating];
+   
     self.view.backgroundColor=[UIColor colorWithRed:(CGFloat)128/255 green:(CGFloat)128/255 blue:(CGFloat)128/255 alpha:1.0];
-    dispatch_async(dispatch_get_global_queue(0, 0),^{
-        [self loadFeeds];
-        dispatch_async(dispatch_get_main_queue(),^{
-            [activityView stopAnimating];
-            [self creatUI];
-        });
-    });
+    //self.view.backgroundColor=[UIColor whiteColor];
+   // waveLayer.hidden=NO;
+   // inAnimation=NO;
+   // [self startAnimation];
     
 
+    
+    [noInternetConnnection removeFromSuperview];
+    [[NSNotificationCenter defaultCenter]postNotificationName:@"reachability" object:nil];
+    if ([SingletonClass shareSinglton].isActivenetworkConnection==YES) {
+   
+    dispatch_async(dispatch_get_global_queue(0, 0),^{
+            [self loadFeeds];
+        dispatch_async(dispatch_get_main_queue(),^{
+            [activityView stopAnimating];
+            
+            [self creatUI];
+           // inAnimation=NO;
+           // waveLayer.hidden=YES;
+            });
+    });
+    
+    }
+    else{
+        [activityView stopAnimating];
+        if (noInternetConnnection) {
+            [noInternetConnnection removeFromSuperview];
+            noInternetConnnection=nil;
+        }
+        noInternetConnnection=[[UILabel alloc]initWithFrame:CGRectMake(30, windowSize.height/2-50, windowSize.width-50, 50)];
+        noInternetConnnection.text=@"Please check your InterNet connection.";
+        noInternetConnnection.textAlignment=NSTextAlignmentCenter;
+        noInternetConnnection.numberOfLines=0;
+        noInternetConnnection.lineBreakMode=NSLineBreakByWordWrapping;
+        [self.view addSubview:noInternetConnnection];
+    }
 }
 
 -(void)creatUI{
+
+    
     if(feedTableView)
     {
         feedTableView=nil;
     }
-    feedTableView=[[UITableView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width,self.view.frame.size.height-20) style:UITableViewStylePlain];
+    feedTableView=[[UITableView alloc]initWithFrame:CGRectMake(0, 0, windowSize.width,windowSize.height-20) style:UITableViewStylePlain];
     feedTableView.dataSource=self;
     feedTableView.delegate=self;
     feedTableView.backgroundColor=[UIColor whiteColor];
     [self.view addSubview:feedTableView];
+    
+    UIView * feedFooter=[[UIView alloc]initWithFrame:CGRectMake(0, 0, windowSize.width, 20)];
+    feedFooter.backgroundColor=[UIColor clearColor];
+    feedTableView.tableFooterView=feedFooter;
 }
 
 
 #pragma mark-TableView delegate methods
 
+-(UIView*)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section{
+    UIView * footerView=[[UIView alloc]initWithFrame:CGRectMake(0, 0, windowSize.width,40)];
+    footerView.backgroundColor=[UIColor colorWithRed:(CGFloat)180/255 green:(CGFloat)180/255 blue:(CGFloat)180/255 alpha:(CGFloat)1];
+    
+    return  nil;
+}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -92,33 +220,42 @@
     if (cell == nil)
     {
         cell = [[TableCustomCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
-     
-    }
-    if (feedTableView==tableView) {
-        
+       
+
         [cell.commentBtn addTarget:self action:@selector(opneCommentsPage:) forControlEvents:UIControlEventTouchUpInside];
-    cell.commentBtn.tag=indexPath.row;
-         
+        [cell.commentCnt addTarget:self action:@selector(opneCommentsPage:) forControlEvents:UIControlEventTouchUpInside];
+            }
+    if (feedTableView==tableView) {
+        cell.commentBtn.tag=indexPath.section;
+        cell.commentCnt.tag=indexPath.section;
+
+        cell.contentView.layer.shadowColor = [UIColor blackColor].CGColor;
+        cell.contentView.layer.shadowOpacity = 0.4f;
+        cell.contentView.layer.shadowOffset = CGSizeMake(0.0f, 2.0f);
+        cell.contentView.layer.shadowRadius = 10.0f;
+        cell.contentView.layer.masksToBounds = NO;
+        
+        UIBezierPath *path = [UIBezierPath bezierPathWithRect:cell.contentView.bounds];
+        cell.layer.shadowPath = path.CGPath;
+        //cell.contentView.layer.shadowPath=path.CGPath;
     
-    NSURL * url=[NSURL URLWithString:[[SingletonClass shareSinglton].feedUserPic objectAtIndex:indexPath.row]];
+    NSURL * url=[NSURL URLWithString:[[SingletonClass shareSinglton].feedUserPic objectAtIndex:indexPath.section]];
     NSData * imageData=[NSData dataWithContentsOfURL:url];
-    cell.userImage.image=[UIImage imageWithData:imageData];
+    cell.feedsUserImage.image=[UIImage imageWithData:imageData];
     
-    cell.userNameDesc.text=[[SingletonClass shareSinglton].feedUserName objectAtIndex:indexPath.row];
+    cell.feedsUsername.text=[[SingletonClass shareSinglton].feedUserName objectAtIndex:indexPath.section];
 
     
-    NSURL * urlFeed=[NSURL URLWithString:[[SingletonClass shareSinglton].feedPic objectAtIndex:indexPath.row]];
+    NSURL * urlFeed=[NSURL URLWithString:[[SingletonClass shareSinglton].feedPic objectAtIndex:indexPath.section]];
 
     
     [cell.feedImage sd_setImageWithURL:urlFeed];
     
-    
-    cell.likesLbl.text=@"Likes";
-    
+        cell.likesBtn.tag=indexPath.section;
+        cell.selectionStyle=UITableViewCellSelectionStyleNone;
      
-    cell.likesCount.text=[NSString stringWithFormat:@"%@",[[SingletonClass shareSinglton].likesCount objectAtIndex:indexPath.row]];
-    cell.commentCnt.text=[NSString stringWithFormat:@"%@",[[SingletonClass shareSinglton].commentsCount objectAtIndex:indexPath.row]];
+    cell.likesCount.text=[NSString stringWithFormat:@"%@",[[SingletonClass shareSinglton].likesCount objectAtIndex:indexPath.section]];
+    [cell.commentCnt setTitle:[NSString stringWithFormat:@"%@",[[SingletonClass shareSinglton].commentsCount objectAtIndex:indexPath.section]] forState:UIControlStateNormal];
     cell.add_minusButton.hidden=YES;
     }
     return cell;
@@ -129,39 +266,36 @@
         userProfile=nil;
     }
     userProfile=[[UserProfileViewController alloc]initWithNibName:@"UserProfileViewController" bundle:nil];
-    userProfile.userId=[userId objectAtIndex:indexPath.row];
+    userProfile.userId=[userId objectAtIndex:indexPath.section];
     [self presentViewController:userProfile animated:YES completion:nil];
     
 }
+
 -(NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
 {
     
-    return 1;
+    return [SingletonClass shareSinglton].feedPic.count;
 }
 
-
+-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
+    return 30;
+}
 
 -(NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if(tableView==feedTableView)
-    {
-        return [SingletonClass shareSinglton].feedPic.count;
-    }
-   else if (tableView==commentsTbl) {
-       if (cmtTextArr.count<1) {
-           return 0;
-       }
-       return cmtTextArr.count;
-    }
-   else{
-       return 0;
-   }
+
+    return 1;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     CGFloat height;
     if (tableView==feedTableView) {
-        height=250;
+        if ([[UIScreen mainScreen] bounds].size.height == 736.0) {
+            height=300;
+        }
+        else{
+            height=250;
+        }
       return height;
     }
     
@@ -174,10 +308,14 @@
 // Api call for showing user home feeds
 
 -(void)loadFeeds{
-    
-   
-    cmtMediaId=[[NSMutableArray alloc]init];
-    userId =[[NSMutableArray alloc]init];
+    [[SingletonClass shareSinglton].commentsCount removeAllObjects];
+    [[SingletonClass shareSinglton].likesCount removeAllObjects ];
+    [[SingletonClass shareSinglton].feedPic removeAllObjects];
+    [[SingletonClass shareSinglton].feedUserPic removeAllObjects];
+    [[SingletonClass shareSinglton].feedUserName removeAllObjects];
+
+    [cmtMediaId removeAllObjects];
+    [userId removeAllObjects];
     
     NSError * error=nil;
     NSURLResponse * urlResponse=nil;
@@ -200,6 +338,7 @@
         return;
     }
     id response=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];
+    NSLog(@"Feeds  %@",response);
     NSMutableDictionary * dict=[response objectForKey:@"meta"];
      pagination=[response objectForKey:@"next_url"];
     nextMaxId=[response objectForKey:@"next_max_id"];
@@ -241,7 +380,7 @@
                 
                 likesDic=[mainDic objectForKey:@"likes"];
                 [[SingletonClass shareSinglton].likesCount addObject:[likesDic objectForKey:@"count"]];
-                
+                          
             }
         }
     }
@@ -249,8 +388,7 @@
 
 #pragma mark-
 
-//Open comments page here
--(void)opneCommentsPage:(UIButton*)sender{
+-(void)handleTapGestureToOpenCmt:(UIButton *)sender{
      int tag = (int)((UIButton *)(UIControl *)sender).tag;
     NSString * captionId=[cmtMediaId objectAtIndex:tag];
     
@@ -260,13 +398,29 @@
     commentsVc=[[CommentsViewController alloc]initWithNibName:@"CommentsViewController" bundle:nil];
     commentsVc.capId=captionId;
     [self presentViewController:commentsVc animated:YES completion:nil];
-   }
+
+}
+
+
+//Open comments page here
+-(void)opneCommentsPage:(UIButton*)sender{
+     int tag = (int)((UIButton *)(UIControl *)sender).tag;
+   
+    NSString * captionId=[cmtMediaId objectAtIndex:tag];
+    
+    if (commentsVc) {
+        commentsVc=nil;
+    }
+    commentsVc=[[CommentsViewController alloc]initWithNibName:@"CommentsViewController" bundle:nil];
+    commentsVc.capId=captionId;
+    [self presentViewController:commentsVc animated:YES completion:nil];
+}
 
 
 
 -(void)firedNotification {
     
-    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
+    //[[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
     
     CGRect rect = CGRectMake(0 ,0 ,120, 60);
     NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://media?id=%@",[SingletonClass shareSinglton].imageId]];

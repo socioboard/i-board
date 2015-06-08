@@ -1,11 +1,5 @@
 
-//
-//  CustomMenuViewController.m
-//  MOVYT
-//
-//  Created by Sumit Ghosh on 27/05/14.
-//  Copyright (c) 2014 Sumit Ghosh. All rights reserved.
-//
+
 
 #import "CustomMenuViewController.h"
 #import <objc/runtime.h>
@@ -21,6 +15,9 @@
 {
     NSInteger updateValue;
     WebViewViewController * webviewVC;
+    UIView * viewLogo;
+    UIImageView * selectedUserImg;
+    UIButton * logOut;
 }
 @property (nonatomic,strong)UITabBar *customTabBar;
 @end
@@ -108,14 +105,17 @@
     NSData * data=[NSData dataWithContentsOfURL:url];
     
     [self.profileImage setBackgroundImage:[UIImage imageWithData:data] forState:UIControlStateNormal];
+    selectedUserImg.image=[UIImage imageWithData:data];
+    
 }
+
 
 #pragma mark -
 - (void)viewDidLoad
 {
     
     
-    menuImages=[NSArray arrayWithObjects:@"fan.png",@"followedby.png",@"Feed.png",@"photo_bucket.png",@"none_followers.png",@"find_friend.png", nil];
+    menuImages=[NSArray arrayWithObjects:@"feeds.png",@"follow_new.png",@"followed_by_new.png",@"fan_new.png",@"mutual.png",@"photo_bucket.png",@"non_follower.png",@"photo_que_new.png",@"copy.png", nil];
     
     windowSize=[UIScreen mainScreen].bounds.size;
     [super viewDidLoad];
@@ -140,6 +140,14 @@
     self.mainsubView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, self.screen_height-45)];
     NSLog(@"Main sub view frame X=-=- %f \n Y == %f",[UIScreen mainScreen].bounds.origin.x,[UIScreen mainScreen].bounds.origin.y);
     self.mainsubView.backgroundColor = [UIColor whiteColor];
+    self.mainsubView.layer.shadowColor = [UIColor blackColor].CGColor;
+    self.mainsubView.layer.shadowOpacity = 0.4f;
+    self.mainsubView.layer.shadowOffset = CGSizeMake(0.0f, 15.0f);
+    self.mainsubView.layer.shadowRadius = 10.0f;
+    self.mainsubView.layer.masksToBounds = NO;
+    
+    UIBezierPath *path = [UIBezierPath bezierPathWithRect:self.mainsubView.bounds];
+    self.mainsubView.layer.shadowPath = path.CGPath;
     [self.view addSubview:self.mainsubView];
     
     //Add Header View
@@ -175,7 +183,7 @@
     //------------------
     
     self.menuButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    self.menuButton.frame = frame_b;
+    self.menuButton.frame =  CGRectMake(20, 20, 30, 25);;
     self.menuButton.titleLabel.font = [UIFont systemFontOfSize:9.0f];
     self.menuButton.titleLabel.shadowOffset = CGSizeMake(0.0f, 0.0f);
     
@@ -200,9 +208,9 @@
     //===================================
     
     //Add Menu Lable
-    self.menuLabel = [[UILabel alloc] initWithFrame:CGRectMake(60, 25, windowSize.width-120, 30)];
+    self.menuLabel = [[UILabel alloc] initWithFrame:CGRectMake(60, 20, windowSize.width-120, 30)];
     self.menuLabel.backgroundColor = [UIColor clearColor];
-    self.menuLabel.font = [UIFont boldSystemFontOfSize:15];
+    self.menuLabel.font = [UIFont boldSystemFontOfSize:20];
     self.menuLabel.textColor = [UIColor whiteColor];
     self.menuLabel.textAlignment = NSTextAlignmentCenter;
     self.menuLabel.text = _selectedViewController.title;
@@ -235,13 +243,14 @@
     if (!self.accountTableView)
     {
         self.selectedIndex = 0;
-        self.accountTableView = [[UITableView alloc] initWithFrame:CGRectMake(screenSize.size.width-160, 55,180, self.screen_height-140) style:UITableViewStylePlain];
+        self.accountTableView = [[UITableView alloc] initWithFrame:CGRectMake(screenSize.size.width-160, 150,180, self.screen_height-140) style:UITableViewStylePlain];
         
         self.accountTableView.backgroundColor =[UIColor whiteColor];
         
         self.accountTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         self.accountTableView.delegate = self;
         self.accountTableView.dataSource = self;
+        
         
     }
     else
@@ -251,23 +260,32 @@
     
     [self.view insertSubview:self.accountTableView belowSubview:self.mainsubView];
     
-    UIView * viewLogo=[[UIView alloc]init];
-    viewLogo.frame=CGRectMake(screenSize.size.width-160, 0, 180, 55);
-    viewLogo.backgroundColor=[UIColor colorWithRed:55.0f/255.0f green:105.0f/255.0f blue:147.0f/255.0f alpha:1.0f];
+  viewLogo=[[UIView alloc]init];
+    viewLogo.frame=CGRectMake(screenSize.size.width-160, 0, 180, 150);
+    viewLogo.backgroundColor=[UIColor colorWithPatternImage:[UIImage imageNamed:@"headerbg.jpeg"]];
     
     [self.view insertSubview:viewLogo belowSubview:self.mainsubView];
     
-    UILabel * acounts=[[UILabel alloc]initWithFrame:CGRectMake(25, 10, 120, 50)];
+    UILabel * acounts=[[UILabel alloc]initWithFrame:CGRectMake(25, 10, 120, 150)];
     acounts.text=@"Accounts";
     acounts.font=[UIFont boldSystemFontOfSize:20];
     acounts.textColor=[UIColor whiteColor];
-    [viewLogo addSubview:acounts];
+   // [viewLogo addSubview:acounts];
+    
+    NSURL * url=[NSURL URLWithString:[SingletonClass shareSinglton].user_pic];
+    NSData * data=[NSData dataWithContentsOfURL:url];
+    
+    selectedUserImg=[[UIImageView alloc]initWithFrame:CGRectMake(viewLogo.frame.size.width/2-40, 50, 70, 70)];
+    selectedUserImg.image=[UIImage imageWithData:data];
+    selectedUserImg.layer.cornerRadius=selectedUserImg.frame.size.width/2;
+    selectedUserImg.clipsToBounds=YES;
+    [viewLogo addSubview:selectedUserImg];
     
    
  //------------------
     // Add Logout button
     //-----------------
-    UIButton * logOut=[[UIButton alloc]init];
+     logOut=[[UIButton alloc]init];
     logOut.frame=CGRectMake(screenSize.size.width-150,screenSize.size.height-80 , 121, 29);
     [logOut setBackgroundImage:[UIImage imageNamed:@"add_account.png"] forState:UIControlStateNormal];
     [logOut addTarget:self action:@selector(addAccountAction) forControlEvents:UIControlEventTouchUpInside];
@@ -293,12 +311,12 @@
     if (!self.menuTableView)
     {
         self.selectedIndex = 0;
-        self.menuTableView = [[UITableView alloc] initWithFrame:CGRectMake(0,55,180, self.screen_height-140) style:UITableViewStylePlain];
+        self.menuTableView = [[UITableView alloc] initWithFrame:CGRectMake(0,0,200, self.screen_height-140) style:UITableViewStylePlain];
         self.menuTableView.backgroundColor=[UIColor whiteColor];
         self.menuTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         self.menuTableView.delegate = self;
         self.menuTableView.dataSource = self;
-        self.menuTableView.backgroundColor=[UIColor clearColor];
+       
     }
     else
     {
@@ -306,14 +324,25 @@
     }
     
     [self.view insertSubview:self.menuTableView belowSubview:self.mainsubView];
-    UIView * viewLogo=[[UIView alloc]init];
-    viewLogo.frame=CGRectMake(0, 0, 140, 55);
-    viewLogo.backgroundColor=[UIColor colorWithRed:55.0f/255.0f green:105.0f/255.0f blue:147.0f/255.0f alpha:1.0f];
-    [self.view insertSubview:viewLogo belowSubview:self.mainsubView];
-     
-     UIImageView * logo=[[UIImageView alloc]initWithFrame:CGRectMake(15, 15, 120, 30)];
+    UIView * viewLogo1=[[UIView alloc]init];
+    viewLogo1.frame=CGRectMake(0, self.screen_height-140, 150, 55);
+    viewLogo1.backgroundColor=[UIColor colorWithRed:55.0f/255.0f green:105.0f/255.0f blue:147.0f/255.0f alpha:1.0f];
+   // [self.view insertSubview:viewLogo1 belowSubview:self.mainsubView];
+    
+
+    self.view.layer.shadowColor = [UIColor blackColor].CGColor;
+    self.view.layer.shadowOpacity = 0.4f;
+    self.view.layer.shadowOffset = CGSizeMake(0.0f, -10.0f);
+    self.view.layer.shadowRadius = 10.0f;
+    self.view.layer.masksToBounds = NO;
+    
+    UIBezierPath *path = [UIBezierPath bezierPathWithRect:self.mainsubView.bounds];
+    self.view.layer.shadowPath = path.CGPath;
+
+    
+    UIImageView * logo=[[UIImageView alloc]initWithFrame:CGRectMake(15, self.screen_height-120, 150, 30)];
     logo.image=[UIImage imageNamed:@"iboardpro.png"];
-    [viewLogo addSubview:logo];
+    [self.view insertSubview:logo belowSubview:self.mainsubView];
      
     
 }
@@ -325,11 +354,14 @@
 //Handle swipe gesture on right side
 -(void)handleSwipeGestureRight:(UISwipeGestureRecognizer *)swipeGesture
 {
-    
+  
     if (self.mainsubView.frame.origin.x==0) {
         
         [UIView animateWithDuration:.5 animations:^{
-            self.mainsubView.frame = CGRectMake(140, 0,screenSize.size.width, screenSize.size.height-45);
+            self.accountTableView.hidden=YES;
+            viewLogo.hidden=YES;
+            logOut.hidden=YES;
+            self.mainsubView.frame = CGRectMake(200, 0,screenSize.size.width, screenSize.size.height-45);
         }completion:^(BOOL finish){
         }];
     }
@@ -340,7 +372,9 @@
             self.mainsubView.frame = CGRectMake(0, 0,screenSize.size.width, screenSize.size.height-45);
             
         }completion:^(BOOL finish){
-            
+            self.accountTableView.hidden=YES;
+            viewLogo.hidden=YES;
+            logOut.hidden=YES;
             self.swipeGestureRight.direction = UISwipeGestureRecognizerDirectionRight;
         }];
     }
@@ -349,11 +383,14 @@
 //Handle swipe gesture on right side
 -(void)handleSwipeGestureLeft:(UISwipeGestureRecognizer *)swipeGesture
 {
-    if (self.mainsubView.frame.origin.x==0)
+       if (self.mainsubView.frame.origin.x==0)
     {
         
         [UIView animateWithDuration:.5 animations:^{
             self.mainsubView.frame = CGRectMake(-160, 0,screenSize.size.width, screenSize.size.height-45);
+            self.accountTableView.hidden=NO;
+            viewLogo.hidden=NO;
+            logOut.hidden=NO;
         }completion:^(BOOL finish){
         }];
         
@@ -365,7 +402,8 @@
             self.mainsubView.frame = CGRectMake(0, 0,screenSize.size.width, screenSize.size.height-45);
             
         }completion:^(BOOL finish){
-            
+          
+
         }];
     }
 }
@@ -374,7 +412,9 @@
 // onclick menu button move main subview to right side.
 -(void) menuButtonClciked:(id)sender
 {
-    
+    self.accountTableView.hidden=YES;
+    viewLogo.hidden=YES;
+    logOut.hidden=YES;
     if (self.mainsubView.frame.origin.x>=120) {
         
         [UIView animateWithDuration:.5 animations:^{
@@ -387,7 +427,7 @@
     }
     else{
         [UIView animateWithDuration:.5 animations:^{
-            self.mainsubView.frame = CGRectMake(140, 0,screenSize.size.width, screenSize.size.height-45);
+            self.mainsubView.frame = CGRectMake(200, 0,screenSize.size.width, screenSize.size.height-45);
         }completion:^(BOOL finish){
             self.swipeGestureRight.direction = UISwipeGestureRecognizerDirectionLeft;
         }];
@@ -440,13 +480,16 @@
     NSLog(@"Title = %@",title);
     
         cell.cellMenuTitle.text=title;
-        cell.cellMenuTitle.font=[UIFont systemFontOfSize:14];
-        
+        cell.cellMenuTitle.font=[UIFont systemFontOfSize:12];
+        cell.cellMenuTitle.numberOfLines=0;
+        cell.cellMenuTitle.lineBreakMode=NSLineBreakByCharWrapping;
         cell.menuImages.image=[UIImage imageNamed:[NSString stringWithFormat:@"%@",[menuImages objectAtIndex:indexPath.row]]];
+        cell.settingButton.hidden=YES;
         
     }
     else if(tableView==self.accountTableView)
     {
+        cell.settingButton.hidden=NO;
         self.dict=[[SingletonClass shareSinglton].allData objectAtIndex:indexPath.row];
         NSString * name=[self.dict objectForKey:@"userFullName"];
         cell.cellTitle.text=name;
@@ -482,40 +525,67 @@
             [(UINavigationController *)newViewController popToRootViewControllerAnimated:YES];
         }
         
-        if (indexPath.row==0) {
+        if (indexPath.row==1) {
             [[NSNotificationCenter defaultCenter]postNotificationName:@"loadAllFollowers" object:nil];
             [[NSNotificationCenter defaultCenter]removeObserver:self name:@"loadAllFollowers" object:nil];
             
-            self.customTabBar.selectedItem = [self.customTabBar.items objectAtIndex:0];
+            self.customTabBar.selectedItem = [self.customTabBar.items objectAtIndex:1];
         }
-        else if(indexPath.row==1){
+        else if(indexPath.row==2){
             [[NSNotificationCenter defaultCenter]postNotificationName:@"loadAllFollowedBy" object:nil];
             [[NSNotificationCenter defaultCenter]removeObserver:self name:@"loadAllFollowedBy" object:nil];
          
-            self.customTabBar.selectedItem = [self.customTabBar.items objectAtIndex:1];
+            self.customTabBar.selectedItem = [self.customTabBar.items objectAtIndex:2];
             
         }
-        else if (indexPath.row==2)
+        else if (indexPath.row==0)
         {
             [[NSNotificationCenter defaultCenter]postNotificationName:@"loadFeeds" object:nil];
             [[NSNotificationCenter defaultCenter]removeObserver:self name:@"loadFeeds" object:nil];
             
-            self.customTabBar.selectedItem = [self.customTabBar.items objectAtIndex:2];
+            self.customTabBar.selectedItem = [self.customTabBar.items objectAtIndex:0];
         }
         else if (indexPath.row==3)
         {
             
-            [[NSNotificationCenter defaultCenter]postNotificationName:@"getUserPhotos" object:nil];
-            [[NSNotificationCenter defaultCenter]removeObserver:self name:@"getUserPhotos" object:nil];
-             self.customTabBar.selectedItem = [self.customTabBar.items objectAtIndex:4];
+            [[NSNotificationCenter defaultCenter]postNotificationName:@"showFans" object:nil];
+            [[NSNotificationCenter defaultCenter]removeObserver:self name:@"showFans" object:nil];
+            self.customTabBar.selectedItem = [self.customTabBar.items objectAtIndex:3];
         }
         else if (indexPath.row==4)
         {
             
-            [[NSNotificationCenter defaultCenter]postNotificationName:@"loadNonFollower" object:nil];
-            [[NSNotificationCenter defaultCenter]removeObserver:self name:@"loadNonFollower" object:nil];
+            [[NSNotificationCenter defaultCenter]postNotificationName:@"showMutualFrnds" object:nil];
+            [[NSNotificationCenter defaultCenter]removeObserver:self name:@"showMutualFrnds" object:nil];
+            self.customTabBar.selectedItem = [self.customTabBar.items objectAtIndex:4];
+        }
+        else if (indexPath.row==5)
+        {
+            
+            [[NSNotificationCenter defaultCenter]postNotificationName:@"getUserPhotos" object:nil];
+            [[NSNotificationCenter defaultCenter]removeObserver:self name:@"getUserPhotos" object:nil];
              self.customTabBar.selectedItem = [self.customTabBar.items objectAtIndex:5];
         }
+        else if (indexPath.row==6)
+        {
+            
+            [[NSNotificationCenter defaultCenter]postNotificationName:@"loadNonFollower" object:nil];
+            [[NSNotificationCenter defaultCenter]removeObserver:self name:@"loadNonFollower" object:nil];
+             self.customTabBar.selectedItem = [self.customTabBar.items objectAtIndex:6];
+        }
+        if(indexPath.row==7)
+        {
+            [[NSNotificationCenter defaultCenter]postNotificationName:@"schedulePhoto" object:nil];
+            [[NSNotificationCenter defaultCenter]removeObserver:self name:@"schedulePhoto" object:nil];
+            self.customTabBar.selectedItem = [self.customTabBar.items objectAtIndex:7];
+        }
+        if(indexPath.row==8)
+        {
+            //[[NSNotificationCenter defaultCenter]postNotificationName:@"schedulePhoto" object:nil];
+            //[[NSNotificationCenter defaultCenter]removeObserver:self name:@"schedulePhoto" object:nil];
+            self.customTabBar.selectedItem = [self.customTabBar.items objectAtIndex:8];
+        }
+            
         _selectedSection = indexPath.section;
         _selectedIndex = indexPath.row;
         
@@ -552,12 +622,12 @@
             
             [SingletonClass shareSinglton].user_pic=[selectedUser objectForKey:@"profilePic"];
             
-            
+                 [[NSNotificationCenter defaultCenter]postNotificationName:@"loadFeeds" object:nil];
               [self changeHeaderImg];
             
             
-                [[NSNotificationCenter defaultCenter]postNotificationName:@"loadAllFollowers" object:nil];
-                [[NSNotificationCenter defaultCenter]removeObserver:self name:@"loadAllFollowers" object:nil];
+           
+                [[NSNotificationCenter defaultCenter]removeObserver:self name:@"loadFeeds" object:nil];
                 self.customTabBar.selectedItem = [self.customTabBar.items objectAtIndex:0];
             
                      _selectedSection = indexPath.section;
@@ -605,12 +675,14 @@
     if (selectedUser) {
         selectedUser=nil;
     }
+    NSLog(@"%@",[[SingletonClass shareSinglton].allData objectAtIndex:tag]);
     selectedUser=[NSMutableDictionary dictionary];
     selectedUser=[[SingletonClass shareSinglton].allData objectAtIndex:tag];
     
     
     ProfileViewController * profileVC=[[ProfileViewController alloc]init];
     profileVC.accessToken=[selectedUser objectForKey:@"accessToken"] ;
+  
     [self presentViewController:profileVC animated:YES completion:nil];
     [[NSNotificationCenter defaultCenter]postNotificationName:@"getDataForProfile" object:nil];
     
