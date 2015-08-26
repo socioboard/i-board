@@ -16,8 +16,8 @@
 #import <Foundation/Foundation.h>
 #endif
 
-#define   client_id   @"d8xxxxxxxxxxxxxxbbb2520d70eeb498"
+#define   client_id   @"XXXXXXXXXXXXXXXXXXXXXXXXXX"
 #define   redirectUri @"http://www.xxxxxxxxxx.com/Instagram/Instagram"
-#define   client_screte @"e4663d0xxxxxxxxxxxxxxxxxx692119c8"
+#define   client_screte @"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 
 
