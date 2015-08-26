@@ -1,6 +1,8 @@
 package com.socioboard.iboardpro;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -45,6 +47,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
+import com.parse.ParseInstallation;
 import com.socioboard.iboardpro.adapter.AccountAdapter;
 import com.socioboard.iboardpro.adapter.DrawerAdapter;
 import com.socioboard.iboardpro.database.util.InstagramManyLocalData;
@@ -116,6 +119,33 @@ public class MainActivity extends ActionBarActivity implements
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
+		/*Intent myIntent = new Intent(MainActivity.this, CustomReciver.class);
+		pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0,
+				myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+		NotificationManager mNotificationManager = (NotificationManager) this
+				.getApplicationContext().getSystemService(
+						this.getApplicationContext().NOTIFICATION_SERVICE);
+		mNotificationManager.cancelAll();
+		alarmManager.cancel(pendingIntent);
+
+		Date dat = new Date();// initializes to now
+		Calendar cal_alarm = Calendar.getInstance();
+		Calendar cal_now = Calendar.getInstance();
+		cal_now.setTime(dat);
+		cal_alarm.setTime(dat);
+		cal_alarm.set(Calendar.HOUR_OF_DAY, 11);// set the alarm time
+		cal_alarm.set(Calendar.MINUTE, 38);
+		cal_alarm.set(Calendar.SECOND, 0);
+		if (cal_alarm.before(cal_now)) {// if its in the past increment
+			cal_alarm.add(Calendar.DATE, 1);
+		}
+		// SET YOUR AlarmManager here
+
+		alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
+				cal_alarm.getTimeInMillis(), 60000, pendingIntent);*/
 
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		if (toolbar != null)
@@ -309,27 +339,105 @@ public class MainActivity extends ActionBarActivity implements
 		 * reminding user to send photo
 		 */
 
-		Intent myIntent = new Intent(MainActivity.this,
-				SchedulerCustomReceiver.class);
-		pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0,
-				myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-		alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-
-		NotificationManager mNotificationManager = (NotificationManager) this
-				.getApplicationContext().getSystemService(
-						this.getApplicationContext().NOTIFICATION_SERVICE);
-		mNotificationManager.cancelAll();
-		alarmManager.cancel(pendingIntent);
+		/*
+		 * Intent myIntent = new Intent(MainActivity.this,
+		 * SchedulerCustomReceiver.class); pendingIntent =
+		 * PendingIntent.getBroadcast(MainActivity.this, 0, myIntent,
+		 * PendingIntent.FLAG_UPDATE_CURRENT); alarmManager = (AlarmManager)
+		 * getSystemService(ALARM_SERVICE);
+		 * 
+		 * NotificationManager mNotificationManager = (NotificationManager) this
+		 * .getApplicationContext().getSystemService(
+		 * this.getApplicationContext().NOTIFICATION_SERVICE);
+		 * mNotificationManager.cancelAll(); alarmManager.cancel(pendingIntent);
+		 */
 
 		mainfragmentManager = getSupportFragmentManager();
 		mainfragmentManager.beginTransaction()
 				.replace(R.id.main_content, new Feeds_Fragments()).commit();
 
-		
-		
+		// Parse installation class for Devices
+
+		ParseInstallation.getCurrentInstallation().saveInBackground();
+
+	//	new GetProfileData().execute();
 
 	}
 
+	/*class GetProfileData extends AsyncTask<Void, Void, Void> {
+		String[] profile_data = new String[2];
+		String followed_by_count, follows_count;
+
+		@Override
+		protected Void doInBackground(Void... params) {
+
+			profile_data = Controller.GetProfileData(ConstantUrl.URL_Userdata
+					+ MainSingleTon.accesstoken);
+
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+
+			super.onPostExecute(result);
+
+			System.out.println("profile_data[0]" + profile_data[0]);
+
+			followed_by_count = profile_data[0];
+			follows_count = profile_data[1];
+
+			// save instalation in parse
+			ParseInstallation.getCurrentInstallation().put("UserId",
+					MainSingleTon.userid);
+			ParseInstallation.getCurrentInstallation().saveInBackground(
+					new SaveCallback() {
+
+						@Override
+						public void done(ParseException arg0) {
+
+						}
+					});
+			ParseQuery<ParseObject> query = ParseQuery.getQuery("userdetails");
+			query.whereEqualTo("UserId", MainSingleTon.userid);
+			query.findInBackground(new FindCallback<ParseObject>() {
+				public void done(List<ParseObject> listuser, ParseException e) {
+					System.out.println("parse user size" + listuser.size());
+					System.out.println("exception" + e);
+					if (e == null) {
+
+						if (listuser.size() < 1) {
+
+							ParseObject parse = new ParseObject("userdetails");
+							parse.put("UserId", MainSingleTon.userid);
+							parse.put("accesstoken", MainSingleTon.accesstoken);
+							parse.put("name", MainSingleTon.username);
+							parse.put("followers",
+									Integer.parseInt(follows_count));
+							parse.put("followedby",
+									Integer.parseInt(followed_by_count));
+
+							parse.saveInBackground(new SaveCallback() {
+								@Override
+								public void done(ParseException arg0) {
+
+									System.out
+											.println("new row created exception=="
+													+ arg0);
+									if (arg0 == null) {
+
+									}
+								}
+							});
+						}
+
+					}
+				}
+			});
+
+		}
+	}
+*/
 	/*
 	 * call back listener to instgram
 	 */
@@ -851,6 +959,9 @@ public class MainActivity extends ActionBarActivity implements
 
 			Toast.makeText(MainActivity.this, "sucess", Toast.LENGTH_SHORT)
 					.show();
+
+			//new GetProfileData().execute();
+
 		}
 
 	}

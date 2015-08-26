@@ -29,25 +29,28 @@ import android.widget.TextView;
 import com.socioboard.iboardpro.JSONParser;
 import com.socioboard.iboardpro.R;
 import com.socioboard.iboardpro.database.util.MainSingleTon;
+import com.socioboard.iboardpro.fragments.Follows_Fragment;
+import com.socioboard.iboardpro.fragments.Mutual_Fragments;
 import com.socioboard.iboardpro.lazylist.ImageLoader;
 import com.socioboard.iboardpro.models.FollowModel;
 
-public class MutualAdapter extends BaseAdapter
-{
+public class MutualAdapter extends BaseAdapter {
 
 	ArrayList<FollowModel> arrayList;
 	FollowModel model;
 	Context context;
 	private ProgressDialog mSpinner;
-	public ImageLoader imageLoader; 
+	public ImageLoader imageLoader;
 	JSONParser jParser = new JSONParser();
-	public MutualAdapter(Context context,ArrayList<FollowModel> arrayList) {
-		this.arrayList=arrayList;
-		this.context=context;
-		
-		imageLoader=new ImageLoader(context);
+
+	int selected_position;
+	public MutualAdapter(Context context, ArrayList<FollowModel> arrayList) {
+		this.arrayList = arrayList;
+		this.context = context;
+
+		imageLoader = new ImageLoader(context);
 	}
-	
+
 	@Override
 	public int getCount() {
 		// TODO Auto-generated method stub
@@ -55,9 +58,9 @@ public class MutualAdapter extends BaseAdapter
 	}
 
 	@Override
-	public Object getItem(int position) {
+	public FollowModel getItem(int position) {
 		// TODO Auto-generated method stub
-		return null;
+		return arrayList.get(position);
 	}
 
 	@Override
@@ -69,33 +72,50 @@ public class MutualAdapter extends BaseAdapter
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
 		
-		model=arrayList.get(position);
-		if (convertView == null)
-        {
-            LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            convertView = mInflater.inflate(R.layout.mutuqal_list_item, parent, false);
-        }
-		
-		ImageView profile_imagView=(ImageView) convertView.findViewById(R.id.current_profile_pic);
-		TextView user_nameText=(TextView) convertView.findViewById(R.id.user_name);
-		ImageView unfollow_button=(ImageView) convertView.findViewById(R.id.unfollow_button);
-		
-		if (model.getFull_name().length()>2) {
-			user_nameText.setText(model.getFull_name());
+		model = arrayList.get(position);
+		if (convertView == null) {
+			LayoutInflater mInflater = (LayoutInflater) context
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			convertView = mInflater.inflate(R.layout.follow_list_item, parent,
+					false);
 		}
-		else {
+		ImageView profile_imagView = (ImageView) convertView
+				.findViewById(R.id.current_profile_pic);
+		TextView user_nameText = (TextView) convertView
+				.findViewById(R.id.user_name);
+		final ImageView unfollow_button = (ImageView) convertView
+				.findViewById(R.id.unfollow_button);
+		final ImageView follow_button = (ImageView) convertView
+				.findViewById(R.id.follow_button);
+
+		if (model.getFull_name().length() > 2) {
+			user_nameText.setText(model.getFull_name());
+		} else {
 			user_nameText.setText(model.getUsername());
 		}
-		
-		 imageLoader.DisplayImage(model.getProfile_pic_url(), profile_imagView);
-		
-		
+
+		imageLoader.DisplayImage(model.getProfile_pic_url(), profile_imagView);
+
 		unfollow_button.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
-				
-				model=arrayList.get(position);
+				//follow_button.setVisibility(View.VISIBLE);
+				//unfollow_button.setVisibility(View.INVISIBLE);
+				model = arrayList.get(position);
+				selected_position=position;
+				new unfollow_task().execute(model.getUserid());
+			}
+		});
+
+		follow_button.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				follow_button.setVisibility(View.INVISIBLE);
+				unfollow_button.setVisibility(View.VISIBLE);
+				model = arrayList.get(position);
+
 				new follow_task().execute(model.getUserid());
 			}
 		});
@@ -103,96 +123,86 @@ public class MutualAdapter extends BaseAdapter
 		return convertView;
 	}
 
-	private class getBitmap extends AsyncTask<String, Void, Bitmap> {
-		private final WeakReference imageViewReference;
-		 Bitmap myBitmap;
-		 
-		 public  getBitmap(ImageView imageView) {
-			 imageViewReference = new WeakReference(imageView);
-		}
+
+
+	public class follow_task extends AsyncTask<String, Void, Void> {
+
 		@Override
 		protected void onPreExecute() {
-			myBitmap=null;
+			mSpinner = new ProgressDialog(context);
+			mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
+			mSpinner.setMessage("Loading...");
+
+			mSpinner.show();
 			super.onPreExecute();
 		}
+
 		@Override
-		protected Bitmap doInBackground(String... params) {
-			
-			String src=params[0];
-			System.out.println("src=="+src);
-			 try {
-			        URL url = new URL(src);
-			        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-			        connection.setDoInput(true);
-			        connection.connect();
-			        InputStream input = connection.getInputStream();
-			        myBitmap = BitmapFactory.decodeStream(input);
-			        return myBitmap;
-			    } catch (IOException e) {
-			        // Log exception
-			        return null;
-			    }
+		protected Void doInBackground(String... params) {
+
+			String userid = params[0];
+
+			String url = "https://api.instagram.com/v1/users/" + userid
+					+ "/relationship/?access_token="
+					+ MainSingleTon.accesstoken;
+			// key and value pair
+			List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(1);
+			nameValuePair.add(new BasicNameValuePair("action", "follow"));
+
+			JSONObject json = jParser.getJSONFromUrlByPost(url, nameValuePair);
+
+			System.out.println("followed user status==" + json);
+
+			return null;
 		}
-		
+
 		@Override
-		protected void onPostExecute(Bitmap bitmap) {
-			super.onPostExecute(bitmap);
-			if (imageViewReference != null) {
-				ImageView imageView = (ImageView) imageViewReference.get();
-				if (imageView != null) {
-
-					if (bitmap != null) {
-						imageView.setImageBitmap(bitmap);
-					} else {
-						imageView.setImageDrawable(imageView.getContext().getResources()
-								.getDrawable(R.drawable.account_image));
-					}
-				}
-
-			}
-		
-		
-		
-	
+		protected void onPostExecute(Void result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			mSpinner.hide();
+		}
 	}
 
-}
-	
-	 public class  follow_task extends AsyncTask<String, Void, Void>{
+	public class unfollow_task extends AsyncTask<String, Void, Void> {
 
-		 @Override
+		@Override
 		protected void onPreExecute() {
-			 mSpinner = new ProgressDialog(context);
-				mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
-				mSpinner.setMessage("Loading...");
-		        
-			 mSpinner.show();
-		super.onPreExecute();
-		}
-		 
-			@Override
-			protected Void doInBackground(String... params) {
+			/*mSpinner = new ProgressDialog(context);
+			mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
+			mSpinner.setMessage("Loading...");
+
+			mSpinner.show();*/
 			
-				String userid=params[0];
-				
-				String url="https://api.instagram.com/v1/users/"+userid+"/relationship/?access_token="+MainSingleTon.accesstoken;
-				// key and value pair
-		        List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(1);
-		        nameValuePair.add(new BasicNameValuePair("action","unfollow"));
-		        
-				
-		        JSONObject json=jParser.getJSONFromUrlByPost(url, nameValuePair);
-				
-				System.out.println("Unfollowed user status=="+json );
-				
-				
-				return null;
-			}
-			 @Override
-			protected void onPostExecute(Void result) {
-				// TODO Auto-generated method stub
-				super.onPostExecute(result);
-				mSpinner.hide();
-			}
-		 }
+			Mutual_Fragments.Mutual_arraylist.remove(selected_position);
+			Mutual_Fragments.adapter.notifyDataSetChanged();
+			super.onPreExecute();
+		}
+
+		@Override
+		protected Void doInBackground(String... params) {
+
+			String userid = params[0];
+
+			String url = "https://api.instagram.com/v1/users/" + userid
+					+ "/relationship/?access_token="
+					+ MainSingleTon.accesstoken;
+			// key and value pair
+			List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(1);
+			nameValuePair.add(new BasicNameValuePair("action", "unfollow"));
+
+			JSONObject json = jParser.getJSONFromUrlByPost(url, nameValuePair);
+
+			System.out.println("Unfollowed user status==" + json);
+
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			//mSpinner.hide();
+		}
+	}
 }

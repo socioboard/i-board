@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.socioboard.iboardpro"
-    android:versionCode="7"
-    android:versionName="1.0.5" >
+    android:versionCode="10"
+    android:versionName="1.0.8" >
 
     <uses-sdk
         android:minSdkVersion="11"
         android:targetSdkVersion="21" />
+
+    <permission
+        android:name="com.socioboard.iboardpro.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -39,6 +43,45 @@
         </activity>
 
         <receiver android:name="com.socioboard.iboardpro.SchedulerCustomReceiver" />
+        <receiver android:name="com.socioboard.iboardpro.CustomReciver" />
+
+        <!-- For getting push from parse.com -->
+
+        <service android:name="com.parse.PushService" />
+
+        <receiver android:name="com.parse.ParseBroadcastReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.parse.GcmBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
+  
+                <category android:name="com.socioboard.iboardpro" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.socioboard.iboardpro.MyCustomReceiver"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.socioboard.iboardpro.UPDATE_STATUS" />
+            </intent-filter>
+        </receiver>
+
+        <!-- AppNext -->
+        <receiver
+            android:name="com.appnext.appnextsdk.ReferralReceiver"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

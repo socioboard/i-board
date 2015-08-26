@@ -52,7 +52,7 @@ public class FollowByAdapter extends BaseAdapter {
 		if (convertView == null) {
 			LayoutInflater mInflater = (LayoutInflater) context
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			convertView = mInflater.inflate(R.layout.follow_by_list_item,
+			convertView = mInflater.inflate(R.layout.followed_by_listitemonly,
 					parent, false);
 		}
 

@@ -16,6 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 
@@ -25,21 +27,27 @@ import com.socioboard.iboardpro.JSONParser;
 import com.socioboard.iboardpro.R;
 import com.socioboard.iboardpro.adapter.FollowsAdapter;
 import com.socioboard.iboardpro.database.util.MainSingleTon;
+import com.socioboard.iboardpro.fragments.Feeds_Fragments.GetpagedUserdata;
 import com.socioboard.iboardpro.models.FollowModel;
 import com.socioboard.iboardpro.ui.WaveDrawable;
 
 /**
  * fragment is used for fetching follows list of user and showing in list view
  */
-public class Follows_Fragment extends Fragment {
+public class Follows_Fragment extends Fragment implements OnScrollListener {
 
-	ArrayList<FollowModel> arrayList = new ArrayList<FollowModel>();
+	public static ArrayList<FollowModel> arrayList = new ArrayList<FollowModel>();
 	JSONParser jParser = new JSONParser();
-	FollowsAdapter adapter;
+	public static FollowsAdapter adapter;
 	ListView list;
 
 	private WaveDrawable waveDrawable;
 	ImageView progressimage;
+
+	// loadmore
+	ViewGroup viewGroup;
+	boolean isAlreadyScrolling = true;
+	String nexturl;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,9 +55,10 @@ public class Follows_Fragment extends Fragment {
 		View rootView = inflater.inflate(R.layout.fragment_followers,
 				container, false);
 		list = (ListView) rootView.findViewById(R.id.listView);
+		addFooterView();
+		list.setOnScrollListener(Follows_Fragment.this);
+		progressimage = (ImageView) rootView.findViewById(R.id.image);
 
-		progressimage=(ImageView) rootView.findViewById(R.id.image);
-		
 		waveDrawable = new WaveDrawable(Color.parseColor("#8DD2FA"), 500);
 		progressimage.setBackground(waveDrawable);
 
@@ -60,6 +69,17 @@ public class Follows_Fragment extends Fragment {
 
 		new getUserFollowers().execute();
 		return rootView;
+	}
+
+	private void addFooterView() {
+
+		LayoutInflater inflater = getActivity().getLayoutInflater();
+
+		viewGroup = (ViewGroup) inflater.inflate(R.layout.progress_layout,
+				list, false);
+
+		list.addFooterView(viewGroup);
+
 	}
 
 	class getUserFollowers extends AsyncTask<Void, Void, Void> {
@@ -78,11 +98,20 @@ public class Follows_Fragment extends Fragment {
 			JSONObject json = jParser
 					.getJSONFromUrlByGet(ConstantUrl.URL_Follows
 							+ MainSingleTon.accesstoken);
+			System.out.println("Follow url" + ConstantUrl.URL_Follows
+					+ MainSingleTon.accesstoken);
 			System.out.println("jsonresponse" + json);
 			try {
 
-				JSONObject pagination_obj = json
-						.getJSONObject(ConstantTags.TAG_PAGINATION);
+				if (json.has("pagination")) {
+					JSONObject jsonObject = json.getJSONObject("pagination");
+					if (jsonObject.has("next_url")) {
+						nexturl = jsonObject.getString("next_url");
+					}
+
+				}
+
+				System.out.println("follow user next url" + nexturl);
 
 				JSONArray data = json.getJSONArray(ConstantTags.TAG_DATA);
 
@@ -106,9 +135,6 @@ public class Follows_Fragment extends Fragment {
 					System.out.println("inside array name=str_full_name"
 							+ str_full_name);
 				}
-				JSONObject meta_obj = pagination_obj
-						.getJSONObject(ConstantTags.TAG_META);
-				String str_code = meta_obj.getString(ConstantTags.TAG_CODE);
 
 			} catch (JSONException e) {
 				System.out.println("catch block");
@@ -122,7 +148,90 @@ public class Follows_Fragment extends Fragment {
 			super.onPostExecute(result);
 
 			setAdapter();
+			isAlreadyScrolling = false;
 			progressimage.setVisibility(View.INVISIBLE);
+
+		}
+
+	}
+
+	class getPagedFollowers extends AsyncTask<String, Void, Void> {
+
+		@Override
+		protected void onPreExecute() {
+
+			super.onPreExecute();
+
+		}
+
+		@Override
+		protected Void doInBackground(String... params) {
+
+			String next_url = params[0].toString();
+
+			JSONObject json = jParser.getJSONFromUrlByGet(next_url);
+
+			System.out.println("jsone respnse after loadmore"+json);
+			try {
+
+				if (json.has("pagination")) {
+					
+					System.out.println("has peginaion true");
+					
+					JSONObject jsonObject = json.getJSONObject("pagination");
+					if (jsonObject.has("next_url")) {
+						nexturl = jsonObject.getString("next_url");
+						System.out.println("nexturl"+nexturl);
+					}
+					else {
+						nexturl=null;
+					}
+
+				}
+				
+
+				JSONArray data = json.getJSONArray(ConstantTags.TAG_DATA);
+
+				for (int data_i = 0; data_i < data.length(); data_i++) {
+
+					JSONObject data_obj = data.getJSONObject(data_i);
+					String str_full_name = data_obj
+							.getString(ConstantTags.TAG_FULL_NAME);
+					String str_profile_picture = data_obj
+							.getString(ConstantTags.TAG_PROFILE_PICTURE);
+					String str_id = data_obj.getString(ConstantTags.TAG_ID);
+					String str_username = data_obj
+							.getString(ConstantTags.TAG_USERNAME);
+
+					FollowModel model = new FollowModel();
+					model.setFull_name(str_full_name);
+					model.setProfile_pic_url(str_profile_picture);
+					model.setUserid(str_id);
+					model.setUsername(str_username);
+					arrayList.add(model);
+					System.out.println("inside array name=str_full_name"
+							+ str_full_name);
+				}
+
+			} catch (JSONException e) {
+				System.out.println("catch block");
+				e.printStackTrace();
+			}
+
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			super.onPostExecute(result);
+
+			System.out.println("$$$$$$$$$$$$$$$$$$$$$$$");
+
+			viewGroup.setVisibility(View.INVISIBLE);
+			int listCount = list.getCount();
+			list.setScrollY(listCount);
+			adapter.notifyDataSetChanged();
+			isAlreadyScrolling = false;
 
 		}
 
@@ -138,8 +247,53 @@ public class Follows_Fragment extends Fragment {
 	public void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
-		list.setAdapter(null);
-		adapter.imageLoader.clearCache();
+
+	}
+
+	@Override
+	public void onScrollStateChanged(AbsListView view, int scrollState) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onScroll(AbsListView view, int firstVisibleItem,
+			int visibleItemCount, int totalItemCount) {
+
+		/* maybe add a padding */
+
+		boolean loadMore = firstVisibleItem + visibleItemCount >= totalItemCount;
+
+		if (loadMore) {
+
+			System.out.println("inside loadmore adapter coumt");
+			if (isAlreadyScrolling) {
+
+			} else {
+
+				viewGroup.setVisibility(View.VISIBLE);
+
+				isAlreadyScrolling = true;
+				System.out.println("adapter.getCount()" + adapter.getCount());
+				if (adapter.getCount() != 0) {
+					System.out.println("inside adapter.getCount()"
+							+ adapter.getCount());
+					if (nexturl != null) {
+						new getPagedFollowers().execute(nexturl);
+					}
+					else {
+						viewGroup.setVisibility(View.INVISIBLE);
+					}
+
+				} else {
+					
+				}
+			}
+
+		} else {
+
+		}
+
 	}
 
 }

@@ -23,7 +23,7 @@ import android.widget.TextView;
 public class InstagramDialog extends Dialog {
 
 	static final float[] DIMENSIONS_LANDSCAPE = { 460, 260 };
-	static final float[] DIMENSIONS_PORTRAIT = { 280, 420 };
+	static final float[] DIMENSIONS_PORTRAIT = { 300, 420 };
 	static final FrameLayout.LayoutParams FILL = new FrameLayout.LayoutParams(
 			ViewGroup.LayoutParams.FILL_PARENT,
 			ViewGroup.LayoutParams.FILL_PARENT);
@@ -37,7 +37,7 @@ public class InstagramDialog extends Dialog {
 	private LinearLayout mContent;
 	private TextView mTitle;
 
-	private static final String TAG = "Instagram-WebView";
+	private static final String TAG = "in-boardpro-WebView";
 
 	public InstagramDialog(Context context, String url,
 			OAuthDialogListener listener) {
@@ -88,10 +88,17 @@ public class InstagramDialog extends Dialog {
 		mWebView.setVerticalScrollBarEnabled(false);
 		mWebView.setHorizontalScrollBarEnabled(false);
 		mWebView.setWebViewClient(new OAuthWebViewClient());
+		
 		mWebView.getSettings().setJavaScriptEnabled(true);
+		mWebView.getSettings().setLoadWithOverviewMode(true);
+		mWebView.getSettings().setUseWideViewPort(true);
 		mWebView.loadUrl(mUrl);
 		mWebView.setLayoutParams(FILL);
+		
+		
 		mContent.addView(mWebView);
+		
+		
 	}
 
 	private class OAuthWebViewClient extends WebViewClient {

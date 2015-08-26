@@ -1,12 +1,20 @@
 package com.socioboard.iboardpro.adapter;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
+
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.animation.Animation;
@@ -14,10 +22,13 @@ import android.view.animation.AnimationUtils;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.socioboard.iboardpro.CommonUtilss;
+import com.socioboard.iboardpro.JSONParser;
 import com.socioboard.iboardpro.R;
+import com.socioboard.iboardpro.database.util.MainSingleTon;
 import com.socioboard.iboardpro.lazylist.ImageLoader;
 import com.socioboard.iboardpro.models.FeedsModel;
 
@@ -26,9 +37,12 @@ public class FeedsAdapter extends BaseAdapter {
 	ArrayList<FeedsModel> arrayList;
 	FeedsModel model;
 	Context context;
+	JSONParser jParser = new JSONParser();
 	public ImageLoader imageLoader;
 	CommonUtilss commonUtilss;
 	private int lastPosition = -1;
+	private ProgressDialog mSpinner;
+
 	public FeedsAdapter(Context context, ArrayList<FeedsModel> arrayList) {
 		this.arrayList = arrayList;
 		this.context = context;
@@ -43,9 +57,9 @@ public class FeedsAdapter extends BaseAdapter {
 	}
 
 	@Override
-	public Object getItem(int position) {
+	public FeedsModel getItem(int position) {
 		// TODO Auto-generated method stub
-		return null;
+		return arrayList.get(position);
 	}
 
 	@Override
@@ -74,8 +88,10 @@ public class FeedsAdapter extends BaseAdapter {
 		ImageView user_profile_pic = (ImageView) convertView
 				.findViewById(R.id.current_profile_pic);
 		TextView username = (TextView) convertView.findViewById(R.id.username);
-		ImageView likeimg = (ImageView) convertView
+		final ImageView likeimg = (ImageView) convertView
 				.findViewById(R.id.like_imgview);
+		LinearLayout like_buttn = (LinearLayout) convertView
+				.findViewById(R.id.likelayout);
 
 		like_countText.setText(model.getLikes_count());
 		comment_countText.setText(model.getComments_count());
@@ -90,8 +106,8 @@ public class FeedsAdapter extends BaseAdapter {
 
 		imageLoader.DisplayImage(model.getLow_resolution_url(),
 				profile_imagView);
-		
-		System.out.println("IMAGE URL"+model.getLow_resolution_url());
+
+		System.out.println("IMAGE URL" + model.getLow_resolution_url());
 
 		imageLoader.DisplayImage(model.getFrom_profilepicture(),
 				user_profile_pic);
@@ -115,11 +131,68 @@ public class FeedsAdapter extends BaseAdapter {
 			}
 		});
 
+		Animation animation = AnimationUtils.loadAnimation(context,
+				(position > lastPosition) ? R.anim.up_from_bottom
+						: R.anim.down_from_top);
+		convertView.startAnimation(animation);
+		lastPosition = position;
 
-		 Animation animation = AnimationUtils.loadAnimation(context, (position > lastPosition) ? R.anim.up_from_bottom : R.anim.down_from_top);
-		    convertView.startAnimation(animation);
-		    lastPosition = position;
+		like_buttn.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				if (model.getIslike()) {
+					model.setIslike(false);
+					likeimg.setImageResource(R.drawable.icon_like);
+				} else {
+					model.setIslike(true);
+					likeimg.setImageResource(R.drawable.red_like);
+				}
+				new like_task().execute(model.getFeed_post_id());
+
+			}
+		});
+
 		return convertView;
+	}
+
+	public class like_task extends AsyncTask<String, Void, Void> {
+
+		@Override
+		protected void onPreExecute() {
+			mSpinner = new ProgressDialog(context);
+			mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
+			mSpinner.setMessage("Loading...");
+
+			mSpinner.show();
+			super.onPreExecute();
+		}
+
+		@Override
+		protected Void doInBackground(String... params) {
+
+			String media_id = params[0];
+
+			String url = "https://api.instagram.com/v1/media/" + media_id
+					+ "/likes/?access_token=" + MainSingleTon.accesstoken;
+			// key and value pair
+			List<NameValuePair> nameValuePair = new ArrayList<NameValuePair>(1);
+			nameValuePair.add(new BasicNameValuePair("action", "likes"));
+
+			JSONObject json = jParser.getJSONFromUrlByPost(url, nameValuePair);
+
+			System.out.println("Likes photo status==" + json);
+
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			// TODO Auto-generated method stub
+			super.onPostExecute(result);
+			mSpinner.hide();
+
+		}
 	}
 
 }

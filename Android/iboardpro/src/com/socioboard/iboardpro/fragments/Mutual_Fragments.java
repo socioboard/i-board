@@ -27,6 +27,7 @@ import com.socioboard.iboardpro.ConstantUrl;
 import com.socioboard.iboardpro.JSONParser;
 import com.socioboard.iboardpro.R;
 import com.socioboard.iboardpro.adapter.FollowsAdapter;
+import com.socioboard.iboardpro.adapter.MutualAdapter;
 import com.socioboard.iboardpro.database.util.MainSingleTon;
 import com.socioboard.iboardpro.models.FollowModel;
 import com.socioboard.iboardpro.ui.WaveDrawable;
@@ -40,8 +41,8 @@ public class Mutual_Fragments extends Fragment {
 	ArrayList<FollowModel> Follows_arrayList = new ArrayList<FollowModel>();
 	ArrayList<FollowModel> Followed_by_arrayList = new ArrayList<FollowModel>();
 	JSONParser jParser = new JSONParser();
-	ArrayList<FollowModel> Mutual_arraylist = new ArrayList<FollowModel>();
-	FollowsAdapter adapter;
+	public static ArrayList<FollowModel> Mutual_arraylist = new ArrayList<FollowModel>();
+	public static  MutualAdapter adapter;
 	ListView list;
 	private WaveDrawable waveDrawable;
 	ImageView progressimage;
@@ -220,7 +221,7 @@ public class Mutual_Fragments extends Fragment {
 	}
 
 	void setAdapter() {
-		adapter = new FollowsAdapter(getActivity(), Mutual_arraylist);
+		adapter = new MutualAdapter(getActivity(), Mutual_arraylist);
 
 		list.setAdapter(adapter);
 		progressimage.setVisibility(View.INVISIBLE);

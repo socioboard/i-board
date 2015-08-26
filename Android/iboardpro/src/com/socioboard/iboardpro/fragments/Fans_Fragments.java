@@ -39,10 +39,10 @@ import com.socioboard.iboardpro.ui.WaveDrawable;
 public class Fans_Fragments extends Fragment {
 
 	ArrayList<FollowModel> Follows_arrayList = new ArrayList<FollowModel>();
-	ArrayList<FollowModel> Followed_by_arrayList = new ArrayList<FollowModel>();
+	public static ArrayList<FollowModel> Followed_by_arrayList = new ArrayList<FollowModel>();
 	JSONParser jParser = new JSONParser();
-	ArrayList<FollowModel> Fans_arraylist = new ArrayList<FollowModel>();
-	FansAdapter adapter;
+	public static ArrayList<FollowModel> Fans_arraylist = new ArrayList<FollowModel>();
+	public static FansAdapter adapter;
 	ListView list;
 	private WaveDrawable waveDrawable;
 	ImageView progressimage;
@@ -119,12 +119,11 @@ public class Fans_Fragments extends Fragment {
 					System.out.println("inside array name=str_full_name"
 							+ str_full_name);
 				}
-				JSONObject meta_obj = pagination_obj
-						.getJSONObject(ConstantTags.TAG_META);
-				String str_code = meta_obj.getString(ConstantTags.TAG_CODE);
+				
 
 			} catch (JSONException e) {
 				System.out.println("catch block");
+				e.printStackTrace();
 			}
 
 			return null;
@@ -173,15 +172,16 @@ public class Fans_Fragments extends Fragment {
 					model.setUserid(str_id);
 					model.setUsername(str_username);
 					Followed_by_arrayList.add(model);
+					
+					System.out.println("followedby fragment");
+					
 					System.out.println("inside array name=str_full_name"
 							+ str_full_name);
 				}
-				JSONObject meta_obj = pagination_obj
-						.getJSONObject(ConstantTags.TAG_META);
-				String str_code = meta_obj.getString(ConstantTags.TAG_CODE);
-
+				
 			} catch (JSONException e) {
 				System.out.println("catch block");
+				e.printStackTrace();
 			}
 
 			return null;
@@ -194,6 +194,11 @@ public class Fans_Fragments extends Fragment {
 			System.out.println("arrayList" + Followed_by_arrayList.size());
 			// setAdapter();
 
+			
+			
+			//Followed_by_arrayList.removeAll(Follows_arrayList);
+			
+			
 			for (int i = 0; i < Followed_by_arrayList.size(); i++) {
 
 				boolean isContain = false;
@@ -219,7 +224,14 @@ public class Fans_Fragments extends Fragment {
 
 			}
 
-			setAdapter();
+			if (Fans_arraylist.size()>0) {
+				setAdapter();
+			}
+			else {
+				Toast.makeText(getActivity(), "No data found",Toast.LENGTH_LONG).show();
+				progressimage.setVisibility(View.INVISIBLE);
+			}
+			
 
 		}
 

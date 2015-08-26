@@ -51,7 +51,7 @@
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/textView3"
         android:layout_marginTop="153dp"
-        android:background="@drawable/buttonbg"
+        android:background="@drawable/connect_with_instagram"
         android:fontFamily="sans-serif-light"
         android:text="Connect with Instagram"
         android:textColor="@color/white"
