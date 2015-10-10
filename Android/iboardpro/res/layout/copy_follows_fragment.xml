@@ -6,7 +6,7 @@
         android:id="@+id/rl1"
         android:layout_width="match_parent"
         android:layout_height="140dp"
-        android:background="@color/light_blue" >
+        android:background="@color/blue_logo">
 
         <EditText
             android:id="@+id/captionText"

@@ -9,9 +9,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Toast;
 
+import com.socioboard.iboardpro.database.util.InstagramManyLocalData;
 import com.socioboard.iboardpro.database.util.MainSingleTon;
 import com.socioboard.iboardpro.database.util.ModelUserDatas;
-import com.socioboard.iboardpro.database.util.TwiterManyLocalData;
 
 public class SplashActivity extends Activity {
 
@@ -20,7 +20,7 @@ public class SplashActivity extends Activity {
 	 * redirect to feed fragment(Main activity) or redirect to login screen
 	 */
 
-	TwiterManyLocalData twiterManyLocalData;
+	InstagramManyLocalData twiterManyLocalData;
 
 	SharedPreferences preferences;
 
@@ -36,7 +36,7 @@ public class SplashActivity extends Activity {
 		Boolean isInternetPresent = cd.isConnectingToInternet();
 
 		if (isInternetPresent) {
-			twiterManyLocalData = new TwiterManyLocalData(
+			twiterManyLocalData = new InstagramManyLocalData(
 					getApplicationContext());
 
 			twiterManyLocalData.CreateTable();

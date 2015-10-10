@@ -1,39 +1,27 @@
 package com.socioboard.iboardpro.fragments;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.socioboard.iboardpro.ApplicationData;
-import com.socioboard.iboardpro.ConstantTags;
-import com.socioboard.iboardpro.ConstantUrl;
-import com.socioboard.iboardpro.JSONParser;
-import com.socioboard.iboardpro.R;
-import com.socioboard.iboardpro.adapter.CopyFollowAdapter;
-import com.socioboard.iboardpro.adapter.FollowByAdapter;
-import com.socioboard.iboardpro.adapter.FollowsAdapter;
-import com.socioboard.iboardpro.database.util.MainSingleTon;
-import com.socioboard.iboardpro.fragments.Follows_Fragment.getPagedFollowers;
-import com.socioboard.iboardpro.models.FollowModel;
-import com.socioboard.iboardpro.ui.WaveDrawable;
-
-import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -41,7 +29,16 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.socioboard.iboardpro.ApplicationData;
+import com.socioboard.iboardpro.ConstantTags;
+import com.socioboard.iboardpro.Encrypt;
+import com.socioboard.iboardpro.JSONParser;
+import com.socioboard.iboardpro.R;
+import com.socioboard.iboardpro.adapter.CopyFollowAdapter;
+import com.socioboard.iboardpro.database.util.MainSingleTon;
+import com.socioboard.iboardpro.models.FollowModel;
+import com.socioboard.iboardpro.ui.WaveDrawable;
 
 public class Copy_follows extends Fragment implements OnScrollListener {
 
@@ -92,7 +89,14 @@ public class Copy_follows extends Fragment implements OnScrollListener {
 		progressimage = (ImageView) rootView.findViewById(R.id.image);
 
 		waveDrawable = new WaveDrawable(Color.parseColor("#8DD2FA"), 500);
-		progressimage.setBackground(waveDrawable);
+		if (Build.VERSION.SDK_INT >= 16) {
+
+			progressimage.setBackground(waveDrawable);
+
+		} else {
+
+			progressimage.setBackgroundDrawable(waveDrawable);
+		}
 
 		Interpolator interpolator = new LinearInterpolator();
 
@@ -145,6 +149,11 @@ public class Copy_follows extends Fragment implements OnScrollListener {
 			}
 		});
 
+		SetAdapter();
+		
+		if (follows_arrayList.size()==0) {
+			viewGroup.setVisibility(View.INVISIBLE);
+		}
 		return rootView;
 
 	}
@@ -169,24 +178,29 @@ public class Copy_follows extends Fragment implements OnScrollListener {
 			// TODO Auto-generated method stub
 			super.onPreExecute();
 			progressimage.setVisibility(View.VISIBLE);
+			list.setVisibility(View.INVISIBLE);
 		}
 
 		@Override
 		protected Void doInBackground(String... params) {
 
 			String username = params[0];
-
+			
 			JSONObject json = jParser.getJSONFromUrlByGet(getUserIDURl
-					+ username + "&client_id=" + ApplicationData.CLIENT_ID);
+					+ username.replace(" ", "%20") + "&client_id=" + GetClientIDKeys(ApplicationData.CLIENT_ID));
 
+			
 			try {
+				if (json.has(ConstantTags.TAG_DATA)) {
+					
+				
 				JSONArray data = json.getJSONArray(ConstantTags.TAG_DATA);
 				if (data.length() > 0) {
 					JSONObject object = data.getJSONObject(0);
 					id = object.getString(ConstantTags.TAG_ID);
 
 				}
-
+				}
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -199,7 +213,8 @@ public class Copy_follows extends Fragment implements OnScrollListener {
 		@Override
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
-			progressimage.setVisibility(View.INVISIBLE);
+		
+			list.setVisibility(View.VISIBLE);
 			String url;
 
 			if (id != null) {
@@ -220,6 +235,7 @@ public class Copy_follows extends Fragment implements OnScrollListener {
 				new getUserFollowers().execute(url);
 			} else {
 				list.setVisibility(View.INVISIBLE);
+				progressimage.setVisibility(View.INVISIBLE);
 				alerttext.setVisibility(View.VISIBLE);
 			}
 		}
@@ -231,6 +247,8 @@ public class Copy_follows extends Fragment implements OnScrollListener {
 		protected void onPreExecute() {
 			// TODO Auto-generated method stub
 			super.onPreExecute();
+			follows_arrayList.clear();
+			adapter.notifyDataSetChanged();
 
 		}
 
@@ -239,7 +257,7 @@ public class Copy_follows extends Fragment implements OnScrollListener {
 
 			String url = params[0];
 
-			follows_arrayList.clear();
+			
 			JSONObject json = jParser.getJSONFromUrlByGet(url);
 			System.out.println("jsonresponse" + json);
 			try {
@@ -251,9 +269,8 @@ public class Copy_follows extends Fragment implements OnScrollListener {
 					}
 
 				}
-				JSONObject pagination_obj = json
-						.getJSONObject(ConstantTags.TAG_PAGINATION);
-
+				
+				if (json.has(ConstantTags.TAG_DATA)) {
 				JSONArray data = json.getJSONArray(ConstantTags.TAG_DATA);
 
 				if (data.length() > 0) {
@@ -277,11 +294,18 @@ public class Copy_follows extends Fragment implements OnScrollListener {
 						follows_arrayList.add(model);
 						System.out.println("inside array name=str_full_name"
 								+ str_full_name);
+						if (data_i % 4 == 0) {
+							if (data_i != 0) {
+								//if full name is "1" then inflate banner ad
+								FollowModel model1 = new FollowModel();
+								model1.setFull_name("1");
+								follows_arrayList.add(model1);
+							}
+
+						}
 					}
 				}
-				JSONObject meta_obj = pagination_obj
-						.getJSONObject(ConstantTags.TAG_META);
-				String str_code = meta_obj.getString(ConstantTags.TAG_CODE);
+				}
 
 			} catch (JSONException e) {
 				System.out.println("catch block");
@@ -296,7 +320,7 @@ public class Copy_follows extends Fragment implements OnScrollListener {
 			progressimage.setVisibility(View.INVISIBLE);
 			if (follows_arrayList.size() > 0) {
 				list.setVisibility(View.VISIBLE);
-				SetAdapter();
+				adapter.notifyDataSetChanged();
 			} else {
 				list.setVisibility(View.INVISIBLE);
 				alerttext.setVisibility(View.VISIBLE);
@@ -338,9 +362,11 @@ public class Copy_follows extends Fragment implements OnScrollListener {
 					}
 
 				}
-				JSONObject pagination_obj = json
-						.getJSONObject(ConstantTags.TAG_PAGINATION);
+			
 
+				if (json.has(ConstantTags.TAG_DATA)) {
+					
+			
 				JSONArray data = json.getJSONArray(ConstantTags.TAG_DATA);
 
 				if (data.length() > 0) {
@@ -362,13 +388,18 @@ public class Copy_follows extends Fragment implements OnScrollListener {
 						model.setUserid(str_id);
 						model.setUsername(str_username);
 						follows_arrayList.add(model);
-						System.out.println("inside array name=str_full_name"
-								+ str_full_name);
+						if (data_i % 4 == 0) {
+							if (data_i != 0) {
+								//if full name is "1" then inflate banner ad
+								FollowModel model1 = new FollowModel();
+								model1.setFull_name("1");
+								follows_arrayList.add(model1);
+							}
+
+						}
 					}
 				}
-				JSONObject meta_obj = pagination_obj
-						.getJSONObject(ConstantTags.TAG_META);
-				String str_code = meta_obj.getString(ConstantTags.TAG_CODE);
+			}
 
 			} catch (JSONException e) {
 				System.out.println("catch block");
@@ -427,10 +458,13 @@ public class Copy_follows extends Fragment implements OnScrollListener {
 
 			} else {
 
-				viewGroup.setVisibility(View.VISIBLE);
+				
+					viewGroup.setVisibility(View.VISIBLE);
 
+				
+			
 				isAlreadyScrolling = true;
-				System.out.println("adapter.getCount()" + adapter.getCount());
+			if (adapter!=null) {
 				if (adapter.getCount() != 0) {
 					System.out.println("inside adapter.getCount()"
 							+ adapter.getCount());
@@ -441,9 +475,10 @@ public class Copy_follows extends Fragment implements OnScrollListener {
 						viewGroup.setVisibility(View.INVISIBLE);
 					}
 
-				} else {
-					
 				}
+				
+			}
+			
 			}
 
 		} else {
@@ -453,5 +488,31 @@ public class Copy_follows extends Fragment implements OnScrollListener {
 	
 
 	}
+	public  String GetClientIDKeys(String key)
 
+	{
+		String text1 = null;
+		String finalkey = null;
+		try {
+			byte[] data1 = Base64
+					.decode(ApplicationData.base64, Base64.DEFAULT);
+			text1 = new String(data1, "UTF-8");
+			
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			
+		}
+
+		try {
+			finalkey = Encrypt.decrypt(text1, key);
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
+
+		
+		return finalkey;
+
+	}
+	
 }

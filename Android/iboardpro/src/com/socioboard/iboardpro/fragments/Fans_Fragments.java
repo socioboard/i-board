@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -57,7 +58,14 @@ public class Fans_Fragments extends Fragment {
 		progressimage = (ImageView) rootView.findViewById(R.id.image);
 
 		waveDrawable = new WaveDrawable(Color.parseColor("#8DD2FA"), 500);
-		progressimage.setBackground(waveDrawable);
+		if (Build.VERSION.SDK_INT >= 16) {
+
+			progressimage.setBackground(waveDrawable);
+
+		} else {
+
+			progressimage.setBackgroundDrawable(waveDrawable);
+		}
 
 		Interpolator interpolator = new LinearInterpolator();
 
@@ -220,6 +228,16 @@ public class Fans_Fragments extends Fragment {
 					model.setUsername(Followed_by_arrayList.get(i)
 							.getUsername());
 					Fans_arraylist.add(model);
+					
+					if (i % 4 == 0) {
+						if (i != 0) {
+							//if full name is "1" then inflate banner ad
+							FollowModel model1 = new FollowModel();
+							model1.setFull_name("1");
+							Fans_arraylist.add(model1);
+						}
+
+					}
 				}
 
 			}

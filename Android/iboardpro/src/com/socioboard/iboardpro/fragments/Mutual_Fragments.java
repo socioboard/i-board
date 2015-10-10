@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -56,7 +57,14 @@ public class Mutual_Fragments extends Fragment {
 		progressimage = (ImageView) rootView.findViewById(R.id.image);
 
 		waveDrawable = new WaveDrawable(Color.parseColor("#8DD2FA"), 500);
-		progressimage.setBackground(waveDrawable);
+		if (Build.VERSION.SDK_INT >= 16) {
+
+			progressimage.setBackground(waveDrawable);
+
+		} else {
+
+			progressimage.setBackgroundDrawable(waveDrawable);
+		}
 
 		Interpolator interpolator = new LinearInterpolator();
 
@@ -93,9 +101,9 @@ public class Mutual_Fragments extends Fragment {
 			System.out.println("jsonresponse" + json);
 			try {
 
-				JSONObject pagination_obj = json
-						.getJSONObject(ConstantTags.TAG_PAGINATION);
-
+				
+				
+				if (json.has(ConstantTags.TAG_DATA)) {
 				JSONArray data = json.getJSONArray(ConstantTags.TAG_DATA);
 
 				for (int data_i = 0; data_i < data.length(); data_i++) {
@@ -115,7 +123,7 @@ public class Mutual_Fragments extends Fragment {
 					model.setUserid(str_id);
 					model.setUsername(str_username);
 					Follows_arrayList.add(model);
-
+				}
 				}
 
 				// String str_code = meta_obj.getString(ConstantTags.TAG_CODE);
@@ -150,8 +158,7 @@ public class Mutual_Fragments extends Fragment {
 			System.out.println("jsonresponse" + json);
 			try {
 
-				JSONObject pagination_obj = json
-						.getJSONObject(ConstantTags.TAG_PAGINATION);
+				if (json.has(ConstantTags.TAG_DATA)) {
 				JSONArray data = json.getJSONArray(ConstantTags.TAG_DATA);
 
 				for (int data_i = 0; data_i < data.length(); data_i++) {
@@ -174,7 +181,7 @@ public class Mutual_Fragments extends Fragment {
 					System.out.println("inside array name=str_full_name"
 							+ str_full_name);
 				}
-
+				}
 			} catch (JSONException e) {
 				System.out.println("catch block getFollowedBy");
 

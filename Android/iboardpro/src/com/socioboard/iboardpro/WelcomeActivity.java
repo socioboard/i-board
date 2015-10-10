@@ -1,5 +1,6 @@
 package com.socioboard.iboardpro;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import android.app.Activity;
@@ -9,9 +10,9 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.util.Base64;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -31,14 +32,17 @@ public class WelcomeActivity extends Activity {
 	InstagramManyLocalData db;
 	PageIndicator indicator;
 	ArrayList<IntroViewPagerModel> arrayList = new ArrayList<IntroViewPagerModel>();
-	
+
 	viewpageradapter viewpageradapter;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.log_in);
-		mApp = new InstagramApp(this, ApplicationData.CLIENT_ID,
-				ApplicationData.CLIENT_SECRET, ApplicationData.CALLBACK_URL);
+		String clientid=GetClientIDKeys(ApplicationData.CLIENT_ID);
+		String clientsecret=GetClientSecretKeys(ApplicationData.CLIENT_SECRET);
+
+		mApp = new InstagramApp(this, clientid,clientsecret, ApplicationData.CALLBACK_URL);
 		mApp.setListener(listener);
 		connect = (ImageView) findViewById(R.id.signin);
 		db = new InstagramManyLocalData(getApplicationContext());
@@ -72,7 +76,6 @@ public class WelcomeActivity extends Activity {
 	void initviewpager() {
 		// View Pager initialization
 
-		
 		ViewPager pager = (ViewPager) findViewById(R.id.pager);
 		indicator = (PageIndicator) findViewById(R.id.indicator);
 
@@ -101,7 +104,6 @@ public class WelcomeActivity extends Activity {
 
 		arrayList.add(model5);
 
-
 		viewpageradapter = new viewpageradapter(getApplicationContext(),
 				arrayList);
 
@@ -109,8 +111,7 @@ public class WelcomeActivity extends Activity {
 		indicator.setViewPager(pager);
 
 	}
-	
-	
+
 	OAuthAuthenticationListener listener = new OAuthAuthenticationListener() {
 
 		@Override
@@ -118,11 +119,6 @@ public class WelcomeActivity extends Activity {
 
 			System.out.println("accessToken" + mApp.getAccessToken());
 
-			
-
-			
-			
-			
 			new Setuserdata().execute(mApp.getProfileimageUrl());
 
 		}
@@ -180,6 +176,62 @@ public class WelcomeActivity extends Activity {
 			Toast.makeText(WelcomeActivity.this, "sucess", Toast.LENGTH_SHORT)
 					.show();
 		}
+
+	}
+
+
+	
+	public  String GetClientIDKeys(String key)
+
+	{
+		String text1 = null;
+		String finalkey = null;
+		try {
+			byte[] data1 = Base64
+					.decode(ApplicationData.base64, Base64.DEFAULT);
+			text1 = new String(data1, "UTF-8");
+			System.out.println("base64 key" + text1);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			
+		}
+
+		try {
+			finalkey = Encrypt.decrypt(text1, key);
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
+
+		
+		return finalkey;
+
+	}
+	
+	public  String GetClientSecretKeys(String key)
+
+	{
+		String text1 = null;
+		String finalkey = null;
+		try {
+			byte[] data1 = Base64
+					.decode(ApplicationData.base64, Base64.DEFAULT);
+			text1 = new String(data1, "UTF-8");
+			
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			
+		}
+
+		try {
+			finalkey = Encrypt.decrypt(text1, key);
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
+
+		
+		return finalkey;
 
 	}
 }

@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.socioboard.iboardpro.FileUtils;
 import com.socioboard.iboardpro.MainActivity;
 import com.socioboard.iboardpro.R;
 
@@ -232,43 +233,24 @@ public class Schedule_fragment extends Fragment {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == RESULT_LOAD_IMG
-				&& resultCode == getActivity().RESULT_OK && data != null) {
-			// Let's read picked image data - its URI
-			/*Uri pickedImageuri = data.getData();
-			// Let's read picked image path using content resolver
-			String[] filePath = { MediaStore.Images.Media.DATA };
-			Cursor cursor = getActivity().getContentResolver().query(
-					pickedImageuri, filePath, null, null, null);
-			cursor.moveToFirst();
-			imagePath = cursor.getString(cursor.getColumnIndex(filePath[0]));
+		
+			
+			  if (requestCode == RESULT_LOAD_IMG && resultCode == getActivity().RESULT_OK && data != null)
+			  {
+				  System.out.println("inside data found");
+			    Uri selectedImage = data.getData();
 
+			    imagePath=FileUtils.getPath(getActivity(), selectedImage);
+			          
+			    Bitmap bitmap =getBitmapFromPath(FileUtils.getPath(getActivity(), selectedImage));
+			      
+			    pickedImage.setImageBitmap(bitmap);
+			  }
 			
 			
 			
-			String  picturePath = cursor.getString(columnIndex);
-			   cursor.close();
-			   
-			   //image.setImageURI(selectedImage);
-			        
-			        
-			        
-			   String selectedImagePath = getPath(selectedImage);
-			   
-			   Bitmap bitmap=decodeSampledBitmapFromResource(selectedImagePath,  200, 200);
-			   //Bitmap bitmap=BitmapFactory.decodeFile(selectedImagePath);
-			   bitmap=Bitmap.createScaledBitmap(bitmap, 100, 100, true);
-			   ByteArrayOutputStream bmpStream = new ByteArrayOutputStream();
-			        
-			   bitmap.compress(Bitmap.CompressFormat.PNG, 100, bmpStream);
-			pickedImage.setImageBitmap(BitmapFactory.decodeFile(imagePath));
-
-			// At the end remember to close the cursor or you will end with the
-			// RuntimeException!
-			cursor.close();*/
 			
-			
-			Uri selectedImage = data.getData();
+			/*Uri selectedImage = data.getData();
 			   String[] filePathColumn = { MediaStore.Images.Media.DATA };
 
 			   Cursor cursor = getActivity().getContentResolver().query(selectedImage,
@@ -289,10 +271,10 @@ public class Schedule_fragment extends Fragment {
 			   //Bitmap bitmap=BitmapFactory.decodeFile(selectedImagePath);
 			   bitmap=Bitmap.createScaledBitmap(bitmap, 100, 100, true);
 			   pickedImage.setImageBitmap(bitmap);
-			   
+			   */
 		}
 
-	}
+	
 	
 	public String getPath(Uri uri) {
 		   String[] projection = { MediaStore.Images.Media.DATA };
@@ -342,5 +324,50 @@ public class Schedule_fragment extends Fragment {
 		return inSampleSize;
 		}
 	
+		public Bitmap getBitmapFromPath(String pathName) 
+		 {
+
+		  // First decode with inJustDecodeBounds=true to check dimensions
+		  final BitmapFactory.Options options = new BitmapFactory.Options();
+
+		  options.inJustDecodeBounds = true;
+
+		  BitmapFactory.decodeFile(pathName, options);
+
+		  // Calculate inSampleSize
+		  options.inSampleSize = calculateInSampleSize1(options, 640, 640);
+
+		  // Decode bitmap with inSampleSize set
+
+		  options.inJustDecodeBounds = false;
+
+		  return BitmapFactory.decodeFile(pathName, options);
+
+		 }
 	
+		 public static int calculateInSampleSize1 (BitmapFactory.Options options,int reqWidth, int reqHeight) 
+		 {
+		  // Raw height and width of image
+		  final int height = options.outHeight;
+		  final int width = options.outWidth;
+		  int inSampleSize = 1;
+
+		  if (height > reqHeight || width > reqWidth) 
+		  {
+
+		   // Calculate ratios of height and width to requested height and
+		   // width
+		   final int heightRatio = Math.round((float) height
+		     / (float) reqHeight);
+		   final int widthRatio = Math.round((float) width / (float) reqWidth);
+
+		   // Choose the smallest ratio as inSampleSize value, this will
+		   // guarantee
+		   // a final image with both dimensions larger than or equal to the
+		   // requested height and width.
+		   inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+		  }
+
+		  return inSampleSize;
+		 }
 }

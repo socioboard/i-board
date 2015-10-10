@@ -1,5 +1,6 @@
 package com.socioboard.iboardpro;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -29,6 +30,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
@@ -63,9 +65,11 @@ import com.socioboard.iboardpro.fragments.Feeds_Fragments;
 import com.socioboard.iboardpro.fragments.Followed_By;
 import com.socioboard.iboardpro.fragments.Follows_Fragment;
 import com.socioboard.iboardpro.fragments.Mutual_Fragments;
+import com.socioboard.iboardpro.fragments.NearBySearch_Fragment;
 import com.socioboard.iboardpro.fragments.Nonfollowers_Fragment;
 import com.socioboard.iboardpro.fragments.Photo_Bucket;
 import com.socioboard.iboardpro.fragments.Schedule_fragment;
+import com.socioboard.iboardpro.fragments.Search_Tag;
 import com.socioboard.iboardpro.instagramlibrary.InstagramApp;
 import com.socioboard.iboardpro.instagramlibrary.InstagramApp.OAuthAuthenticationListener;
 import com.socioboard.iboardpro.ui.Items;
@@ -120,32 +124,28 @@ public class MainActivity extends ActionBarActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		/*Intent myIntent = new Intent(MainActivity.this, CustomReciver.class);
-		pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0,
-				myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-		alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-
-		NotificationManager mNotificationManager = (NotificationManager) this
-				.getApplicationContext().getSystemService(
-						this.getApplicationContext().NOTIFICATION_SERVICE);
-		mNotificationManager.cancelAll();
-		alarmManager.cancel(pendingIntent);
-
-		Date dat = new Date();// initializes to now
-		Calendar cal_alarm = Calendar.getInstance();
-		Calendar cal_now = Calendar.getInstance();
-		cal_now.setTime(dat);
-		cal_alarm.setTime(dat);
-		cal_alarm.set(Calendar.HOUR_OF_DAY, 11);// set the alarm time
-		cal_alarm.set(Calendar.MINUTE, 38);
-		cal_alarm.set(Calendar.SECOND, 0);
-		if (cal_alarm.before(cal_now)) {// if its in the past increment
-			cal_alarm.add(Calendar.DATE, 1);
-		}
-		// SET YOUR AlarmManager here
-
-		alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
-				cal_alarm.getTimeInMillis(), 60000, pendingIntent);*/
+		/*
+		 * Intent myIntent = new Intent(MainActivity.this, CustomReciver.class);
+		 * pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0,
+		 * myIntent, PendingIntent.FLAG_UPDATE_CURRENT); alarmManager =
+		 * (AlarmManager) getSystemService(ALARM_SERVICE);
+		 * 
+		 * NotificationManager mNotificationManager = (NotificationManager) this
+		 * .getApplicationContext().getSystemService(
+		 * this.getApplicationContext().NOTIFICATION_SERVICE);
+		 * mNotificationManager.cancelAll(); alarmManager.cancel(pendingIntent);
+		 * 
+		 * Date dat = new Date();// initializes to now Calendar cal_alarm =
+		 * Calendar.getInstance(); Calendar cal_now = Calendar.getInstance();
+		 * cal_now.setTime(dat); cal_alarm.setTime(dat);
+		 * cal_alarm.set(Calendar.HOUR_OF_DAY, 11);// set the alarm time
+		 * cal_alarm.set(Calendar.MINUTE, 38); cal_alarm.set(Calendar.SECOND,
+		 * 0); if (cal_alarm.before(cal_now)) {// if its in the past increment
+		 * cal_alarm.add(Calendar.DATE, 1); } // SET YOUR AlarmManager here
+		 * 
+		 * alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
+		 * cal_alarm.getTimeInMillis(), 60000, pendingIntent);
+		 */
 
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		if (toolbar != null)
@@ -286,8 +286,8 @@ public class MainActivity extends ActionBarActivity implements
 			public void onClick(View v) {
 
 				mApp = new InstagramApp(MainActivity.this,
-						ApplicationData.CLIENT_ID,
-						ApplicationData.CLIENT_SECRET,
+						GetClientIDKeys(ApplicationData.CLIENT_ID),
+						GetClientSecretKeys(ApplicationData.CLIENT_SECRET),
 						ApplicationData.CALLBACK_URL);
 				mApp.setListener(listener);
 				mApp.authorize();
@@ -339,18 +339,17 @@ public class MainActivity extends ActionBarActivity implements
 		 * reminding user to send photo
 		 */
 
-		/*
-		 * Intent myIntent = new Intent(MainActivity.this,
-		 * SchedulerCustomReceiver.class); pendingIntent =
-		 * PendingIntent.getBroadcast(MainActivity.this, 0, myIntent,
-		 * PendingIntent.FLAG_UPDATE_CURRENT); alarmManager = (AlarmManager)
-		 * getSystemService(ALARM_SERVICE);
-		 * 
-		 * NotificationManager mNotificationManager = (NotificationManager) this
-		 * .getApplicationContext().getSystemService(
-		 * this.getApplicationContext().NOTIFICATION_SERVICE);
-		 * mNotificationManager.cancelAll(); alarmManager.cancel(pendingIntent);
-		 */
+		Intent myIntent = new Intent(MainActivity.this,
+				SchedulerCustomReceiver.class);
+		pendingIntent = PendingIntent.getBroadcast(MainActivity.this, 0,
+				myIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+		NotificationManager mNotificationManager = (NotificationManager) this
+				.getApplicationContext().getSystemService(
+						this.getApplicationContext().NOTIFICATION_SERVICE);
+		mNotificationManager.cancelAll();
+		alarmManager.cancel(pendingIntent);
 
 		mainfragmentManager = getSupportFragmentManager();
 		mainfragmentManager.beginTransaction()
@@ -358,86 +357,67 @@ public class MainActivity extends ActionBarActivity implements
 
 		// Parse installation class for Devices
 
-		ParseInstallation.getCurrentInstallation().saveInBackground();
+		// ParseInstallation.getCurrentInstallation().saveInBackground();
 
-	//	new GetProfileData().execute();
+		// new GetProfileData().execute();
 
 	}
 
-	/*class GetProfileData extends AsyncTask<Void, Void, Void> {
-		String[] profile_data = new String[2];
-		String followed_by_count, follows_count;
-
-		@Override
-		protected Void doInBackground(Void... params) {
-
-			profile_data = Controller.GetProfileData(ConstantUrl.URL_Userdata
-					+ MainSingleTon.accesstoken);
-
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(Void result) {
-
-			super.onPostExecute(result);
-
-			System.out.println("profile_data[0]" + profile_data[0]);
-
-			followed_by_count = profile_data[0];
-			follows_count = profile_data[1];
-
-			// save instalation in parse
-			ParseInstallation.getCurrentInstallation().put("UserId",
-					MainSingleTon.userid);
-			ParseInstallation.getCurrentInstallation().saveInBackground(
-					new SaveCallback() {
-
-						@Override
-						public void done(ParseException arg0) {
-
-						}
-					});
-			ParseQuery<ParseObject> query = ParseQuery.getQuery("userdetails");
-			query.whereEqualTo("UserId", MainSingleTon.userid);
-			query.findInBackground(new FindCallback<ParseObject>() {
-				public void done(List<ParseObject> listuser, ParseException e) {
-					System.out.println("parse user size" + listuser.size());
-					System.out.println("exception" + e);
-					if (e == null) {
-
-						if (listuser.size() < 1) {
-
-							ParseObject parse = new ParseObject("userdetails");
-							parse.put("UserId", MainSingleTon.userid);
-							parse.put("accesstoken", MainSingleTon.accesstoken);
-							parse.put("name", MainSingleTon.username);
-							parse.put("followers",
-									Integer.parseInt(follows_count));
-							parse.put("followedby",
-									Integer.parseInt(followed_by_count));
-
-							parse.saveInBackground(new SaveCallback() {
-								@Override
-								public void done(ParseException arg0) {
-
-									System.out
-											.println("new row created exception=="
-													+ arg0);
-									if (arg0 == null) {
-
-									}
-								}
-							});
-						}
-
-					}
-				}
-			});
-
-		}
-	}
-*/
+	/*
+	 * class GetProfileData extends AsyncTask<Void, Void, Void> { String[]
+	 * profile_data = new String[2]; String followed_by_count, follows_count;
+	 * 
+	 * @Override protected Void doInBackground(Void... params) {
+	 * 
+	 * profile_data = Controller.GetProfileData(ConstantUrl.URL_Userdata +
+	 * MainSingleTon.accesstoken);
+	 * 
+	 * return null; }
+	 * 
+	 * @Override protected void onPostExecute(Void result) {
+	 * 
+	 * super.onPostExecute(result);
+	 * 
+	 * System.out.println("profile_data[0]" + profile_data[0]);
+	 * 
+	 * followed_by_count = profile_data[0]; follows_count = profile_data[1];
+	 * 
+	 * // save instalation in parse
+	 * ParseInstallation.getCurrentInstallation().put("UserId",
+	 * MainSingleTon.userid);
+	 * ParseInstallation.getCurrentInstallation().saveInBackground( new
+	 * SaveCallback() {
+	 * 
+	 * @Override public void done(ParseException arg0) {
+	 * 
+	 * } }); ParseQuery<ParseObject> query = ParseQuery.getQuery("userdetails");
+	 * query.whereEqualTo("UserId", MainSingleTon.userid);
+	 * query.findInBackground(new FindCallback<ParseObject>() { public void
+	 * done(List<ParseObject> listuser, ParseException e) {
+	 * System.out.println("parse user size" + listuser.size());
+	 * System.out.println("exception" + e); if (e == null) {
+	 * 
+	 * if (listuser.size() < 1) {
+	 * 
+	 * ParseObject parse = new ParseObject("userdetails"); parse.put("UserId",
+	 * MainSingleTon.userid); parse.put("accesstoken",
+	 * MainSingleTon.accesstoken); parse.put("name", MainSingleTon.username);
+	 * parse.put("followers", Integer.parseInt(follows_count));
+	 * parse.put("followedby", Integer.parseInt(followed_by_count));
+	 * 
+	 * parse.saveInBackground(new SaveCallback() {
+	 * 
+	 * @Override public void done(ParseException arg0) {
+	 * 
+	 * System.out .println("new row created exception==" + arg0); if (arg0 ==
+	 * null) {
+	 * 
+	 * } } }); }
+	 * 
+	 * } } });
+	 * 
+	 * } }
+	 */
 	/*
 	 * call back listener to instgram
 	 */
@@ -487,34 +467,44 @@ public class MainActivity extends ActionBarActivity implements
 
 			break;
 		case 1:
-
-			fragment = new Follows_Fragment();
+			MainSingleTon.location_arraylist.clear();
+			fragment = new NearBySearch_Fragment();
 			break;
 		case 2:
 
-			fragment = new Followed_By();
+			fragment = new Follows_Fragment();
 			break;
 		case 3:
 
-			fragment = new Photo_Bucket();
+			fragment = new Followed_By();
 			break;
 		case 4:
+
+			fragment = new Photo_Bucket();
+			break;
+		case 5:
 			fragment = new Nonfollowers_Fragment();
 
 			break;
 
-		case 5:
+		case 6:
 			fragment = new Schedule_fragment();
 			break;
 
-		case 6:
+		case 7:
 			fragment = new Fans_Fragments();
 			break;
-		case 7:
+		case 8:
 			fragment = new Mutual_Fragments();
 			break;
-		case 8:
+		case 9:
 			fragment = new Copy_follows();
+			break;
+		case 10:
+			fragment = new Search_Tag();
+			break;
+		case 11:
+			fragment = new Search_Tag();
 			break;
 		}
 		if (fragment != null) {
@@ -960,7 +950,7 @@ public class MainActivity extends ActionBarActivity implements
 			Toast.makeText(MainActivity.this, "sucess", Toast.LENGTH_SHORT)
 					.show();
 
-			//new GetProfileData().execute();
+			// new GetProfileData().execute();
 
 		}
 
@@ -1027,5 +1017,57 @@ public class MainActivity extends ActionBarActivity implements
 		// TODO Auto-generated method stub
 		super.onStop();
 		FlurryAgent.onEndSession(MainActivity.this);
+	}
+
+	public String GetClientIDKeys(String key)
+
+	{
+		String text1 = null;
+		String finalkey = null;
+		try {
+			byte[] data1 = Base64
+					.decode(ApplicationData.base64, Base64.DEFAULT);
+			text1 = new String(data1, "UTF-8");
+			System.out.println("base64 key" + text1);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+
+		}
+
+		try {
+			finalkey = Encrypt.decrypt(text1, key);
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return finalkey;
+
+	}
+
+	public String GetClientSecretKeys(String key)
+
+	{
+		String text1 = null;
+		String finalkey = null;
+		try {
+			byte[] data1 = Base64
+					.decode(ApplicationData.base64, Base64.DEFAULT);
+			text1 = new String(data1, "UTF-8");
+			System.out.println("base64 key" + text1);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+
+		}
+
+		try {
+			finalkey = Encrypt.decrypt(text1, key);
+		} catch (Exception e) {
+
+			e.printStackTrace();
+		}
+
+		return finalkey;
+
 	}
 }

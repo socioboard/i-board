@@ -87,4 +87,10 @@ public class ConstantTags {
 	public static final String TAG_DATA_OBJ_USER_OBJ_ID="id";
 	public static final String TAG_DATA_OBJ_USER_OBJ_USERNAME="username";
 	
+	
+	
+	//tags 
+	public static final String TAG_MEDIA_COUNT="media_count";
+	public static final String TAG_MEDIA_NAME="name";
+	
 }

@@ -121,6 +121,8 @@ public class CommonUtilss {
 			out = null;
 			
 			
+			
+			
 			Toast.makeText(context, "Photo Saved in gallery ",Toast.LENGTH_LONG).show();
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -19,6 +19,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.socioboard.iboardpro.JSONParser;
 import com.socioboard.iboardpro.R;
 import com.socioboard.iboardpro.adapter.NonFollowersAdapter.follow_task;
@@ -40,10 +42,11 @@ public class CopyFollowAdapter extends BaseAdapter {
 	int selected_positon;
 	
 	
-	
+	AdRequest adRequest;
 	public CopyFollowAdapter(Context context, ArrayList<FollowModel> arrayList) {
 		this.arrayList = arrayList;
 		this.context = context;
+		adRequest = new AdRequest.Builder().build();
 		imageLoader = new ImageLoader(context);
 	}
 
@@ -69,12 +72,22 @@ public class CopyFollowAdapter extends BaseAdapter {
 	public View getView(final int position, View convertView, ViewGroup parent) {
 
 		model = arrayList.get(position);
-		if (convertView == null) {
+		if (model.getFull_name().equals("1")) {
+			LayoutInflater mInflater = (LayoutInflater) context
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			convertView = mInflater.inflate(R.layout.banner_ad_listitem,
+					parent, false);
+			AdView mAdView = (AdView) convertView.findViewById(R.id.adView);
+
+		
+			mAdView.loadAd(adRequest);
+		}
+		else {
 			LayoutInflater mInflater = (LayoutInflater) context
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			convertView = mInflater.inflate(R.layout.follow_by_list_item, parent,
 					false);
-		}
+		
 			ImageView profile_imagView = (ImageView) convertView
 					.findViewById(R.id.current_profile_pic);
 			TextView user_nameText = (TextView) convertView
@@ -120,7 +133,7 @@ public class CopyFollowAdapter extends BaseAdapter {
 					new follow_task().execute(model.getUserid());
 				}
 			});
-		
+		}
 		return convertView;
 	}
 

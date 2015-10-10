@@ -19,6 +19,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.socioboard.iboardpro.JSONParser;
 import com.socioboard.iboardpro.R;
 import com.socioboard.iboardpro.adapter.FollowsAdapter.follow_task;
@@ -38,9 +40,12 @@ public class FansAdapter extends BaseAdapter {
 	JSONParser jParser = new JSONParser();
 
 	int selected_position;
+	AdRequest adRequest;
+
 	public FansAdapter(Context context, ArrayList<FollowModel> arrayList) {
 		this.arrayList = arrayList;
 		this.context = context;
+		adRequest = new AdRequest.Builder().build();
 		imageLoader = new ImageLoader(context);
 	}
 
@@ -66,12 +71,20 @@ public class FansAdapter extends BaseAdapter {
 	public View getView(final int position, View convertView, ViewGroup parent) {
 
 		model = arrayList.get(position);
-		if (convertView == null) {
+		if (model.getFull_name().equals("1")) {
 			LayoutInflater mInflater = (LayoutInflater) context
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			convertView = mInflater.inflate(R.layout.follow_by_list_item, parent,
-					false);
-		}
+			convertView = mInflater.inflate(R.layout.banner_ad_listitem,
+					parent, false);
+			AdView mAdView = (AdView) convertView.findViewById(R.id.adView);
+
+			mAdView.loadAd(adRequest);
+		} else {
+			LayoutInflater mInflater = (LayoutInflater) context
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			convertView = mInflater.inflate(R.layout.follow_by_list_item,
+					parent, false);
+
 			ImageView profile_imagView = (ImageView) convertView
 					.findViewById(R.id.current_profile_pic);
 			TextView user_nameText = (TextView) convertView
@@ -106,16 +119,16 @@ public class FansAdapter extends BaseAdapter {
 
 				@Override
 				public void onClick(View v) {
-					//follow_button.setVisibility(View.INVISIBLE);
-					//unfollow_button.setVisibility(View.VISIBLE);
-					selected_position=position;
+					// follow_button.setVisibility(View.INVISIBLE);
+					// unfollow_button.setVisibility(View.VISIBLE);
+					selected_position = position;
 					model = arrayList.get(position);
 
-					System.out.println("name followingg"+model.getFull_name());
+					System.out.println("name followingg" + model.getFull_name());
 					new follow_task().execute(model.getUserid());
 				}
 			});
-		
+		}
 		return convertView;
 	}
 
@@ -123,14 +136,16 @@ public class FansAdapter extends BaseAdapter {
 
 		@Override
 		protected void onPreExecute() {
-			/*mSpinner = new ProgressDialog(context);
-			mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
-			mSpinner.setMessage("Loading...");
-
-			mSpinner.show();*/
+			/*
+			 * mSpinner = new ProgressDialog(context);
+			 * mSpinner.requestWindowFeature(Window.FEATURE_NO_TITLE);
+			 * mSpinner.setMessage("Loading...");
+			 * 
+			 * mSpinner.show();
+			 */
 			Fans_Fragments.Fans_arraylist.remove(selected_position);
 			Fans_Fragments.adapter.notifyDataSetChanged();
-			
+
 			super.onPreExecute();
 		}
 
@@ -157,7 +172,7 @@ public class FansAdapter extends BaseAdapter {
 		protected void onPostExecute(Void result) {
 			// TODO Auto-generated method stub
 			super.onPostExecute(result);
-			//mSpinner.hide();
+			// mSpinner.hide();
 		}
 	}
 

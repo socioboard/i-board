@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 
 
+
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -64,7 +65,7 @@ public class PhotoBucketAdapter extends BaseAdapter {
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			convertView = mInflater.inflate(R.layout.photo_bucket_listitem,
 					parent, false);
-		}
+			convertView.setTag(Integer.valueOf(position));
 
 		ImageView profile_imagView = (ImageView) convertView
 				.findViewById(R.id.image);
@@ -86,6 +87,7 @@ public class PhotoBucketAdapter extends BaseAdapter {
 				
 			}
 		});
+		}
 
 		return convertView;
 	}

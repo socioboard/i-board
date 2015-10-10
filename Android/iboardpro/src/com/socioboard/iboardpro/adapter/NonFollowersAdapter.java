@@ -1,10 +1,5 @@
 package com.socioboard.iboardpro.adapter;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,8 +9,6 @@ import org.json.JSONObject;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,10 +19,11 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.socioboard.iboardpro.JSONParser;
 import com.socioboard.iboardpro.R;
 import com.socioboard.iboardpro.database.util.MainSingleTon;
-import com.socioboard.iboardpro.fragments.Follows_Fragment;
 import com.socioboard.iboardpro.fragments.Nonfollowers_Fragment;
 import com.socioboard.iboardpro.lazylist.ImageLoader;
 import com.socioboard.iboardpro.models.FollowModel;
@@ -44,10 +38,11 @@ public class NonFollowersAdapter extends BaseAdapter {
 	JSONParser jParser = new JSONParser();
 
 	int selected_position;
+	AdRequest adRequest;
 	public NonFollowersAdapter(Context context, ArrayList<FollowModel> arrayList) {
 		this.arrayList = arrayList;
 		this.context = context;
-
+		adRequest = new AdRequest.Builder().build();
 		imageLoader = new ImageLoader(context);
 	}
 
@@ -73,12 +68,22 @@ public class NonFollowersAdapter extends BaseAdapter {
 	public View getView(final int position, View convertView, ViewGroup parent) {
 		
 		model = arrayList.get(position);
-		if (convertView == null) {
+		if (model.getFull_name().equals("1")) {
+			LayoutInflater mInflater = (LayoutInflater) context
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			convertView = mInflater.inflate(R.layout.banner_ad_listitem,
+					parent, false);
+			AdView mAdView = (AdView) convertView.findViewById(R.id.adView);
+
+		
+			mAdView.loadAd(adRequest);
+		}
+		else {
 			LayoutInflater mInflater = (LayoutInflater) context
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			convertView = mInflater.inflate(R.layout.follow_list_item, parent,
 					false);
-		}
+		
 		ImageView profile_imagView = (ImageView) convertView
 				.findViewById(R.id.current_profile_pic);
 		TextView user_nameText = (TextView) convertView
@@ -119,7 +124,7 @@ public class NonFollowersAdapter extends BaseAdapter {
 				new follow_task().execute(model.getUserid());
 			}
 		});
-
+	}
 		return convertView;
 	}
 

@@ -9,7 +9,9 @@
 	<classpathentry exported="true" kind="lib" path="libs/Parse-1.9.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/bolts-android-1.2.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/appnextTrackingSDK.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/volley.jar"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
+	<classpathentry exported="true" kind="lib" path="D:/Biswatma/GameWorkspace/google-play-services_lib/libs/google-play-services.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
