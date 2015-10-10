@@ -1,17 +1,19 @@
 
 
 #import "NonFollowerViewController.h"
-#import "SingletonClass.h"
+#import "SingletonClassIboard.h"
 #import "TableCustomCell.h"
-#import "UserProfileViewController.h"
+#import "UserProfileViewControllerIboard.h"
 #import "UIImageView+WebCache.h"
+#import "HelperClassIboard.h"
 
 @interface NonFollowerViewController ()
 {
     NSMutableArray * userId;
-    UserProfileViewController * userProfile;
+    UserProfileViewControllerIboard * userProfile;
     UIActivityIndicatorView * activityIndicator;
     UILabel * noInternetConnnection;
+    NSArray * mutaulfrnds;
   
 }
 @end
@@ -39,7 +41,7 @@
     activityIndicator=[[UIActivityIndicatorView alloc]init];
     activityIndicator.frame=CGRectMake(windowSize.width/2-20, 150, 40, 40);
     activityIndicator.activityIndicatorViewStyle=UIActivityIndicatorViewStyleWhiteLarge;
-    activityIndicator.color=[UIColor whiteColor];
+    activityIndicator.color=[UIColor blackColor];
     activityIndicator.alpha=1.0;
     [self.view addSubview:activityIndicator];
     [self.view bringSubviewToFront:activityIndicator];
@@ -54,15 +56,25 @@
 
 -(void)loadUI{
     
-    self.view.backgroundColor=[UIColor colorWithRed:(CGFloat)128/255 green:(CGFloat)128/255 blue:(CGFloat)128/255 alpha:1.0];
-    
-    //self.view.backgroundColor=[UIColor whiteColor];
+    //self.view.backgroundColor=[UIColor colorWithRed:(CGFloat)128/255 green:(CGFloat)128/255 blue:(CGFloat)128/255 alpha:1.0];
+    self.view.backgroundColor = [UIColor colorWithRed:(CGFloat)227/255 green:(CGFloat)227/255 blue:(CGFloat)227/255 alpha:1.0];
     [nonFollowTbl removeFromSuperview];
     [activityIndicator startAnimating];
     [noInternetConnnection removeFromSuperview];
     [[NSNotificationCenter defaultCenter]postNotificationName:@"reachability" object:nil];
-    if ([SingletonClass shareSinglton].isActivenetworkConnection==YES) {
+    if ([SingletonClassIboard shareSinglton].isActivenetworkConnection==YES) {
 
+        self.bannerView =[[GADBannerView alloc]initWithAdSize:kGADAdSizeBanner];
+        self.bannerView.frame =  CGRectMake(0, windowSize.height-105, windowSize.width, 50);
+        self.bannerView.adUnitID = adMobId_iboard;
+        self.bannerView.rootViewController = self;
+        self.bannerView.delegate = self;
+        
+        GADRequest *request = [GADRequest request];
+       // request.testDevices = @[ kGADSimulatorID ];
+        [self.bannerView loadRequest:request];
+        self.bannerView.hidden = NO;
+       // [self.view addSubview:self.bannerView];
     
     dispatch_async(dispatch_get_global_queue(0, 0),^{
         
@@ -93,7 +105,7 @@ else{
 //create UI to show non followers
 -(void)creatUI{
     
-    if (full_name.count<1) {
+    if (mutaulfrnds.count<1) {
         UILabel * label=[[UILabel alloc]init];
         label.frame=CGRectMake(40, 150, windowSize.width-60, 50);
         label.text=@"There is no Non Follower";
@@ -108,7 +120,8 @@ else{
     {
         nonFollowTbl=nil;
     }
-    nonFollowTbl=[[UITableView alloc]initWithFrame:CGRectMake(0, 0, windowSize.width,windowSize.height) style:UITableViewStylePlain];
+//    nonFollowTbl=[[UITableView alloc]initWithFrame:CGRectMake(0, 0, windowSize.width,windowSize.height-105) style:UITableViewStylePlain];
+        nonFollowTbl=[[UITableView alloc]initWithFrame:CGRectMake(0, 0, windowSize.width,windowSize.height-55) style:UITableViewStylePlain];
     nonFollowTbl.dataSource=self;
     nonFollowTbl.delegate=self;
     nonFollowTbl.backgroundColor=[UIColor whiteColor];
@@ -137,19 +150,19 @@ else{
     [full_name removeAllObjects];
     [profilePic removeAllObjects];
     [userId removeAllObjects];
-        NSMutableDictionary * followDict=[NSMutableDictionary dictionary];
+   /*     NSMutableDictionary * followDict=[NSMutableDictionary dictionary];
         NSMutableDictionary * followedByDict=[NSMutableDictionary dictionary];
         
-        NSLog(@"Follow Dic %@",[SingletonClass shareSinglton].follower);
-        NSLog(@"Follow By Dic %@",[SingletonClass shareSinglton].followeBy);
+        NSLog(@"Follow Dic %@",[SingletonClassIboard shareSinglton].follower);
+        NSLog(@"Follow By Dic %@",[SingletonClassIboard shareSinglton].followeBy);
         
-        for (int i=0; i<[SingletonClass shareSinglton].follower.count; i++) {
-            followDict=[[SingletonClass shareSinglton].follower objectAtIndex:i];
+        for (int i=0; i<[SingletonClassIboard shareSinglton].follower.count; i++) {
+            followDict=[[SingletonClassIboard shareSinglton].follower objectAtIndex:i];
             BOOL contain=NO;
-            for (int j=0; j<[SingletonClass shareSinglton].followeBy.count; j++) {
+            for (int j=0; j<[SingletonClassIboard shareSinglton].followeBy.count; j++) {
                 
                 
-                followedByDict=[[SingletonClass shareSinglton].followeBy objectAtIndex:j];
+                followedByDict=[[SingletonClassIboard shareSinglton].followeBy objectAtIndex:j];
                 
                 if ([[followedByDict objectForKey:@"id"] isEqualToString:[followDict objectForKey:@"id"]]) {
                     contain=YES;
@@ -161,22 +174,34 @@ else{
                 [profilePic addObject:[followDict objectForKey:@"profile_picture"]];
                 [userId addObject:[followDict objectForKey:@"id"]];
             }
-        }
+        }*/
         NSLog(@" count of non follow %lu",(unsigned long)full_name.count);
-        
-    }
+    
+    
+    NSArray *a = [NSArray arrayWithArray:[SingletonClassIboard shareSinglton].follower];
+    NSArray *b = [NSArray arrayWithArray:[SingletonClassIboard shareSinglton].followeBy];
+    
+    NSMutableSet *setA = [NSMutableSet setWithArray:a];
+    NSMutableSet *setB = [NSMutableSet setWithArray:b];
+    [setA minusSet:setB];
+    mutaulfrnds =[setA allObjects];
+    NSLog(@" count of non follow %@",mutaulfrnds);
+   
+}
 //}
 
 
 #pragma  mark-  load Followers
 -(void)loadAllFollowers{
     
-    NSURLResponse * urlResponse;
+    [[SingletonClassIboard shareSinglton].follower removeAllObjects];
+    [[SingletonClassIboard shareSinglton].full_name removeAllObjects];
+    [[SingletonClassIboard shareSinglton].profile_picture removeAllObjects];
+    
+   /* NSURLResponse * urlResponse;
     NSError * error;
     
-    [[SingletonClass shareSinglton].follower removeAllObjects];
-    [[SingletonClass shareSinglton].full_name removeAllObjects];
-    [[SingletonClass shareSinglton].profile_picture removeAllObjects];
+   
     NSString * accessToken=[[ NSUserDefaults standardUserDefaults]                                                                                                                                               valueForKey:@"access_token"];
     NSURL * getUrl=   [NSURL URLWithString:[NSString stringWithFormat:@"https://api.instagram.com/v1/users/self/follows?access_token=%@",accessToken]];
     NSMutableURLRequest * request=[[NSMutableURLRequest alloc]initWithURL:getUrl cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:50];
@@ -190,31 +215,39 @@ else{
     if (data==nil) {
         return;
     }
-    NSDictionary *dictResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
-    NSArray * resultArr=(NSArray*)[dictResponse objectForKey:@"data"];
-    NSLog(@"Result arr %@ ==--%lu",resultArr,(unsigned long)resultArr.count);
-    NSMutableDictionary * dict=[NSMutableDictionary dictionary];
+    NSDictionary *dictResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];*/
+   
+    id dictResponse =[HelperClassIboard loadAllFollowers:nil];
+    
+     if ([[[dictResponse objectForKey:@"meta"]objectForKey:@"code"] isEqualToNumber:[NSNumber numberWithInt:200]]) {
+           NSArray * resultArr=(NSArray*)[dictResponse objectForKey:@"data"];
+          pagination=[[dictResponse objectForKey:@"pagination"]objectForKey:@"next_url"];
+         NSLog(@"Result arr %@ ==--%lu",resultArr,(unsigned long)resultArr.count);
+         NSMutableDictionary * dict=[NSMutableDictionary dictionary];
     for (int i=0; i<resultArr.count; i++) {
         dict=[resultArr objectAtIndex:i];
-        [[SingletonClass shareSinglton].follower addObject:dict];
+        [[SingletonClassIboard shareSinglton].follower addObject:dict];
         
-        [[SingletonClass shareSinglton].full_name addObject:[dict objectForKey:@"username"]];
-        [[SingletonClass shareSinglton].profile_picture addObject:[dict objectForKey:@"profile_picture"]];
+        [[SingletonClassIboard shareSinglton].full_name addObject:[dict objectForKey:@"username"]];
+        [[SingletonClassIboard shareSinglton].profile_picture addObject:[dict objectForKey:@"profile_picture"]];
     }
+}
     
 }
 
 #pragma  mark- load followed by
 
 -(void)loadAllFollowedBy{
-    NSURLResponse * urlResponse;
+    [[SingletonClassIboard shareSinglton].followeBy removeAllObjects];
+    [[SingletonClassIboard shareSinglton].full_name removeAllObjects];
+    [[SingletonClassIboard shareSinglton].profile_picture removeAllObjects];
+    [userId removeAllObjects];
+
+    
+    /*NSURLResponse * urlResponse;
     NSError * error;
     
-    [[SingletonClass shareSinglton].followeBy removeAllObjects];
-    [[SingletonClass shareSinglton].full_name removeAllObjects];
-    [[SingletonClass shareSinglton].profile_picture removeAllObjects];
-    [userId removeAllObjects];
-    NSString * accessToken=[[ NSUserDefaults standardUserDefaults]                                                                                                                                               valueForKey:@"access_token"];
+        NSString * accessToken=[[ NSUserDefaults standardUserDefaults]                                                                                                                                               valueForKey:@"access_token"];
     NSURL * getUrl=   [NSURL URLWithString:[NSString stringWithFormat:@"https://api.instagram.com/v1/users/self/followed-by?access_token=%@",accessToken]];
     NSMutableURLRequest * request=[[NSMutableURLRequest alloc]initWithURL:getUrl cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:50];
     
@@ -227,17 +260,21 @@ else{
     if (data==nil) {
         return;
     }
-    NSDictionary *dictResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
+    NSDictionary *dictResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];*/
     
-    NSArray * resultArr=(NSArray*)[dictResponse objectForKey:@"data"];
-    NSLog(@"Result arr %@ ==--%lu",resultArr,(unsigned long)resultArr.count);
-    NSMutableDictionary * dict=[NSMutableDictionary dictionary];
+    
+    id dictResponse = [HelperClassIboard loadAllFollowedBy:nil];
+    if ([[[dictResponse objectForKey:@"meta"]objectForKey:@"code"] isEqualToNumber:[NSNumber numberWithInt:200]]) {
+        NSArray * resultArr=(NSArray*)[dictResponse objectForKey:@"data"];
+        pagination=[[dictResponse objectForKey:@"pagination"]objectForKey:@"next_url"];
+        NSMutableDictionary * dict=[NSMutableDictionary dictionary];
     for (int i=0; i<resultArr.count; i++) {
         dict=[resultArr objectAtIndex:i];
-        [[SingletonClass shareSinglton].followeBy addObject:dict];
-        [[SingletonClass shareSinglton].full_name addObject:[dict objectForKey:@"username"]];
-        [[SingletonClass shareSinglton].profile_picture addObject:[dict objectForKey:@"profile_picture"]];
+        [[SingletonClassIboard shareSinglton].followeBy addObject:dict];
+        [[SingletonClassIboard shareSinglton].full_name addObject:[dict objectForKey:@"username"]];
+        [[SingletonClassIboard shareSinglton].profile_picture addObject:[dict objectForKey:@"profile_picture"]];
         
+    }
     }
 }
 
@@ -247,7 +284,7 @@ else{
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"Follow";
+    static NSString *CellIdentifier = @"notFeed";
     
     TableCustomCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
 
@@ -258,25 +295,32 @@ else{
         
         cell.add_minusButton.tag=indexPath.row;
         [cell.add_minusButton addTarget:self action:@selector(unfollowActions:) forControlEvents:UIControlEventTouchUpInside];
-        [cell.add_minusButton setBackgroundImage:[UIImage imageNamed:@"unfollow.png"] forState:UIControlStateNormal];
+        [cell.add_minusButton setBackgroundImage:[UIImage imageNamed:@"iboard-unfollow.png"] forState:UIControlStateNormal];
         
     }
-    cell.commentBtn.hidden=YES;
-     cell.likesBtn.hidden=YES;
+    cell.userNameDesc.tag = indexPath.row;
+    UITapGestureRecognizer * tapGesture =[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showUserProfile:)];
+    tapGesture.numberOfTouchesRequired =1;
+    cell.userNameDesc.userInteractionEnabled = YES;
+    [cell.userNameDesc addGestureRecognizer:tapGesture];
+
     
-     [cell.userImage sd_setImageWithURL:[profilePic objectAtIndex:indexPath.row]];
-    cell.userNameDesc.text=[full_name objectAtIndex:indexPath.row];
+    NSDictionary * dict =[mutaulfrnds objectAtIndex:indexPath.row];
+    
+    [cell.userImage sd_setImageWithURL:[dict objectForKey:@"profile_picture"]];
+    cell.userNameDesc.text=[dict objectForKey:@"username"];
     
     return cell;
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (userProfile) {
+   /* if (userProfile) {
         userProfile=nil;
     }
-    userProfile=[[UserProfileViewController alloc]initWithNibName:@"UserProfileViewController" bundle:nil];
-    userProfile.userId=[userId objectAtIndex:indexPath.row];
-    [self presentViewController:userProfile animated:YES completion:nil];
+     NSDictionary * dict =[mutaulfrnds objectAtIndex:indexPath.row];
+    userProfile=[[UserProfileViewControllerIboard alloc]initWithNibName:@"UserProfileViewControllerIboard" bundle:nil];
+    userProfile.userId=[NSString stringWithFormat:@"%@",[dict objectForKey:@"id"]];
+    [self presentViewController:userProfile animated:YES completion:nil];*/
     
 }
 -(NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
@@ -287,22 +331,22 @@ else{
 -(NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     
-    return full_name.count;
+    return mutaulfrnds.count;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 100;
+    return 80;
 }
 
 #pragma mark- unfollow action
 
 -(void)unfollowActions:(UIButton *)sender{
-    int tag = (int)((UIButton *)(UIControl *)sender).tag;
+   /* int tag = (int)((UIButton *)(UIControl *)sender).tag;
     NSString * accessToken=[[NSUserDefaults standardUserDefaults]objectForKey:@"access_token"];
     NSError * error=nil;
     NSURLResponse * urlResponse=nil;
     
-    NSString * userIDStr=[userId  objectAtIndex:tag];
+    NSString * userIDStr=[[mutaulfrnds  objectAtIndex:tag]objectForKey:@"id"];
     
     NSURL * postUrl=[NSURL URLWithString:[NSString stringWithFormat:@"https://api.instagram.com/v1/users/%@/relationship",userIDStr]];
     
@@ -321,8 +365,18 @@ else{
     if (data==nil) {
         return;
     }
-    id response=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];
-    NSLog(@" response of unfollow %@",response);
+    id response=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];*/
+   // NSLog(@" response of unfollow %@",response);
+    int tag = (int)((UIButton *)(UIControl *)sender).tag;
+
+    NSString * userIDStr=[[mutaulfrnds  objectAtIndex:tag]objectForKey:@"id"];
+
+    id response =[HelperClassIboard unfollowAction:userIDStr];
+    
+    if ([[[response objectForKey:@"meta"]objectForKey:@"code"] isEqualToNumber:[NSNumber numberWithInt:200]]) {
+//        UIAlertView * alertView =[[UIAlertView alloc]initWithTitle:@"You are unfollowing this user" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+//        [alertView show];
+    }
     
     [self compareAndFetchNonFollowers];
     [nonFollowTbl reloadData];
@@ -334,14 +388,15 @@ else{
    // [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
     
     CGRect rect = CGRectMake(0 ,0 ,120, 60);
-    NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://media?id=%@",[SingletonClass shareSinglton].imageId]];
+    NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://media?id=%@",[SingletonClassIboard shareSinglton].imageId]];
     
     if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
         
-        self.dic = [UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClass shareSinglton].imagePath]];
+        self.dic = [UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
         self.dic.delegate = self;
         self.dic.UTI = @"com.instagram.photo";
-        self.dic=[UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClass shareSinglton].imagePath]];
+        self.dic=[UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
+         self.dic.annotation = [NSDictionary dictionaryWithObject:[SingletonClassIboard shareSinglton].captionStr forKey:@"InstagramCaption"];
         [self.dic presentOpenInMenuFromRect: CGRectZero    inView:self.view animated: YES ];
         
     }
@@ -353,6 +408,21 @@ else{
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+#pragma mark-
+
+-(void)showUserProfile:(UITapGestureRecognizer*)sender{
+    if (userProfile) {
+        userProfile=nil;
+    }
+    NSDictionary * dict =[mutaulfrnds objectAtIndex:[[sender view]tag]];
+    userProfile=[[UserProfileViewControllerIboard alloc]initWithNibName:@"UserProfileViewControllerIboard" bundle:nil];
+    userProfile.userId=[NSString stringWithFormat:@"%@",[dict objectForKey:@"id"]];
+    [self presentViewController:userProfile animated:YES completion:nil];
+    
+}
+
+
 
 /*
 #pragma mark - Navigation

@@ -3,19 +3,22 @@
 #import "ViewController.h"
 #import "AppDelegate.h"
 #import <sqlite3.h>
-#import "CustomMenuViewController.h"
-#import "FollwViewController.h"
-#import "FollowedByViewController.h"
-#import "ProfileViewController.h"
-#import "WebViewViewController.h"
-#import "FeedViewController.h"
-#import "PhotosViewController.h"
+#import "CustomMenuViewControllerIboard.h"
+#import "FollwViewControllerIboard.h"
+#import "FollowedByViewControllerIboard.h"
+#import "ProfileViewControllerIboard.h"
+#import "WebViewViewControllerIboard.h"
+#import "FeedViewControllerIboard.h"
+#import "PhotosViewControllerIboard.h"
 #import "NonFollowerViewController.h"
-#import "SingletonClass.h"
-#import "ScheduleViewController.h"
-#import "FansViewController.h"
-#import "MutualFriendsViewController.h"
-#import "CopyFollowersViewController.h"
+#import "SingletonClassIboard.h"
+#import "ScheduleViewControllerIboard.h"
+#import "FansViewControllerIboard.h"
+#import "MutualFriendsViewControllerIboard.h"
+#import "deatilsOfSearchInstaViewControllerIboard.h"
+#import "OverlappingViewController.h"
+#import "SearchTagsViewControllerIboard.h"
+#import "LocationSearchViewControllerIboard.h"
 
 @interface ViewController ()
 {
@@ -31,7 +34,7 @@
     windowSize=[UIScreen mainScreen].bounds.size;
     
     UIImageView * background=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, windowSize.width, windowSize.height)];
-    background.image=[UIImage imageNamed:@"main_view_new.png"];
+    background.image=[UIImage imageNamed:@"iboard-main_view_new.png"];
     [self.view addSubview:background];
     
     NSString * access_token=[[NSUserDefaults standardUserDefaults]objectForKey:@"access_token"];
@@ -73,11 +76,11 @@
 
 
 -(void)callWebView:(UIButton*)sender{
-    if ([SingletonClass shareSinglton].isActivenetworkConnection==NO) {
+    if ([SingletonClassIboard shareSinglton].isActivenetworkConnection==NO) {
         
     }
     else{
-        WebViewViewController *  webviewVC=[[WebViewViewController alloc]initWithNibName:@"WebViewViewController" bundle:nil];
+        WebViewViewControllerIboard *  webviewVC=[[WebViewViewControllerIboard alloc]init];
         [self presentViewController:webviewVC animated:YES completion:^{
         }];
     }
@@ -88,34 +91,34 @@
 -(void)loginCheckComplete
 {
     [[NSNotificationCenter defaultCenter]removeObserver:self name:@"loginCheckComplete" object:nil];
-    CustomMenuViewController * mainMenu=[ViewController goTOHomeView];
+    CustomMenuViewControllerIboard * mainMenu=[ViewController goTOHomeView];
     [self presentViewController:mainMenu animated:YES completion:nil];
     
 }
 
-+(CustomMenuViewController*)goTOHomeView
++(CustomMenuViewControllerIboard*)goTOHomeView
 {
     
-    FollwViewController *follow = [[FollwViewController alloc]init];
+    FollwViewControllerIboard *follow = [[FollwViewControllerIboard alloc]init];
     follow.title=@"Following";
     NSLog(@"Title =- %@",follow.title);
     
-    FollowedByViewController *followedby = [[FollowedByViewController alloc] init];
+    FollowedByViewControllerIboard *followedby = [[FollowedByViewControllerIboard alloc] init];
     followedby.title = @"Followed-By";
     
     
-    FeedViewController * feed =[[FeedViewController alloc]initWithNibName:@"FeedViewController" bundle:nil];
+    FeedViewControllerIboard * feed =[[FeedViewControllerIboard alloc]initWithNibName:@"FeedViewControllerIboard" bundle:nil];
     feed.title=@"Feeds";
     
     
-    FansViewController * fans=[[FansViewController alloc]initWithNibName:@"FansViewController" bundle:nil];
+    FansViewControllerIboard * fans=[[FansViewControllerIboard alloc]initWithNibName:@"FansViewControllerIboard" bundle:nil];
     fans.title=@"Fans";
     
-    MutualFriendsViewController * mutualVc=[[MutualFriendsViewController alloc]initWithNibName:@"MutualFriendsViewController" bundle:nil];
+    MutualFriendsViewControllerrIboard * mutualVc=[[MutualFriendsViewControllerrIboard alloc]init];
     mutualVc.title=@"Mutual ";
 
     
-    PhotosViewController * photoVC=[[PhotosViewController alloc]initWithNibName:@"PhotosViewController" bundle:nil];
+    PhotosViewControllerIboard * photoVC=[[PhotosViewControllerIboard alloc]initWithNibName:@"PhotosViewControllerIboard" bundle:nil];
     photoVC.title=@"Photo Bucket";
     
     
@@ -123,18 +126,24 @@
     NonFollowerViewController * nonFollowVC=[[NonFollowerViewController alloc]initWithNibName:@"NonFollowerViewController" bundle:nil];
     nonFollowVC.title=@"Non followers";
     
-    ScheduleViewController * scheduleVC=[[ScheduleViewController alloc]initWithNibName:@"ScheduleViewController" bundle:nil];
+    ScheduleViewControllerIboard * scheduleVC=[[ScheduleViewControllerIboard alloc]initWithNibName:@"ScheduleViewControllerIboard" bundle:nil];
     scheduleVC.title=@"Photo Que";
     
-    CopyFollowersViewController   * copyFollowVC=[[CopyFollowersViewController alloc]init];
+    deatilsOfSearchInstaViewControllerIboard   * copyFollowVC=[[deatilsOfSearchInstaViewControllerIboard alloc]init];
     copyFollowVC.title=@"Copy follows/followed-by";
+    
+    LocationSearchViewControllerIboard * locationVC = [[LocationSearchViewControllerIboard alloc]init];
+    locationVC.title = @"Nearby feeds";
+    
+    SearchTagsViewControllerIboard   * searchHashTagVC=[[SearchTagsViewControllerIboard alloc]init];
+    searchHashTagVC.title=@"Search # tags";
     
     UINavigationController *followNavi = [[UINavigationController alloc] initWithRootViewController:feed];
     followNavi.navigationBar.hidden = YES;
     
-    CustomMenuViewController *customMenuView =[[CustomMenuViewController alloc] init];
+    CustomMenuViewControllerIboard *customMenuView =[[CustomMenuViewControllerIboard alloc] init];
     customMenuView.numberOfSections = 1;
-    customMenuView.viewControllers = @[followNavi,follow,followedby,fans,mutualVc,photoVC,nonFollowVC,scheduleVC,copyFollowVC];
+    customMenuView.viewControllers = @[followNavi,follow,followedby,fans,mutualVc,photoVC,nonFollowVC,scheduleVC,copyFollowVC,searchHashTagVC,locationVC];
     
     return customMenuView;
 }
@@ -142,7 +151,7 @@
 // Retreive all Loggedin user list
 -(void)retreiveDataFromSqlite{
     
-    [SingletonClass shareSinglton].allData=[[NSMutableArray alloc]init];
+    [SingletonClassIboard shareSinglton].allData=[[NSMutableArray alloc]init];
     
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     
@@ -160,7 +169,7 @@
         {
             NSLog(@"prepared");
             
-            [[SingletonClass shareSinglton].allData removeAllObjects];
+            [[SingletonClassIboard shareSinglton].allData removeAllObjects];
             while(sqlite3_step(compiledStmt)==SQLITE_ROW)
             {
                 char *userid = (char *) sqlite3_column_text(compiledStmt,1);
@@ -189,14 +198,14 @@
                 [temp setObject:mediaCnt forKey:@"mediaCnt"];
                 [temp setObject:Followers forKey:@"followers"];
                 [temp setObject:Following forKey:@"following"];
-                [[SingletonClass shareSinglton].allData addObject:temp];
+                [[SingletonClassIboard shareSinglton].allData addObject:temp];
             }
             
         }
         sqlite3_finalize(compiledStmt);
     }
     sqlite3_close(database);
-    NSLog(@"count from data base  %@",[SingletonClass shareSinglton].allData);
+    NSLog(@"count from data base  %@",[SingletonClassIboard shareSinglton].allData);
 }
 
 - (void)didReceiveMemoryWarning {

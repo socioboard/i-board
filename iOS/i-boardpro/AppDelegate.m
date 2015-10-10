@@ -2,9 +2,10 @@
 
 #import "AppDelegate.h"
 #import <sqlite3.h>
-#import "ComposeViewController.h"
-#import "SingletonClass.h"
+#import "ComposeViewControllerIboard.h"
+#import "SingletonClassIboard.h"
 #import "Flurry.h"
+#import "HelperClassIboard.h"
 
 @interface AppDelegate ()
 
@@ -17,15 +18,17 @@
     
     UILocalNotification *localNotification = [launchOptions objectForKey:UIApplicationLaunchOptionsLocalNotificationKey];
     
-    [Flurry startSession:@"RRCNMX72TCQH7VX8R2JB"];
+    [Flurry startSession:flurryId_iboard];
     
     if (localNotification)
     {
         
-        for (int i=0; i<[SingletonClass shareSinglton].notfyArr.count; i++) {
-            NSMutableDictionary * dict=[[SingletonClass shareSinglton].notfyArr objectAtIndex:i];
+        for (int i=0; i<[SingletonClassIboard shareSinglton].notfyArr.count; i++) {
+            NSMutableDictionary * dict=[[SingletonClassIboard shareSinglton].notfyArr objectAtIndex:i];
             if ([[localNotification.userInfo objectForKey:@"unixTime"] isEqualToString:[dict objectForKey:@"unixTime"]] && [[localNotification.userInfo objectForKey:@"access_token"] isEqualToString:[dict objectForKey:@"access_token"]]) {
-                [self fetchNotificationData : [localNotification.userInfo objectForKey:@"unixTime"] andAccesToken:[localNotification.userInfo objectForKey:@"access_token"]];
+                HelperClassIboard * help =[[HelperClassIboard alloc]init];;
+
+                [help fetchNotificationData : [localNotification.userInfo objectForKey:@"unixTime"] andAccesToken:[localNotification.userInfo objectForKey:@"access_token"]];
                 
             }
             
@@ -57,20 +60,28 @@
         //[alertView show];
     }
     
-    for (int i=0; i<[SingletonClass shareSinglton].notfyArr.count; i++) {
-        NSMutableDictionary * dict=[[SingletonClass shareSinglton].notfyArr objectAtIndex:i];
-        if ([[notification.userInfo objectForKey:@"unixTime"] isEqualToString:[dict objectForKey:@"unixTime"]] && [[notification.userInfo objectForKey:@"access_token"] isEqualToString:[dict objectForKey:@"access_token"]]) {
-            [self fetchNotificationData : [notification.userInfo objectForKey:@"unixTime"] andAccesToken:[notification.userInfo objectForKey:@"access_token"]];
+    NSDictionary * dict =notification.userInfo;
+    if ([dict objectForKey:@"follower"]) {
+        
+    }
+    else{
+        for (int i=0; i<[SingletonClassIboard shareSinglton].notfyArr.count; i++) {
+            NSMutableDictionary * dict=[[SingletonClassIboard shareSinglton].notfyArr objectAtIndex:i];
+            if ([[notification.userInfo objectForKey:@"unixTime"] isEqualToString:[dict objectForKey:@"unixTime"]] && [[notification.userInfo objectForKey:@"access_token"] isEqualToString:[dict objectForKey:@"access_token"]]) {
+                //[self fetchNotificationData : [notification.userInfo objectForKey:@"unixTime"] andAccesToken:[notification.userInfo objectForKey:@"access_token"]];
+                HelperClassIboard * help =[[HelperClassIboard alloc]init];;
+                [help fetchNotificationData : [notification.userInfo objectForKey:@"unixTime"] andAccesToken:[notification.userInfo objectForKey:@"access_token"]];
+        
+            }
         
         }
-        
     }
     
     
     
 }
 
--(void)fetchNotificationData :(NSString *)time andAccesToken:(NSString *) accessToken {
+/*-(void)fetchNotificationData :(NSString *)time andAccesToken:(NSString *) accessToken {
     
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSLog(@"%@",paths);
@@ -98,7 +109,8 @@
             data=[NSData dataWithBytes:sqlite3_column_blob(compiledStmt, 3) length:length];
             
             char * time=(char *) sqlite3_column_text(compiledStmt,4);
-            char * caption=(char*)sqlite3_column_text(compiledStmt,6);            NSString *profilePic  = [NSString stringWithUTF8String:profilepic];
+            char * caption=(char*)sqlite3_column_text(compiledStmt,6);
+            NSString *profilePic  = [NSString stringWithUTF8String:profilepic];
             NSString *imageId  = [NSString stringWithUTF8String:imgId];
              NSString *captionStr  = [NSString stringWithUTF8String:caption];
             NSMutableDictionary * temp=[[NSMutableDictionary alloc]init];
@@ -107,9 +119,9 @@
             [temp setObject:data forKey:@"image"];
             
             
-            [SingletonClass shareSinglton].captionStr=captionStr;
-            [SingletonClass shareSinglton].imagePath=profilePic;
-            [SingletonClass shareSinglton].imageId=imageId;
+            [SingletonClassIboard shareSinglton].captionStr=captionStr;
+            [SingletonClassIboard shareSinglton].imagePath=profilePic;
+            [SingletonClassIboard shareSinglton].imageId=imageId;
         }
         }
         else{
@@ -125,16 +137,18 @@
     
     
     
-}
--(void)fireNotification{
-    [[NSNotificationCenter defaultCenter]postNotificationName:@"firedNotification" object:nil userInfo:nil];
-}
+}*/
+    
+    
+//-(void)fireNotification{
+//    [[NSNotificationCenter defaultCenter]postNotificationName:@"firedNotification" object:nil userInfo:nil];
+//}
 
 
 
 
 
--(void)deleteNotificationData :(NSString *)time andAccesToken:(NSString *) accessToken {
+/*-(void)deleteNotificationData :(NSString *)time andAccesToken:(NSString *) accessToken {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSLog(@"%@",paths);
     NSString *documentsDirectory = [paths objectAtIndex:0];
@@ -168,7 +182,7 @@
     }
     sqlite3_close(database);
 //    [[NSNotificationCenter defaultCenter]postNotificationName:@"scheduleReload" object:nil userInfo:nil];
-}
+}*/
 
 
 
@@ -185,16 +199,16 @@
     NetworkStatus a = [self.internetReachability currentReachabilityStatus];
     switch (a) {
         case NotReachable:
-            NSLog(@"Not Reachable");
-            [SingletonClass shareSinglton].isActivenetworkConnection = NO;
+          //  NSLog(@"Not Reachable");
+            [SingletonClassIboard shareSinglton].isActivenetworkConnection = NO;
             break;
         case ReachableViaWiFi:
-            NSLog(@"Reachable via WAN");
-            [SingletonClass shareSinglton].isActivenetworkConnection = YES;
+           // NSLog(@"Reachable via WAN");
+            [SingletonClassIboard shareSinglton].isActivenetworkConnection = YES;
             break;
         case ReachableViaWWAN:
-            NSLog(@"Reachable Via Wifi");
-            [SingletonClass shareSinglton].isActivenetworkConnection = YES;
+           // NSLog(@"Reachable Via Wifi");
+            [SingletonClassIboard shareSinglton].isActivenetworkConnection = YES;
             break;
             
         default:
