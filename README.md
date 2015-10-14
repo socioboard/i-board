@@ -59,6 +59,8 @@ Guide to create app in Instagram developer console:
 5. Copy client id,client-secret and redirect url and paste it in ApplicationData.java file inside android application.
    ![](http://i.imgur.com/NVlwoNu.png)
 
+For android
+![](http://i.imgur.com/Ysa11eL.png)
 
 For ios
 ![](http://i.imgur.com/VA0xEav.png)
