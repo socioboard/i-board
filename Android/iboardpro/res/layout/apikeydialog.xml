@@ -1,0 +1,223 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="@color/white" >
+
+        <RelativeLayout
+            android:id="@+id/reloutTop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:background="@color/color_light_blue_500" >
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="15dp"
+                android:layout_toLeftOf="@+id/imageView2Info"
+                android:layout_toRightOf="@+id/imageView1"
+                android:gravity="center"
+                android:text="Instagram API Credentials"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/imageView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="25dp"
+                android:layout_marginTop="15dp"
+                android:src="@drawable/ic_launcher" />
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/imageView2Info"
+                android:layout_marginRight="5dp"
+                android:text="(Help)"
+                android:textColor="@color/white"
+                android:textSize="9sp" />
+
+            <ImageView
+                android:id="@+id/imageView2Info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@+id/textView1"
+                android:src="@android:drawable/ic_menu_help" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/reloutmiddle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/reloutTop"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:background="@android:color/transparent" >
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="10dp"
+                android:text="Client Id"
+                android:textColor="@color/color_light_blue_500"
+                android:textSize="10sp" />
+
+            <EditText
+                android:id="@+id/editText1Key"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textView2"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_toLeftOf="@+id/buttonPaste1"
+                android:background="@drawable/editbox_background_normal"
+                android:hint="Client Id"
+                android:maxLines="2"
+                android:padding="10dp"
+                android:textSize="10sp" >
+
+                <requestFocus />
+            </EditText>
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/editText1Key"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="15dp"
+                android:text="Client Secret"
+                android:textColor="@color/color_light_blue_500"
+                android:textSize="10sp" />
+
+            <EditText
+                android:id="@+id/editText1Secret"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textView3"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_toLeftOf="@+id/buttonPaste2"
+                android:background="@drawable/editbox_background_normal"
+                android:hint="Client Secret"
+                android:maxLines="2"
+                android:padding="10dp"
+                android:textSize="10sp" >
+
+                <requestFocus />
+            </EditText>
+
+            <Button
+                android:id="@+id/buttonPaste1"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/editText1Key"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/textView2"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="4dp"
+                android:text="Paste"
+                android:textSize="9sp" />
+
+            <Button
+                android:id="@+id/buttonPaste2"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/editText1Secret"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/textView3"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="4dp"
+                android:text="Paste"
+                android:textSize="9sp" />
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/editText1Secret"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="15dp"
+                android:text="Redirect URL"
+                android:textColor="@color/color_light_blue_500"
+                android:textSize="10sp" />
+
+            <EditText
+                android:id="@+id/editTextCallbcak"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textView5"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_toLeftOf="@+id/buttonPaste3"
+                android:background="@drawable/editbox_background_normal"
+                android:hint="Redirect URL"
+                android:maxLines="3"
+                android:padding="10dp"
+                android:textSize="10sp" >
+
+                <requestFocus />
+            </EditText>
+
+            <Button
+                android:id="@+id/buttonPaste3"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/editTextCallbcak"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/textView5"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="4dp"
+                android:text="Paste"
+                android:textSize="9sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/reloutbottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/reloutmiddle"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:background="@color/color_light_blue_500" >
+
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="30dp"
+                android:text="Save"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

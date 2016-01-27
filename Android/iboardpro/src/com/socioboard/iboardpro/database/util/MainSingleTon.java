@@ -7,6 +7,14 @@ import com.socioboard.iboardpro.models.LocationModel;
 
 public class MainSingleTon {
 
+	public static String api_key;
+	public static String api_secret;
+	public static String api_redirect_url;
+	
+	public static String Tag_key="KEY";
+	public static String Tag_secret="SECRET";
+	public static String Tag_redirectUri="REDIRECTURL";
+	
 	public static boolean signedInStatus = false;
 	public static String userid;
 	public static String username;

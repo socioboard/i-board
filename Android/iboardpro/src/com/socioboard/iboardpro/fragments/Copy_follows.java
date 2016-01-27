@@ -187,7 +187,7 @@ public class Copy_follows extends Fragment implements OnScrollListener {
 			String username = params[0];
 			
 			JSONObject json = jParser.getJSONFromUrlByGet(getUserIDURl
-					+ username.replace(" ", "%20") + "&client_id=" + GetClientIDKeys(ApplicationData.CLIENT_ID));
+					+ username.replace(" ", "%20") + "&client_id=" + MainSingleTon.api_key);
 
 			
 			try {
@@ -488,31 +488,6 @@ public class Copy_follows extends Fragment implements OnScrollListener {
 	
 
 	}
-	public  String GetClientIDKeys(String key)
-
-	{
-		String text1 = null;
-		String finalkey = null;
-		try {
-			byte[] data1 = Base64
-					.decode(ApplicationData.base64, Base64.DEFAULT);
-			text1 = new String(data1, "UTF-8");
-			
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-			
-		}
-
-		try {
-			finalkey = Encrypt.decrypt(text1, key);
-		} catch (Exception e) {
-			
-			e.printStackTrace();
-		}
-
-		
-		return finalkey;
-
-	}
+	
 	
 }

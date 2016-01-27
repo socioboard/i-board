@@ -1,19 +1,19 @@
 package com.socioboard.iboardpro;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -30,7 +30,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.Gravity;
@@ -49,7 +48,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.flurry.android.FlurryAgent;
-import com.parse.ParseInstallation;
 import com.socioboard.iboardpro.adapter.AccountAdapter;
 import com.socioboard.iboardpro.adapter.DrawerAdapter;
 import com.socioboard.iboardpro.database.util.InstagramManyLocalData;
@@ -109,7 +107,8 @@ public class MainActivity extends ActionBarActivity implements
 	TextView current_user_name, curret_user_username, feedbacktxt;
 	ImageView curret_user_profilepic;
 
-	RelativeLayout addacount_view, settings_view, feedback_view;
+	RelativeLayout addacount_view, settings_view, feedback_view,
+			configurekeys_view;
 
 	CommonUtilss utills;
 	InstagramManyLocalData db;
@@ -239,6 +238,8 @@ public class MainActivity extends ActionBarActivity implements
 				R.layout.left_footer, mDrawerList_Right, false);
 
 		feedback_view = (RelativeLayout) footerR.findViewById(R.id.feedback);
+		configurekeys_view = (RelativeLayout) footerR
+				.findViewById(R.id.configurekeys);
 
 		current_user_name = (TextView) headerR.findViewById(R.id.currentname);
 		curret_user_username = (TextView) headerR
@@ -280,15 +281,75 @@ public class MainActivity extends ActionBarActivity implements
 			}
 		});
 
+		configurekeys_view.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+
+				AlertDialog.Builder builder = new AlertDialog.Builder(
+						MainActivity.this);
+
+				builder.setTitle("Warning!!");
+				builder.setMessage("This will remove all existing accounts,click Yes to continue");
+
+				builder.setPositiveButton("YES",
+						new DialogInterface.OnClickListener() {
+
+							public void onClick(DialogInterface dialog,
+									int which) {
+
+								dialog.dismiss();
+
+								MainSingleTon.accesstoken = null;
+								MainSingleTon.userid = null;
+								InstagramManyLocalData dbdata = new InstagramManyLocalData(
+										getApplicationContext());
+
+								dbdata.deleteAllRows();
+								
+								Editor editor = getSharedPreferences(
+										"iboardpro", Context.MODE_PRIVATE)
+										.edit();
+
+								MainSingleTon.userdetails.clear();
+								MainSingleTon.useridlist.clear();
+
+								editor.clear();
+
+								Intent in = new Intent(getApplicationContext(),
+										WelcomeActivity.class);
+								startActivity(in);
+								finish();
+
+							}
+
+						});
+
+				builder.setNegativeButton("NO",
+						new DialogInterface.OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								// Do nothing
+								dialog.dismiss();
+							}
+						});
+
+				AlertDialog alert = builder.create();
+				alert.show();
+
+			}
+		});
+
 		addacount_view.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 
 				mApp = new InstagramApp(MainActivity.this,
-						GetClientIDKeys(ApplicationData.CLIENT_ID),
-						GetClientSecretKeys(ApplicationData.CLIENT_SECRET),
-						ApplicationData.CALLBACK_URL);
+						MainSingleTon.api_key, MainSingleTon.api_secret,
+						MainSingleTon.api_redirect_url);
 				mApp.setListener(listener);
 				mApp.authorize();
 
@@ -1019,55 +1080,4 @@ public class MainActivity extends ActionBarActivity implements
 		FlurryAgent.onEndSession(MainActivity.this);
 	}
 
-	public String GetClientIDKeys(String key)
-
-	{
-		String text1 = null;
-		String finalkey = null;
-		try {
-			byte[] data1 = Base64
-					.decode(ApplicationData.base64, Base64.DEFAULT);
-			text1 = new String(data1, "UTF-8");
-			System.out.println("base64 key" + text1);
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-
-		}
-
-		try {
-			finalkey = Encrypt.decrypt(text1, key);
-		} catch (Exception e) {
-
-			e.printStackTrace();
-		}
-
-		return finalkey;
-
-	}
-
-	public String GetClientSecretKeys(String key)
-
-	{
-		String text1 = null;
-		String finalkey = null;
-		try {
-			byte[] data1 = Base64
-					.decode(ApplicationData.base64, Base64.DEFAULT);
-			text1 = new String(data1, "UTF-8");
-			System.out.println("base64 key" + text1);
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-
-		}
-
-		try {
-			finalkey = Encrypt.decrypt(text1, key);
-		} catch (Exception e) {
-
-			e.printStackTrace();
-		}
-
-		return finalkey;
-
-	}
 }

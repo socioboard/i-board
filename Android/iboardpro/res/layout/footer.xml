@@ -11,8 +11,6 @@
         android:layout_height="1dp"
         android:background="@color/divider" />
 
-  
-
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -47,8 +45,7 @@
     <RelativeLayout
         android:id="@+id/feedback"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/drawer_item_height" 
-        >
+        android:layout_height="@dimen/drawer_item_height" >
 
         <ImageView
             android:id="@+id/footer_icon2"
@@ -67,6 +64,32 @@
             android:paddingLeft="@dimen/drawer_text_with_icon"
             android:paddingRight="@dimen/drawer_right"
             android:text="Feedback"
+            android:textColor="@color/text"
+            android:textSize="14sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/configurekeys"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/drawer_item_height" >
+
+        <ImageView
+            android:id="@+id/footer_icon4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:paddingLeft="@dimen/drawer_left"
+            android:src="@drawable/key_drawer_icon" />
+
+        <TextView
+            android:id="@+id/feedback_text2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:ellipsize="end"
+            android:paddingLeft="@dimen/drawer_text_with_icon"
+            android:paddingRight="@dimen/drawer_right"
+            android:text="Configure Keys"
             android:textColor="@color/text"
             android:textSize="14sp" />
     </RelativeLayout>
