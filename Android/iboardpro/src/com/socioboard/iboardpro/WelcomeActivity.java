@@ -499,7 +499,7 @@ public class WelcomeActivity extends Activity {
 
 		dialogIntkey.show();
 	}
-
+//info dialog
 	protected void infoDialog() {
 
 		final Dialog dialogIntkey = new Dialog(WelcomeActivity.this);
