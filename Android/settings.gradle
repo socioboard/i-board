@@ -1,0 +1,3 @@
+include ':viewPagerLib'
+include ':iboardpro'
+include ':instagramLibrary'

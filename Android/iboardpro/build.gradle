@@ -1,0 +1,34 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 24
+    buildToolsVersion "23.0.0"
+    useLibrary 'org.apache.http.legacy'
+    defaultConfig {
+        applicationId "com.socioboard.iboardpro"
+        minSdkVersion 16
+        targetSdkVersion 23
+        multiDexEnabled true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+}
+
+dependencies {
+    compile 'com.android.support:multidex:1.0.0'
+    compile project(':viewPagerLib')
+    compile 'com.android.support:support-v4:24.0.0'
+    compile 'com.google.android.gms:play-services-ads:+'
+    compile 'com.android.support:appcompat-v7:24.0.0'
+    compile files('libs/appnextTrackingSDK.jar')
+    compile files('libs/bolts-android-1.2.0.jar')
+    compile files('libs/FlurryAnalytics-5.5.0.jar')
+    compile files('libs/Parse-1.9.4.jar')
+    compile files('libs/volley.jar')
+    compile project(path: ':instagramLibrary')
+}

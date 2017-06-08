@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">i-boardpro</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello World!</string>
+    <string name="drawer_open">open</string>
+    <string name="drawer_close">close</string>
+
+    <!-- Ad ID -->
+    <string name="banner_ad_unit_id">ca-app-pub-4051522440712965/9242827537</string>
+
+    <plurals name="numberOfNewArticles">
+        <item quantity="one">%d new</item>
+        <item quantity="other">%d new</item>
+    </plurals>
+
+    <string-array name="drawer_titles">
+        <item>Nearby Feeds</item>
+        <item>Follows</item>
+       <!-- <item>Followed By</item>-->
+        <item>Photo Bucket</item>
+      <!--  <item>Non followers</item>-->
+        <item>Photo Que</item>
+      <!--<item>Fans</item>
+        <item>Mutual</item>
+        <item>Copy Follows/Followed by</item>-->
+        <item>Search #Tag</item>
+    </string-array>
+
+    <array name="drawer_icons">
+        <item>@drawable/nearbyloc</item>
+        <item>@drawable/followers</item>
+      <!--  <item>@drawable/followed</item>-->
+        <item>@drawable/photo_bucket</item>
+       <!-- <item>@drawable/non_follower</item>-->
+        <item>@drawable/photo_que</item>
+      <!--<item>@drawable/fan</item>
+        <item>@drawable/mutual</item>
+        <item>@drawable/copy_follower</item>-->
+        <item>@drawable/search</item>
+    </array>
+
+    <string-array name="chooselist">
+        <item>Follows</item>
+        <item>Followed By</item>
+    </string-array>
+    <string-array name="footer_titles">
+        <item>Settings</item>
+        <item>Feedback</item>
+    </string-array>
+
+    <array name="footer_icons">
+        <item>@drawable/ic_settings</item>
+        <item>@drawable/ic_help</item>
+    </array>
+
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="title_activity_welcome">WelcomeActivity</string>
+
+</resources>

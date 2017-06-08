@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/dialog_background_mtrl_mult" >
+
+    <LinearLayout
+        android:id="@+id/likelayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/image"
+        android:layout_marginLeft="17dp"
+        android:layout_marginTop="10dp"
+        android:paddingBottom="10dp" >
+
+        <ImageView
+            android:id="@+id/like_imgview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_like" />
+
+        <TextView
+            android:id="@+id/like_count_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/like_imgview"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/like_imgview"
+            android:paddingBottom="10dp"
+            android:text="0"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textSize="8dp" />
+    </LinearLayout>
+
+    <com.socioboard.iboardpro.ui.AccountImageView
+        android:id="@+id/current_profile_pic"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:src="@drawable/account_image"
+        app:maskDrawable="@drawable/circle_mask" />
+
+    <ImageView
+        android:id="@+id/comment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/likelayout"
+        android:layout_toLeftOf="@+id/comment_count_text"
+        android:paddingBottom="10dp"
+        android:paddingRight="5dp"
+        android:src="@drawable/icon_comment" />
+
+    <TextView
+        android:id="@+id/comment_count_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/comment"
+        android:layout_alignRight="@+id/image"
+        android:paddingBottom="10dp"
+        android:paddingRight="5dp"
+        android:text="0"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="8dp" />
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="fill_parent"
+        android:layout_height="310dp"
+        android:layout_below="@+id/current_profile_pic" />
+
+    <TextView
+        android:id="@+id/username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/current_profile_pic"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@+id/likelayout"
+        android:text=""
+        android:textSize="10dp" />
+
+</RelativeLayout>

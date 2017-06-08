@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:padding="10dp" >
+
+    <com.socioboard.iboardpro.ui.AccountImageView
+        android:id="@+id/current_profile_pic"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="5dp"
+        android:src="@drawable/account_image"
+        app:maskDrawable="@drawable/circle_mask" />
+
+    <TextView
+        android:id="@+id/user_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/follow_button"
+        android:ellipsize="end"
+        android:paddingLeft="@dimen/drawer_text_with_icon"
+        android:paddingRight="@dimen/drawer_right"
+        android:text="sirejs"
+        android:textColor="@color/text"
+        android:textSize="14sp" />
+
+    <ImageView
+        android:id="@+id/unfollow_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="31dp"
+        android:background="@drawable/unfollow"
+        android:padding="15dp"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/follow_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="31dp"
+        android:background="@drawable/follow"
+        android:padding="15dp"
+        android:visibility="visible" />
+
+</RelativeLayout>

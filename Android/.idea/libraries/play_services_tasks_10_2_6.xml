@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="play-services-tasks-10.2.6">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/iboardpro/build/intermediates/exploded-aar/com.google.android.gms/play-services-tasks/10.2.6/res" />
+      <root url="jar://$PROJECT_DIR$/iboardpro/build/intermediates/exploded-aar/com.google.android.gms/play-services-tasks/10.2.6/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/iboardpro/iboardpro.iml" filepath="$PROJECT_DIR$/iboardpro/iboardpro.iml" />
+      <module fileurl="file://$PROJECT_DIR$/iboardproandroid2.iml" filepath="$PROJECT_DIR$/iboardproandroid2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/instagramLibrary/instagramLibrary.iml" filepath="$PROJECT_DIR$/instagramLibrary/instagramLibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/viewPagerLib/viewPagerLib.iml" filepath="$PROJECT_DIR$/viewPagerLib/viewPagerLib.iml" />
+    </modules>
+  </component>
+</project>

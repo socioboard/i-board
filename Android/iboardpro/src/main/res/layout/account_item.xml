@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp" >
+
+  
+    <com.socioboard.iboardpro.ui.AccountImageView
+        android:id="@+id/profile_pic"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginBottom="5dp"
+            android:src="@drawable/account_image"
+            app:maskDrawable="@drawable/circle_mask" />
+
+    <TextView
+        android:id="@+id/user_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:text="sirejs"
+        android:ellipsize="end"
+        android:paddingLeft="@dimen/drawer_text_with_icon"
+        android:paddingRight="@dimen/drawer_right"
+        android:layout_alignParentLeft="@+id/settings"
+        android:textColor="@color/text"
+        android:textSize="12sp" />
+
+    <ImageView
+        android:id="@+id/settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/item_text"
+        android:layout_alignParentRight="true"
+        android:padding="3dp"
+         android:layout_centerVertical="true"
+        android:src="@drawable/ic_settings"
+        android:textColor="@color/google_white"
+        android:layout_marginRight="@dimen/drawer_right"/>
+
+</RelativeLayout>
