@@ -1,12 +1,5 @@
 package com.socioboard.iboardpro.adapter;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONObject;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -14,12 +7,12 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -29,10 +22,16 @@ import com.socioboard.iboardpro.CommonUtilss;
 import com.socioboard.iboardpro.JSONParser;
 import com.socioboard.iboardpro.R;
 import com.socioboard.iboardpro.database.util.MainSingleTon;
-import com.socioboard.iboardpro.fragments.Fans_Fragments;
 import com.socioboard.iboardpro.fragments.Tag_Feeds_Fragmets;
-import com.socioboard.iboardpro.lazylist.ImageLoader;
 import com.socioboard.iboardpro.models.FeedsModel;
+import com.squareup.picasso.Picasso;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TagFeedAdapter extends BaseAdapter {
 
@@ -40,7 +39,7 @@ public class TagFeedAdapter extends BaseAdapter {
 	FeedsModel model;
 	Context context;
 	JSONParser jParser = new JSONParser();
-	public ImageLoader imageLoader;
+
 	CommonUtilss commonUtilss;
 	private int lastPosition = -1;
 	private ProgressDialog mSpinner;
@@ -49,7 +48,7 @@ public class TagFeedAdapter extends BaseAdapter {
 	public TagFeedAdapter(Context context, ArrayList<FeedsModel> arrayList) {
 		this.arrayList = arrayList;
 		this.context = context;
-		imageLoader = new ImageLoader(context);
+
 		commonUtilss = new CommonUtilss();
 	}
 
@@ -107,14 +106,13 @@ public class TagFeedAdapter extends BaseAdapter {
 		} else {
 			likeimg.setImageResource(R.drawable.icon_like);
 		}
+		Picasso.with(context).load(model.getLow_resolution_url()).into(profile_imagView);
 
-		imageLoader.DisplayImage(model.getLow_resolution_url(),
-				profile_imagView);
 
 		System.out.println("IMAGE URL" + model.getLow_resolution_url());
 
-		imageLoader.DisplayImage(model.getFrom_profilepicture(),
-				user_profile_pic);
+
+		Picasso.with(context).load(model.getFrom_profilepicture()).into(user_profile_pic);
 
 		// new
 		// getBitmap(profile_imagView).execute(model.getLow_resolution_url());

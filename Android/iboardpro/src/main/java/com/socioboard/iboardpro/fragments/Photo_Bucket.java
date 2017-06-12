@@ -1,22 +1,13 @@
 package com.socioboard.iboardpro.fragments;
 
-import java.util.ArrayList;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.AdapterView;
@@ -37,6 +28,12 @@ import com.socioboard.iboardpro.models.CommentsModel;
 import com.socioboard.iboardpro.models.LikesModel;
 import com.socioboard.iboardpro.models.UserMediaModel;
 import com.socioboard.iboardpro.ui.WaveDrawable;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * fratgment is used for fetching photo bucket list of user and showing in list
@@ -302,6 +299,6 @@ public class Photo_Bucket extends Fragment {
 		// TODO Auto-generated method stub
 		super.onDestroy();
 		list.setAdapter(null);
-		adapter.imageLoader.clearCache();
+
 	}
 }

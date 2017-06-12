@@ -1,0 +1,608 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-clearcut\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="1172091167cff5873cbcccad4c0e08ec9e3240de">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-clearcut-10.2.6_c7afd47d7f06969eb39ee3abef1656d201e5d8d9.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-basement\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="900a290779cdb4eb2e63b6f7806fd9f30ce4f60d">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-basement-10.2.6_d10a73510602eb83ecbca47e0e5a72b2c34c21cf.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-games\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="1b41f7538ea1af0aad76cb3253b87b13744788c2">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-games-10.2.6_3315f79e2d2c43c66070e2629dc0e1a99f2e8039.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-tagmanager\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="81978250f6de6ffdf2ea4632e7955613103e984c">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-tagmanager-10.2.6_92d990b3895989ceef805c98a9287e01ec5ef052.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.firebase\firebase-iid\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="8f83a631abfdb790591a720e0cfb5f41329831c3">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.firebase-firebase-iid-10.2.6_6b79c8bc5a2ce9016144c83d0ddc9486dd101273.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-maps\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="0c6924cbba8248329a8c58ead6a380efe7eee76e">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-maps-10.2.6_7a03595ec692e6e59dcf5968a50e8ada215e14f2.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.android.support\support-media-compat\25.2.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="ee394a892dd21c03a528139c1e8d4e0e1264ac84">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.android.support-support-media-compat-25.2.0_c55c7329b8e088d999d96f6340e2b8c820c53c21.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\libs\volley.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="d4aaa36e04ee71a83444f8367c97a46fda662d2c">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\volley_c5d2145f17a562b4afbb2034ce034e09824b0af3.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\libs\bolts-android-1.2.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="6ee2953ccf51ce72b6d548c30c4633b99eb4f9dd">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\bolts-android-1.2.0_e50dd1a1158f72e45c045e8f2d8ba1431e25b2fd.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.firebase\firebase-config\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="c4ba6d53176502b2672a5d7d25a0000d1a6e701c">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.firebase-firebase-config-10.2.6_bc6afa86f56914987b0de6e71dfc680e605eb3ee.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-auth\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="ec94bba6a9bbd3461d90830e0a0752a6487f5484">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-auth-10.2.6_24ff98f7a759d00d427e9eeaa7b905774f3ae68c.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.firebase\firebase-appindexing\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="b34276d1fea450411cedd49d3146b04838f9dd6e">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.firebase-firebase-appindexing-10.2.6_07d9a66a4127bf928d51563c8727213a788c266f.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.firebase\firebase-database\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="de24d8023e8da79f30bee46b298f606e5e758432">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.firebase-firebase-database-10.2.6_07ac2d3a920ce9ed27f994e19b715d3cbe48f622.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.android.support\support-vector-drawable\25.2.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="810f41e5b7fd99f196ebeabe865ba2c54e7e76dc">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.android.support-support-vector-drawable-25.2.0_b9dc03a8ef8b3e37e569c7af8b8317bd74f04d48.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-cast-framework\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="f9aa417cd6d4373c413f6e60865133bcfdb7096b">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-cast-framework-10.2.6_dd8c7b5ac5e15c5651a458d41d1b11f36f8fb41c.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-tagmanager-v4-impl\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="d4e5223997fa6032b326167ee4586ae0b3498647">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-tagmanager-v4-impl-10.2.6_b9eb5c76dc566e9718e9bf56665ba0c5829b4ecf.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.android.support\palette-v7\25.2.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="9be5e957849eb82ad9addf9bdb2896de8bf5654b">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.android.support-palette-v7-25.2.0_91c09ae7e3ef85f8794dd1145d20e12e8d4813d5.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-safetynet\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="d068a922134f5f9b9f98bfc609145e09af03c2a4">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-safetynet-10.2.6_b88d76a250aefc1005dd9776ccd472b8255701fd.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\libs\Parse-1.9.4.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="56c22930b5d4f77015b6a40c7f14103d3e101001">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\Parse-1.9.4_05742eb18d579379d759638846f695dd60fc1bb7.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.firebase\firebase-crash\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="29bd9a40adebb952fbe97515aac9db5dfbd90d93">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.firebase-firebase-crash-10.2.6_64ddeb7db45cfa41526749b1c1747f6988b5950e.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-plus\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="577aa74e06e6b4b407ff23ac75043685ae26dcbb">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-plus-10.2.6_c1873c8fbef0fc2fc2fd2dd29dadd7c39dcda611.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.firebase\firebase-analytics\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="d79c575e1d97b0298746a4c032a0c1dc201c2f82">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.firebase-firebase-analytics-10.2.6_b9bdfb21b1dc0758d7bd15ac79f6920093b78439.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.android.support\mediarouter-v7\25.2.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="af13a350b71b437ebf4be335d02a8f785c39b111">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.android.support-mediarouter-v7-25.2.0_a944bb0e3260e06f58c56d610686f19e670724a4.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-wearable\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="cea6fccbfe2b9ca7701a8766710179cd41ae1974">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-wearable-10.2.6_e803f524b0aeb1de4294570b322b8a22e0586430.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\GLB-112\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\25.2.0\support-annotations-25.2.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="4a5a82a027706397fff621b22fd6fa796e91d7c5">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\support-annotations-25.2.0_1c92e06067099a69afb94ca660db60b312915625.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.android.support\support-core-utils\25.2.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="e820b7be8c035dd522da4bc822e8a76c8e27921a">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.android.support-support-core-utils-25.2.0_b8e70dc57f735b6bc8e3dd389ced60f61a1cf28b.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-awareness\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="079c035b2a1820bf455e0ae7fd484dec575e2182">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-awareness-10.2.6_0902e8d383f14c74ecb73965560471faf9360e9f.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.firebase\firebase-storage\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="ba4defc8cb4ed5b90b8ef71602722cdeebe507cd">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.firebase-firebase-storage-10.2.6_30d9b5efa0bc36444e4b15b261a6525d69ef3bf7.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-gcm\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="215363c803a119c16058c8bc0ccd0a4ee62e7157">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-gcm-10.2.6_7438a8a8b0e7c2413e5bc982ea5430d5d0c53054.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.android.support\support-compat\25.2.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="67eb33110dbacb46a48175b08ae0c96761d2c17d">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.android.support-support-compat-25.2.0_7fd1f355cffb4429711f253610aa6b6583cb037a.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\libs\FlurryAnalytics-5.5.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="0b458e548cb3a6196b60181134f975116b2ac040">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\FlurryAnalytics-5.5.0_1ba397232c9080ecf96195191a579928b962c135.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-panorama\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="0c7e0d83e333a25f969bce43db78150c63e7aa0c">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-panorama-10.2.6_b3f3f24c8af497415226c8b37cda6bff9bd76c56.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-gass\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="9b775d7b643397da3ab57e62ae8abb74a9cc9a83">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-gass-10.2.6_23e2f5e61ad4df60b83a0c8392bbd17f0adc6ce3.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-auth-base\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="8a43729dd397e849f2a8bdc5d57a2f3170efb3ed">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-auth-base-10.2.6_e37cfcf232b677225a16d1b31b7a03d59ed9bd4c.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\libs\appnextTrackingSDK.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="457e8862e0187bcff3f8b8bb67d60a5b5eaba045">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\appnextTrackingSDK_a7936cb651288f9826b6729538e3e67acf37e3d2.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-fitness\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="2f2f16fde0c662116f735951b4e830afba373cc6">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-fitness-10.2.6_5988ac94a5a865989398540d38aeef446fec6543.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-analytics-impl\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="cad5ae5774f39b7017a3ae3d103e7b78506397b0">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-analytics-impl-10.2.6_80dc479bd1a6b6cf3ac15c13e4936dbbb41d1c4a.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-appinvite\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="79100391e3b32d7323a04b7b8a9c8ad0adbae583">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-appinvite-10.2.6_50817d0c0fa6e1eebd67ec047c448733d53b9aba.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-nearby\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="dd057bc43f1c1e2f13566f5fe800d077b08b61b9">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-nearby-10.2.6_64f3704da9d8f013f58161834725f4a37f67af8f.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-places\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="cf5f630e354827a90ffe90ce2a330495108f0595">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-places-10.2.6_aea7183dc02eb65206eb8efa389cf92f851e6d1f.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-instantapps\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="a00607e7cf55392edd324bc8fa3827ded7e9859b">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-instantapps-10.2.6_9483a6739cd4ed8f0274fe1f43ff1b3dab0fc434.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-analytics\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="ab2c6111c9e733c965725976ca2a2e57670000f9">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-analytics-10.2.6_38cdb6c4553c447d5324adac359ffd8eba419cc1.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-location\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="7979972576b6dbb1688052e42e5199abb54f81ba">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-location-10.2.6_25793367b053b83bf5a0f29f9a138b96c7e8aaa7.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.android.support\support-core-ui\25.2.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="fa0446a14ed5dd3725047d6399ffea771a564b30">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.android.support-support-core-ui-25.2.0_436b5a707f1e0b659048f422d1151671022ae1ea.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-tasks\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="69e74a8b1cbf5b8ee0fc0cca6bab1ac6c45efef8">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-tasks-10.2.6_6fa17adfaa5d6b4aaa01ae1beb55ead66f4d0f1f.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-wallet\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="553e58050e91d4295a2f1d1f80ea63b41ee5bc4b">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-wallet-10.2.6_dfb63ab6e1dbbdee452db3d15f02d171608c3027.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\iboardproandroid2\instagramLibrary\unspecified\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="72167c3f28fa11f53d336dc3fc11292807f97646">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\iboardproandroid2-instagramLibrary-unspecified_a6c88610e336bfd50fd749822522c82dd347f77d.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.firebase\firebase-messaging\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="9ff5114aff3bfb387577ba92a11408dcf0441c24">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.firebase-firebase-messaging-10.2.6_66989ba5e7d3a289bd9b8802310813f47faf6e53.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-cast\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="60a8cdd1ad9b8d22a5d44bc8e479257ced2bf075">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-cast-10.2.6_705a124b085635384ea33604d54073d938782010.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.firebase\firebase-database-connection\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="5c1f80f62ccad560edcd6609fc75f385cf7cb45a">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.firebase-firebase-database-connection-10.2.6_d641fe0ab822a1873c7157b5528cc95b836e3795.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.firebase\firebase-storage-common\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="3dbaff65d26258306561d545f88d6712ac41dd46">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.firebase-firebase-storage-common-10.2.6_05892b5f8f2e65fe9a911ef27eeddc6c83982440.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-vision\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="740c4226d6bec1adaaf5fee4b9178674b695f75a">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-vision-10.2.6_17b1dc35e055a9c68dd517d34755782591ee4d5d.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-iid\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="d54a722583c1b99735f62d395806fa38bf5669ae">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-iid-10.2.6_06570c722a94edd69fc660df791f0350e6f40783.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-ads\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="4d7184a651c5975b49928ce7c76175d491ee7a5e">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-ads-10.2.6_2e1124cab4fc238bb966025047c05b8c3b9a250c.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-base\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="3f0a85e6000998ac322ddd50750e8cf91601a84b">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-base-10.2.6_7bcef97893865e69bc775253cb9a56dbce0a6311.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\iboardproandroid2\viewPagerLib\unspecified\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="dee9bdf419f5982c184471c0f5111073b5d23350">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\iboardproandroid2-viewPagerLib-unspecified_ba0d734add9b0f69c8710d187b2f2e98b9a998a4.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-drive\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="aec5337725e7a3171f7f40a50d9837745693d429">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-drive-10.2.6_72d48b983554c294cb263c457f602f8660ee219d.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.android.support\animated-vector-drawable\25.2.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="cb454b52545859ed2f24a6c01366805b0fa04b22">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.android.support-animated-vector-drawable-25.2.0_1c7986b1cd6ab1216d5e0ce6f5897adf2028b6c8.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.firebase\firebase-analytics-impl\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="da832806828ba407284c0c4b1d87b8f9ed9f2520">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.firebase-firebase-analytics-impl-10.2.6_b2e2df0158fbc56891b9f6d7d56615bac64160a2.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.android.support\support-fragment\25.2.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="8fe8a8f77d651982ce5e18f6187dc4daf914ac57">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.android.support-support-fragment-25.2.0_299e02c7ba87034fa6fdcb4f2bb850e1c7876c36.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.android.support\appcompat-v7\25.2.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="702d339bc0a81d21354cd7e2cf2b67225fa4a16c">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.android.support-appcompat-v7-25.2.0_ac222d77258ad0aa5915bced69c4e8708c0b9d36.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-identity\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="f1968b9614bc6851e99db64e356cf60063503e5d">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-identity-10.2.6_6d4b6c03988f1a770f664c42f0fc1834fa1fcb8d.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-tagmanager-api\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="84a9797d6c3dd732d00f0433edc17778573cea17">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-tagmanager-api-10.2.6_18fbf815508aac9c96a015aa1a4f1c2802784caf.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.android.support\support-v4\25.2.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="d7c42c80f6509b9ea4db28ca7859ffae08ec5741">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.android.support-support-v4-25.2.0_e6e728dba024aefca01293f3f24cf0e683f85af7.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.firebase\firebase-auth\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="7b3eaf755284fb08a6d616a55fbb07dc3917d5e7">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.firebase-firebase-auth-10.2.6_18354b28645c556ac20058ce85df47c617dadbf5.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.android.gms\play-services-ads-lite\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="9024225796c3f11342ef6a4a99439f2f988bafb0">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.android.gms-play-services-ads-lite-10.2.6_6da1865e9e0fe174b4798af0df1131f1e24a976b.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\exploded-aar\com.google.firebase\firebase-common\10.2.6\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="23.0.0"
+        sha1="0a534044236cf81b002604643d23e7ca56bd1ee0">
+        <dex dex="D:\Workspace\doodlecricket\hello\platforms\iboardproandroid2\iboardpro\build\intermediates\pre-dexed\debug\com.google.firebase-firebase-common-10.2.6_97b8ad332f6e4f2ee611e68bb407e065d2b52102.jar" />
+    </item>
+
+</items>

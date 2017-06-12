@@ -1,12 +1,5 @@
 package com.socioboard.iboardpro.adapter;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONObject;
-
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -20,14 +13,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.socioboard.iboardpro.JSONParser;
 import com.socioboard.iboardpro.R;
 import com.socioboard.iboardpro.database.util.MainSingleTon;
 import com.socioboard.iboardpro.fragments.Follows_Fragment;
-import com.socioboard.iboardpro.lazylist.ImageLoader;
 import com.socioboard.iboardpro.models.FollowModel;
+import com.squareup.picasso.Picasso;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FollowsAdapter extends BaseAdapter {
 
@@ -35,7 +34,7 @@ public class FollowsAdapter extends BaseAdapter {
 	FollowModel model;
 	Context context;
 	private ProgressDialog mSpinner;
-	public ImageLoader imageLoader;
+
 	JSONParser jParser = new JSONParser();
 
 	int selected_position;
@@ -44,7 +43,7 @@ public class FollowsAdapter extends BaseAdapter {
 		this.arrayList = arrayList;
 		this.context = context;
 		adRequest = new AdRequest.Builder().build();
-		imageLoader = new ImageLoader(context);
+
 	}
 
 	@Override
@@ -99,9 +98,8 @@ public class FollowsAdapter extends BaseAdapter {
 				} else {
 					user_nameText.setText(model.getUsername());
 				}
+				Picasso.with(context).load(model.getProfile_pic_url()).into(profile_imagView);
 
-				imageLoader.DisplayImage(model.getProfile_pic_url(),
-						profile_imagView);
 
 				unfollow_button.setOnClickListener(new OnClickListener() {
 

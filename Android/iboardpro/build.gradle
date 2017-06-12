@@ -31,4 +31,5 @@ dependencies {
     compile files('libs/Parse-1.9.4.jar')
     compile files('libs/volley.jar')
     compile project(path: ':instagramLibrary')
+    compile 'com.squareup.picasso:picasso:2.5.2'
 }

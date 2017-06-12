@@ -1,5 +1,16 @@
 package com.socioboard.iboardpro.instagramlibrary;
 
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+
+import com.socioboard.iboardpro.instagramlibrary.InstagramDialog.OAuthDialogListener;
+
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,19 +18,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
-import com.socioboard.iboardpro.instagramlibrary.InstagramDialog.OAuthDialogListener;
-
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
 
 /**
  * 
@@ -67,7 +65,7 @@ public class InstagramApp {
 		mTokenUrl = TOKEN_URL + "?client_id=" + clientId + "&client_secret="
 				+ clientSecret + "&redirect_uri=" + mCallbackUrl + "&grant_type=authorization_code";
 		mAuthUrl = AUTH_URL + "?client_id=" + clientId + "&redirect_uri="
-				+ mCallbackUrl + "&response_type=code&display=touch&scope=likes+comments+relationships";
+				+ mCallbackUrl + "&response_type=code&display=touch&scope=likes+comments+relationships+follower_list+public_content";
 		
 		OAuthDialogListener listener = new OAuthDialogListener() {
 			@Override

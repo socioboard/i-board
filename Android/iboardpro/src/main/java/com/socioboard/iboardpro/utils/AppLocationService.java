@@ -1,13 +1,16 @@
 package com.socioboard.iboardpro.utils;
 
+import android.Manifest;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.app.ActivityCompat;
 
 public class AppLocationService extends Service implements LocationListener {
 
@@ -23,13 +26,22 @@ public class AppLocationService extends Service implements LocationListener {
 	}
 
 	public Location getLocation(String provider) {
+
+
 		if (locationManager.isProviderEnabled(provider)) {
+
+
+
 			locationManager.requestLocationUpdates(provider,
 					MIN_TIME_FOR_UPDATE, MIN_DISTANCE_FOR_UPDATE, this);
 			if (locationManager != null) {
 				location = locationManager.getLastKnownLocation(provider);
 				return location;
 			}
+
+
+
+
 		}
 		return null;
 	}

@@ -1,17 +1,11 @@
 package com.socioboard.iboardpro.fragments;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
@@ -19,6 +13,8 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,6 +51,14 @@ import com.socioboard.iboardpro.models.RowItemLocations;
 import com.socioboard.iboardpro.ui.WaveDrawable;
 import com.socioboard.iboardpro.utils.AppLocationService;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 public class NearBySearch_Fragment extends Fragment {
 
 	View rootview;
@@ -72,7 +76,7 @@ public class NearBySearch_Fragment extends Fragment {
 	LocationSearchAdapter adapter;
 
 	AppLocationService appLocationService;
-
+	public static final int MY_PERMISSIONS_REQUEST_LOCATION = 123;
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -149,23 +153,34 @@ public class NearBySearch_Fragment extends Fragment {
 
 			@Override
 			public void onClick(View v) {
-				appLocationService = new AppLocationService(getActivity());
-				// fetch current lat & long from network
-				Location nwLocation = appLocationService
-						.getLocation(LocationManager.NETWORK_PROVIDER);
-				if (nwLocation != null) {
 
-					double latitude = nwLocation.getLatitude();
-					double longitude = nwLocation.getLongitude();
 
-					if (MainSingleTon.location_arraylist.size() == 0) {
-
-						FetchLocation(latitude + "", longitude + "");
-					}
-
-				} else {
-					showSettingsAlert("Location");
+				if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+					// TODO: Consider calling
+					ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
 				}
+				else
+				{
+					appLocationService = new AppLocationService(getActivity());
+					// fetch current lat & long from network
+					Location nwLocation = appLocationService
+							.getLocation(LocationManager.NETWORK_PROVIDER);
+					if (nwLocation != null) {
+
+						double latitude = nwLocation.getLatitude();
+						double longitude = nwLocation.getLongitude();
+
+						if (MainSingleTon.location_arraylist.size() == 0) {
+
+							FetchLocation(latitude + "", longitude + "");
+						}
+
+					} else {
+						showSettingsAlert("Location");
+					}
+				}
+
+
 			}
 		});
 	}
@@ -393,4 +408,34 @@ public class NearBySearch_Fragment extends Fragment {
 		alertDialog.show();
 	}
 
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+		if (requestCode==MY_PERMISSIONS_REQUEST_LOCATION)
+		{
+			if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+				appLocationService = new AppLocationService(getActivity());
+				// fetch current lat & long from network
+				Location nwLocation = appLocationService
+						.getLocation(LocationManager.NETWORK_PROVIDER);
+				if (nwLocation != null) {
+
+					double latitude = nwLocation.getLatitude();
+					double longitude = nwLocation.getLongitude();
+
+					if (MainSingleTon.location_arraylist.size() == 0) {
+
+						FetchLocation(latitude + "", longitude + "");
+					}
+
+				} else {
+					showSettingsAlert("Location");
+				}
+			} else {
+						Toast.makeText(getActivity(),"Permission not granted",Toast.LENGTH_SHORT).show();
+			}
+
+		}
+	}
 }
