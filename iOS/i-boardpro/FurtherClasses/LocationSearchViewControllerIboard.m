@@ -45,15 +45,15 @@
     self.view.backgroundColor = [UIColor colorWithRed:(CGFloat)227/255 green:(CGFloat)227/255 blue:(CGFloat)227/255 alpha:1.0];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(createUI) name:@"Location" object:nil];
     
-    self.bannerView =[[GADBannerView alloc]initWithAdSize:kGADAdSizeBanner];
-    self.bannerView.frame = CGRectMake(0, windowSize.height-105, windowSize.width, 50);
-    self.bannerView.adUnitID = adMobId_iboard;
-    self.bannerView.delegate = self;
-    self.bannerView.rootViewController = self;
-    GADRequest * request =[GADRequest request];
-    //request.testDevices = @[ kGADSimulatorID ];
-    [self.bannerView loadRequest:request];
-   // [self.view addSubview:self.bannerView];
+//    self.bannerView =[[GADBannerView alloc]initWithAdSize:kGADAdSizeBanner];
+//    self.bannerView.frame = CGRectMake(0, windowSize.height-105, windowSize.width, 50);
+//    self.bannerView.adUnitID = adMobId_iboard;
+//    self.bannerView.delegate = self;
+//    self.bannerView.rootViewController = self;
+//    GADRequest * request =[GADRequest request];
+//    //request.testDevices = @[ kGADSimulatorID ];
+//    [self.bannerView loadRequest:request];
+//    [self.view addSubview:self.bannerView];
 
        // Do any additional setup after loading the view.
 }
@@ -75,7 +75,15 @@
     searchTable.dataSource = self;
     searchTable.showsVerticalScrollIndicator = NO;
     [self.view addSubview:searchTable];
-    
+    self.bannerView =[[GADBannerView alloc]initWithAdSize:kGADAdSizeBanner];
+   self.bannerView.frame =  CGRectMake((windowSize.width - self.bannerView.frame.size.width)/2, windowSize.height-105, self.bannerView.frame.size.width, 50);
+    self.bannerView.adUnitID = adMobId_iboard;
+    self.bannerView.delegate = self;
+    self.bannerView.rootViewController = self;
+    GADRequest * request =[GADRequest request];
+    //request.testDevices = @[ kGADSimulatorID ];
+    [self.bannerView loadRequest:request];
+    [self.view addSubview:self.bannerView];
     
     UIView * headerView=[[UIView alloc]initWithFrame:CGRectMake(0, 0, windowSize.width, 80)];
     headerView.backgroundColor=[UIColor colorWithRed:(CGFloat)50/255 green:(CGFloat)50/255 blue:(CGFloat)50/255 alpha:(CGFloat)1];
@@ -186,7 +194,11 @@
     urlStr = [urlStr stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSURL * getUrl =[NSURL URLWithString: urlStr];
     NSMutableURLRequest * getRequest =[[NSMutableURLRequest alloc]initWithURL:getUrl cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:50];
+    //on 2.5.2017 added
     
+    [getRequest setHTTPMethod:@"GET"];
+    [getRequest addValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
+    //
     NSData * data =[NSURLConnection sendSynchronousRequest:getRequest returningResponse:&urlResponse error:&error];
     if (!data) {
         return;
@@ -259,7 +271,9 @@
     NSLog(@"Failed to receive");
 }
 
-
+- (UIStatusBarStyle) preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent;
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

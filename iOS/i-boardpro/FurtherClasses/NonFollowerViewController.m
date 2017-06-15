@@ -6,7 +6,7 @@
 #import "UserProfileViewControllerIboard.h"
 #import "UIImageView+WebCache.h"
 #import "HelperClassIboard.h"
-
+#import "TWMessageBarManager.h"
 @interface NonFollowerViewController ()
 {
     NSMutableArray * userId;
@@ -64,17 +64,17 @@
     [[NSNotificationCenter defaultCenter]postNotificationName:@"reachability" object:nil];
     if ([SingletonClassIboard shareSinglton].isActivenetworkConnection==YES) {
 
-        self.bannerView =[[GADBannerView alloc]initWithAdSize:kGADAdSizeBanner];
-        self.bannerView.frame =  CGRectMake(0, windowSize.height-105, windowSize.width, 50);
-        self.bannerView.adUnitID = adMobId_iboard;
-        self.bannerView.rootViewController = self;
-        self.bannerView.delegate = self;
-        
-        GADRequest *request = [GADRequest request];
-       // request.testDevices = @[ kGADSimulatorID ];
-        [self.bannerView loadRequest:request];
-        self.bannerView.hidden = NO;
-       // [self.view addSubview:self.bannerView];
+//        self.bannerView =[[GADBannerView alloc]initWithAdSize:kGADAdSizeBanner];
+//        self.bannerView.frame =  CGRectMake(0, windowSize.height-105, windowSize.width, 50);
+//        self.bannerView.adUnitID = adMobId_iboard;
+//        self.bannerView.rootViewController = self;
+//        self.bannerView.delegate = self;
+//        
+//        GADRequest *request = [GADRequest request];
+//       // request.testDevices = @[ kGADSimulatorID ];
+//        [self.bannerView loadRequest:request];
+//        self.bannerView.hidden = NO;
+//        [self.view addSubview:self.bannerView];
     
     dispatch_async(dispatch_get_global_queue(0, 0),^{
         
@@ -126,6 +126,19 @@ else{
     nonFollowTbl.delegate=self;
     nonFollowTbl.backgroundColor=[UIColor whiteColor];
     [self.view addSubview:nonFollowTbl];
+        
+        self.bannerView =[[GADBannerView alloc]initWithAdSize:kGADAdSizeBanner];
+       self.bannerView.frame =  CGRectMake((windowSize.width - self.bannerView.frame.size.width)/2, windowSize.height-105, self.bannerView.frame.size.width, 50);
+        self.bannerView.adUnitID = adMobId_iboard;
+        self.bannerView.rootViewController = self;
+        self.bannerView.delegate = self;
+        
+        GADRequest *request = [GADRequest request];
+        // request.testDevices = @[ kGADSimulatorID ];
+        [self.bannerView loadRequest:request];
+        self.bannerView.hidden = NO;
+        [self.view addSubview:self.bannerView];
+
         UIView * view=[[UIView alloc]initWithFrame:CGRectMake(0, 0, windowSize.width, 40)];
         view.backgroundColor=[UIColor clearColor];
         nonFollowTbl.tableFooterView=view;
@@ -287,23 +300,23 @@ else{
     static NSString *CellIdentifier = @"notFeed";
     
     TableCustomCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-
+    
     if (cell == nil)
     {
         cell = [[TableCustomCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         
-        cell.add_minusButton.tag=indexPath.row;
-        [cell.add_minusButton addTarget:self action:@selector(unfollowActions:) forControlEvents:UIControlEventTouchUpInside];
         [cell.add_minusButton setBackgroundImage:[UIImage imageNamed:@"iboard-unfollow.png"] forState:UIControlStateNormal];
         
     }
+    [cell.add_minusButton addTarget:self action:@selector(unfollowActions:) forControlEvents:UIControlEventTouchUpInside];
+    cell.add_minusButton.tag=indexPath.row;
     cell.userNameDesc.tag = indexPath.row;
     UITapGestureRecognizer * tapGesture =[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showUserProfile:)];
     tapGesture.numberOfTouchesRequired =1;
     cell.userNameDesc.userInteractionEnabled = YES;
     [cell.userNameDesc addGestureRecognizer:tapGesture];
-
+    
     
     NSDictionary * dict =[mutaulfrnds objectAtIndex:indexPath.row];
     
@@ -341,65 +354,94 @@ else{
 #pragma mark- unfollow action
 
 -(void)unfollowActions:(UIButton *)sender{
-   /* int tag = (int)((UIButton *)(UIControl *)sender).tag;
-    NSString * accessToken=[[NSUserDefaults standardUserDefaults]objectForKey:@"access_token"];
-    NSError * error=nil;
-    NSURLResponse * urlResponse=nil;
-    
-    NSString * userIDStr=[[mutaulfrnds  objectAtIndex:tag]objectForKey:@"id"];
-    
-    NSURL * postUrl=[NSURL URLWithString:[NSString stringWithFormat:@"https://api.instagram.com/v1/users/%@/relationship",userIDStr]];
-    
-    
-    
-    NSMutableURLRequest * request=[[NSMutableURLRequest alloc]initWithURL:postUrl cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:50];
-    [request setHTTPMethod:@"POST"];
-    NSString * body=[NSString stringWithFormat:@"access_token=%@&action=unfollow",accessToken];
-    
-    [request setHTTPBody:[body dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES]];
-    
-    [request addValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
-    
-    NSData * data=[NSURLConnection sendSynchronousRequest:request returningResponse:&urlResponse error:&error];
-    
-    if (data==nil) {
-        return;
-    }
-    id response=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];*/
-   // NSLog(@" response of unfollow %@",response);
-    int tag = (int)((UIButton *)(UIControl *)sender).tag;
+  
+   NSInteger tag = ((UIButton *)(UIControl *)sender).tag;
 
     NSString * userIDStr=[[mutaulfrnds  objectAtIndex:tag]objectForKey:@"id"];
+    NSString *username = [[mutaulfrnds  objectAtIndex:tag]objectForKey:@"username"];
+//    UIAlertController * alert=   [UIAlertController
+//                                  alertControllerWithTitle:@"Info !!!"
+//                                  message:[NSString stringWithFormat:@"Are you sure you want to unfollow  %@",username]
+//                                  preferredStyle:UIAlertControllerStyleAlert];
+//    
+//    UIAlertAction* ok = [UIAlertAction
+//                         actionWithTitle:@"Yes"
+//                         style:UIAlertActionStyleDefault
+//                         handler:^(UIAlertAction * action)
+//                         {
+    
+                             id response =[HelperClassIboard unfollowAction:userIDStr];
+                             
+                             if ([[[response objectForKey:@"meta"]objectForKey:@"code"] isEqualToNumber:[NSNumber numberWithInt:200]]) {
+                                 
+                                 [[SingletonClassIboard shareSinglton].follower removeAllObjects];
+                                 [[SingletonClassIboard shareSinglton].full_name removeAllObjects];
+                                 [[SingletonClassIboard shareSinglton].profile_picture removeAllObjects];
+                                 [usreId removeAllObjects];
+                                 [self compareAndFetchNonFollowers];
+                                 [nonFollowTbl reloadData];
+                                 [[TWMessageBarManager sharedInstance] showMessageWithTitle:@"i-boardpro"
+                                                                                description:[NSString stringWithFormat:@"You just unfollowed %@ ",username]
+                                                                                       type:TWMessageBarMessageTypeInfo];
 
-    id response =[HelperClassIboard unfollowAction:userIDStr];
+//                                 UIAlertView * alertView =[[UIAlertView alloc]initWithTitle:@"" message:[NSString stringWithFormat:@"You just unfollowed %@ ",username] delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
+//                                 [alertView show];
+                             }
+                             
+                             
+                             else{
+                                 
+                                 UIAlertView * alertView =[[UIAlertView alloc]initWithTitle:@"" message:@"Something went wrong" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+                                 [alertView show];
+                                 
+                                 
+                                 
+                             }
+//                             [alert dismissViewControllerAnimated:YES completion:nil];
+//                             
+//                         }];
+//    UIAlertAction* cancel = [UIAlertAction
+//                             actionWithTitle:@"No"
+//                             style:UIAlertActionStyleDefault
+//                             handler:^(UIAlertAction * action)
+//                             {
+//                                 [alert dismissViewControllerAnimated:YES completion:nil];
+//                                 
+//                             }];
+//    
+//    [alert addAction:ok];
+//    [alert addAction:cancel];
+//    
+//    [self presentViewController:alert animated:YES completion:nil];
+//
+//    id response =[HelperClassIboard unfollowAction:userIDStr];
+//    
+//    if ([[[response objectForKey:@"meta"]objectForKey:@"code"] isEqualToNumber:[NSNumber numberWithInt:200]]) {
+////        UIAlertView * alertView =[[UIAlertView alloc]initWithTitle:@"You are unfollowing this user" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+////        [alertView show];
+//    }
     
-    if ([[[response objectForKey:@"meta"]objectForKey:@"code"] isEqualToNumber:[NSNumber numberWithInt:200]]) {
-//        UIAlertView * alertView =[[UIAlertView alloc]initWithTitle:@"You are unfollowing this user" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-//        [alertView show];
-    }
-    
-    [self compareAndFetchNonFollowers];
-    [nonFollowTbl reloadData];
     
 }
 
 -(void)firedNotification {
+    [[SingletonClassIboard shareSinglton]shareImageToInstagramFromController:self];
     
    // [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
     
-    CGRect rect = CGRectMake(0 ,0 ,120, 60);
-    NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://media?id=%@",[SingletonClassIboard shareSinglton].imageId]];
-    
-    if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
-        
-        self.dic = [UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
-        self.dic.delegate = self;
-        self.dic.UTI = @"com.instagram.photo";
-        self.dic=[UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
-         self.dic.annotation = [NSDictionary dictionaryWithObject:[SingletonClassIboard shareSinglton].captionStr forKey:@"InstagramCaption"];
-        [self.dic presentOpenInMenuFromRect: CGRectZero    inView:self.view animated: YES ];
-        
-    }
+//    CGRect rect = CGRectMake(0 ,0 ,120, 60);
+//    NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://media?id=%@",[SingletonClassIboard shareSinglton].imageId]];
+//    
+//    if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
+//        
+//        self.dic = [UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
+//        self.dic.delegate = self;
+//        self.dic.UTI = @"com.instagram.photo";
+//        self.dic=[UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
+//         self.dic.annotation = [NSDictionary dictionaryWithObject:[SingletonClassIboard shareSinglton].captionStr forKey:@"InstagramCaption"];
+//        [self.dic presentOpenInMenuFromRect: CGRectZero    inView:self.view animated: YES ];
+//        
+//    }
     
 }
 

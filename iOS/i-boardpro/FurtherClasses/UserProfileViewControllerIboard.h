@@ -1,8 +1,9 @@
 
 
 #import <UIKit/UIKit.h>
+#import <GoogleMobileAds/GoogleMobileAds.h>
 
-@interface UserProfileViewControllerIboard : UIViewController<UICollectionViewDataSource,UICollectionViewDelegate,UIDocumentInteractionControllerDelegate>
+@interface UserProfileViewControllerIboard : UIViewController<UICollectionViewDataSource,UICollectionViewDelegate,UIDocumentInteractionControllerDelegate,GADBannerViewDelegate>
 {
     UIImageView * profileImage,* loggedInImge;
     CGSize windowSize;
@@ -17,4 +18,5 @@
 @property(nonatomic,strong)NSString * accessToken,*userId;
 @property(nonatomic,strong)UICollectionView * mainCollectionView;
 @property (nonatomic, retain) UIDocumentInteractionController *dic;
+@property(nonatomic,strong)GADBannerView *bannerView;
 @end

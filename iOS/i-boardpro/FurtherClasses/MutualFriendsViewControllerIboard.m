@@ -6,6 +6,7 @@
 #import "UserProfileViewControllerIboard.h"
 #import "UIImageView+WebCache.h"
 #import "HelperClassIboard.h"
+#import "TWMessageBarManager.h"
 
 @interface MutualFriendsViewControllerrIboard ()
 {
@@ -18,6 +19,19 @@
 @end
 
 @implementation MutualFriendsViewControllerrIboard
+-(void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:YES];
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
+}
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:YES];
+    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(firedNotification) name:@"firedNotification" object:nil];
+    
+}
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -51,17 +65,17 @@
     [[NSNotificationCenter defaultCenter]postNotificationName:@"reachability" object:nil];
     if ([SingletonClassIboard shareSinglton].isActivenetworkConnection==YES) {
 
-        self.bannerView =[[GADBannerView alloc]initWithAdSize:kGADAdSizeBanner];
-        self.bannerView.frame =  CGRectMake(0, windowSize.height-105, windowSize.width, 50);
-        self.bannerView.adUnitID = adMobId_iboard;
-        self.bannerView.rootViewController = self;
-        self.bannerView.delegate = self;
-        
-        GADRequest *request = [GADRequest request];
-        //request.testDevices = @[ kGADSimulatorID ];
-        [self.bannerView loadRequest:request];
-        self.bannerView.hidden = NO;
-       // [self.view addSubview:self.bannerView];
+//        self.bannerView =[[GADBannerView alloc]initWithAdSize:kGADAdSizeBanner];
+//        self.bannerView.frame =  CGRectMake(0, windowSize.height-105, windowSize.width, 50);
+//        self.bannerView.adUnitID = adMobId_iboard;
+//        self.bannerView.rootViewController = self;
+//        self.bannerView.delegate = self;
+//        
+//        GADRequest *request = [GADRequest request];
+//        //request.testDevices = @[ kGADSimulatorID ];
+//        [self.bannerView loadRequest:request];
+//        self.bannerView.hidden = NO;
+//        [self.view addSubview:self.bannerView];
         
     dispatch_async(dispatch_get_global_queue(0, 0),^{
         [self compareTogetMutualFrnds];
@@ -87,12 +101,14 @@
 
 }
 
-
+-(void)firedNotification {
+    [[SingletonClassIboard shareSinglton]shareImageToInstagramFromController:self];
+}
 -(void)creatTableForMutualFrnds{
     if ( mutaulfrnds.count<1) {
         UILabel * label=[[UILabel alloc]init];
         label.frame=CGRectMake(40, 150, windowSize.width-60, 50);
-        label.text=@"There is no fans";
+        label.text=@"There is no Mutual Followers";
         label.font=[UIFont boldSystemFontOfSize:15];
         label.lineBreakMode=NSLineBreakByWordWrapping;
         label.numberOfLines=0;
@@ -106,6 +122,17 @@
     mutualTbl.delegate=self;
     mutualTbl.dataSource=self;
     [self.view addSubview:mutualTbl];
+        self.bannerView =[[GADBannerView alloc]initWithAdSize:kGADAdSizeBanner];
+       self.bannerView.frame =  CGRectMake((windowSize.width - self.bannerView.frame.size.width)/2, windowSize.height-105, self.bannerView.frame.size.width, 50);
+        self.bannerView.adUnitID = adMobId_iboard;
+        self.bannerView.rootViewController = self;
+        self.bannerView.delegate = self;
+        
+        GADRequest *request = [GADRequest request];
+        //request.testDevices = @[ kGADSimulatorID ];
+        [self.bannerView loadRequest:request];
+        self.bannerView.hidden = NO;
+        [self.view addSubview:self.bannerView];
         
         UIView * view=[[UIView alloc]initWithFrame:CGRectMake(0, 0, windowSize.width, 40)];
         view.backgroundColor=[UIColor clearColor];
@@ -136,11 +163,8 @@
          cell.topView.hidden = YES;
     }
     cell.commentBtn.hidden=YES;
-     cell.likesBtn.hidden=YES;
+    cell.likesBtn.hidden=YES;
     
-//   [cell.userImage sd_setImageWithURL:[profilePic objectAtIndex:indexPath.row]];
-//    
-//    cell.userNameDesc.text=[full_name objectAtIndex:indexPath.row];
     cell.add_minusButton.tag=indexPath.row;
     UITapGestureRecognizer * tapGesture =[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(showUserProfile:)];
     tapGesture.numberOfTouchesRequired =1;
@@ -340,48 +364,73 @@
 // call unfollow api here
 -(void)unfollowActions:(UIButton *)sender{
     int tag = (int)((UIButton *)(UIControl *)sender).tag;
-   /* NSString * accessToken=[[NSUserDefaults standardUserDefaults]objectForKey:@"access_token"];
-    NSError * error=nil;
-    NSURLResponse * urlResponse=nil;
+  
+//    NSString * userIDStr=[userId  objectAtIndex:tag];
     
-    //NSString * userIDStr=[userId  objectAtIndex:tag];
+    NSString * userIDStr = [[mutaulfrnds  objectAtIndex:tag]objectForKey:@"id"];
+    NSString *username = [[mutaulfrnds  objectAtIndex:tag]objectForKey:@"username"];
+//    UIAlertController * alert=   [UIAlertController
+//                                  alertControllerWithTitle:@"Info !!!"
+//                                  message:[NSString stringWithFormat:@"Are you sure you want to unfollow  %@",username]
+//                                  preferredStyle:UIAlertControllerStyleAlert];
+//    
+//    UIAlertAction* ok = [UIAlertAction
+//                         actionWithTitle:@"Yes"
+//                         style:UIAlertActionStyleDefault
+//                         handler:^(UIAlertAction * action)
+//                         {
     
-    NSString * userIDStr=[[mutaulfrnds objectAtIndex:tag]objectForKey:@"id"];
-    NSURL * postUrl=[NSURL URLWithString:[NSString stringWithFormat:@"https://api.instagram.com/v1/users/%@/relationship",userIDStr]];
+                             id response =[HelperClassIboard unfollowAction:userIDStr];
+
+                             if ([[[response objectForKey:@"meta"]objectForKey:@"code"] isEqualToNumber:[NSNumber numberWithInt:200]]) {
+                                 
+                                  [mutaulfrnds removeObjectAtIndex:tag];
+                                 
+                                 [[SingletonClassIboard shareSinglton].follower removeAllObjects];
+                                 [[SingletonClassIboard shareSinglton].full_name removeAllObjects];
+                                 [[SingletonClassIboard shareSinglton].profile_picture removeAllObjects];
+                                 [userId removeAllObjects];
+                                 [self compareTogetMutualFrnds];
+                                 [mutualTbl reloadData];
+                                 [[TWMessageBarManager sharedInstance] showMessageWithTitle:@"i-boardpro"
+                                                                                description:[NSString stringWithFormat:@"You just unfollowed %@ ",username]
+                                                                                       type:TWMessageBarMessageTypeInfo];
+
+//
+//                                 UIAlertView * alertView =[[UIAlertView alloc]initWithTitle:@"" message:[NSString stringWithFormat:@"You just unfollowed %@ ",username] delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
+//                                 [alertView show];
+                             }
+                             
+                             
+                             else{
+                                 
+                                 UIAlertView * alertView =[[UIAlertView alloc]initWithTitle:@"" message:@"Something went wrong" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+                                 [alertView show];
+                                 
+                                 
+                                 
+                             }
+//                             [alert dismissViewControllerAnimated:YES completion:nil];
+//                             
+//                         }];
+//    UIAlertAction* cancel = [UIAlertAction
+//                             actionWithTitle:@"No"
+//                             style:UIAlertActionStyleDefault
+//                             handler:^(UIAlertAction * action)
+//                             {
+//                                 [alert dismissViewControllerAnimated:YES completion:nil];
+//                                 
+//                             }];
+//    
+//    [alert addAction:ok];
+//    [alert addAction:cancel];
+//    
+//    [self presentViewController:alert animated:YES completion:nil];
     
     
     
-    NSMutableURLRequest * request=[[NSMutableURLRequest alloc]initWithURL:postUrl cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:50];
-    [request setHTTPMethod:@"POST"];
-    NSString * body=[NSString stringWithFormat:@"access_token=%@&action=unfollow",accessToken];
     
-    [request setHTTPBody:[body dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES]];
-    
-    [request addValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
-    
-    NSData * data=[NSURLConnection sendSynchronousRequest:request returningResponse:&urlResponse error:&error];
-    
-    if (data==nil) {
-        return;
-    }
-    id response=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];*/
-    // NSLog(@"response of sollowing %@", response);
-    NSString * userIDStr=[userId  objectAtIndex:tag];
-    id response =[HelperClassIboard unfollowAction:userIDStr];
-    
-    if ([[[response objectForKey:@"meta"]objectForKey:@"code"] isEqualToNumber:[NSNumber numberWithInt:200]]) {
-//        UIAlertView * alertView =[[UIAlertView alloc]initWithTitle:@"You are unfollowing this user" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-//        [alertView show];
-        [mutaulfrnds removeObjectAtIndex:tag];
-        
-    }
-    
-    [[SingletonClassIboard shareSinglton].follower removeAllObjects];
-    [[SingletonClassIboard shareSinglton].full_name removeAllObjects];
-    [[SingletonClassIboard shareSinglton].profile_picture removeAllObjects];
-    [userId removeAllObjects];
-     [self compareTogetMutualFrnds];
-    [mutualTbl reloadData];
+
     
 }
 
@@ -391,11 +440,6 @@
     
     NSLog(@"Ad received");
 }
-
-
-
-/// Tells the delegate that an ad request failed. The failure is normally due to network
-/// connectivity or ad availablility (i.e., no fill).
 - (void)adView:(GADBannerView *)bannerView didFailToReceiveAdWithError:(GADRequestError *)error{
     
     NSLog(@"Failed to receive");

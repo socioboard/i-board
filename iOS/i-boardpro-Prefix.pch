@@ -15,10 +15,13 @@
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 #endif
+#define SCREEN_WIDTH ([[UIScreen mainScreen] bounds].size.width)
+#define SCREEN_HEIGHT ([[UIScreen mainScreen] bounds].size.height)
 
+#define   client_id_iboard   @"***********XXXXXXX************"
+#define   redirectUri_iboard @"***********XXXXXXX************"
+#define   client_screte_iboard @"***********XXXXXXX************"
+#define   flurryId_iboard @"***********XXXXXXX************"
+#define Rgb2UIColor(r, g, b)  [UIColor colorWithRed:((r) / 255.0) green:((g) / 255.0) blue:((b) / 255.0) alpha:1.0]
 
-#define   client_id_iboard   @"7xxxxxxxxxxxxxxxxxxxxxxxxxxxx0"
-#define   redirectUri_iboard @"http://xxxxxxxxxxxxxxxxx"
-#define   client_screte_iboard @"xxxxxxxxxxxxxxxxxxx"
-#define   flurryId_iboard @"xxxxxxxxxxxxxxxxxxxx"
-#define   adMobId_iboard @"xxxxxxxxxxxxxxxxxxxxxxx"
+#define   adMobId_iboard @"***********XXXXXXX************"

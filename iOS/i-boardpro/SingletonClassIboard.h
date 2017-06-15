@@ -2,10 +2,10 @@
 
 #import <Foundation/Foundation.h>
 
-@interface SingletonClassIboard : NSObject
+@interface SingletonClassIboard : NSObject<UIDocumentInteractionControllerDelegate>
 
 +(SingletonClassIboard*)shareSinglton;
-
+@property (strong, nonatomic) UIDocumentInteractionController *documentIneraction;
 @property(nonatomic,strong)NSMutableArray * full_name,* profile_picture,* userId;
 @property(nonatomic,strong)NSString * followed_by,* follows,* media,* user_full_name,* user_pic,* user_name,* medaiCnt;
 
@@ -44,4 +44,5 @@
 
 //
 @property(nonatomic,strong) NSMutableDictionary * storedData;
+- (void) shareImageToInstagramFromController:(UIViewController *) controller;
 @end

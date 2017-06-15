@@ -13,4 +13,5 @@
 }
 @property(nonatomic)BOOL isAddMoreJokes;
 @property (nonatomic, retain) UIDocumentInteractionController *dic;
+@property(nonatomic,strong)GADBannerView *bannerView;
 @end

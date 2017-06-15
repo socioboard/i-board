@@ -95,7 +95,7 @@
 
 
     
-    NSString * url=[NSString stringWithFormat:@"https://api.instagram.com/oauth/authorize/?client_id=%@&redirect_uri=%@&response_type=code&scope=relationships+likes",client_id_iboard,redirectUri_iboard];
+    NSString * url=[NSString stringWithFormat:@"https://api.instagram.com/oauth/authorize/?client_id=%@&redirect_uri=%@&response_type=code&scope=basic+relationships+likes+follower_list+comments+public_content",client_id_iboard,redirectUri_iboard];
     
     NSURL * instagramUrl=[NSURL URLWithString:url];
     NSURLRequest *req = [[NSURLRequest alloc]initWithURL:instagramUrl];
@@ -139,6 +139,14 @@
 //    [SingletonClassIboard shareSinglton].profile_picture=[[NSMutableArray alloc]init];
     NSString * accessToken=[[ NSUserDefaults standardUserDefaults]                                                                                                                                               valueForKey:@"access_token"];
     NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://api.instagram.com/v1/users/self/follows?access_token=%@",accessToken]]];
+    
+    
+    
+    if([data length]== 0){
+        
+        [[[UIAlertView alloc]initWithTitle:@"Login failed" message:@"Access denied" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil] show];
+        return;
+    }
 
     NSDictionary *dictResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];
   
@@ -192,6 +200,8 @@
     dict=[dictResponse objectForKey:@"user"];
     [SingletonClassIboard shareSinglton].user_full_name=[dict objectForKey:@"full_name"];
     [SingletonClassIboard shareSinglton].user_pic=[dict objectForKey:@"profile_picture"];
+    [[NSUserDefaults standardUserDefaults]setObject:[SingletonClassIboard shareSinglton].user_pic forKey:@"userprofile_picture"];
+    
     [SingletonClassIboard shareSinglton].user_name=[dict objectForKey:@"username"];
     [SingletonClassIboard shareSinglton].userID=[dict objectForKey:@"id"];
     
@@ -407,6 +417,9 @@
     }
     sqlite3_close(_database);
     [[NSNotificationCenter defaultCenter]postNotificationName:@"reloadData" object:nil];
+    
+    NSString *profilestring = [[[SingletonClassIboard shareSinglton].allData lastObject]objectForKey:@"profilePic"];
+    [[NSUserDefaults standardUserDefaults]setObject:profilestring forKey:@"userprofile_picture"];
     NSLog(@"count from data base  %@",[SingletonClassIboard shareSinglton].allData);
 }
 
@@ -414,22 +427,22 @@
 
 -(void)firedNotification {
     
-    //[[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
+   [[SingletonClassIboard shareSinglton]shareImageToInstagramFromController:self];
     
-    CGRect rect = CGRectMake(0 ,0 ,120, 60);
-    NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://media?id=%@",[SingletonClassIboard shareSinglton].imageId]];
-    
-    if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
-        
-        self.dic = [UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
-        self.dic.delegate = self;
-        self.dic.UTI = @"com.instagram.photo";
-        self.dic=[UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
-         self.dic.annotation = [NSDictionary dictionaryWithObject:[SingletonClassIboard shareSinglton].captionStr forKey:@"InstagramCaption"];
-        [self.dic presentOpenInMenuFromRect: CGRectZero    inView:self.view animated: YES ];
-        //[self.dic presentPreviewAnimated:YES];
-        
-    }
+//    CGRect rect = CGRectMake(0 ,0 ,120, 60);
+//    NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://media?id=%@",[SingletonClassIboard shareSinglton].imageId]];
+//    
+//    if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
+//        
+//        self.dic = [UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
+//        self.dic.delegate = self;
+//        self.dic.UTI = @"com.instagram.photo";
+//        self.dic=[UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
+//         self.dic.annotation = [NSDictionary dictionaryWithObject:[SingletonClassIboard shareSinglton].captionStr forKey:@"InstagramCaption"];
+//        [self.dic presentOpenInMenuFromRect: CGRectZero    inView:self.view animated: YES ];
+//        //[self.dic presentPreviewAnimated:YES];
+//        
+//    }
     
 }
 

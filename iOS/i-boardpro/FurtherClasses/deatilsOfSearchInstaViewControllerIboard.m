@@ -171,9 +171,9 @@
         cell = [[TableCustomCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         [cell.add_plusButton setBackgroundImage:[UIImage imageNamed:@"iboard-follow_btn.png"] forState:UIControlStateNormal];
         [cell.add_plusButton addTarget:self action:@selector(followActions:) forControlEvents:UIControlEventTouchUpInside];
-        [cell.commentBtn addTarget:self action:@selector(opneCommentsPage:) forControlEvents:UIControlEventTouchUpInside];
-        [cell.commentCnt addTarget:self action:@selector(opneCommentsPage:) forControlEvents:UIControlEventTouchUpInside];
-        [cell.likesBtn addTarget:self action:@selector(likeFeedAction:) forControlEvents:UIControlEventTouchUpInside];
+//        [cell.commentBtn addTarget:self action:@selector(opneCommentsPage:) forControlEvents:UIControlEventTouchUpInside];
+//        [cell.commentCnt addTarget:self action:@selector(opneCommentsPage:) forControlEvents:UIControlEventTouchUpInside];
+//        [cell.likesBtn addTarget:self action:@selector(likeFeedAction:) forControlEvents:UIControlEventTouchUpInside];
     }
     
        if (detailTable==tableView) {
@@ -392,40 +392,69 @@
 #pragma mark- follow action
 
 -(void)followActions:(UIButton *)sender{
-    //int tag = (int)((UIButton *)(UIControl *)sender).tag;
-    /*NSString * accessToken=[[NSUserDefaults standardUserDefaults]objectForKey:@"access_token"];
-    NSError * error=nil;
-    NSURLResponse * urlResponse=nil;
-
-    NSString * userIDStr=[[[resultArr objectAtIndex:sender.tag]objectForKey:@"user"]objectForKey:@"id"];
-    NSURL * postUrl=[NSURL URLWithString:[NSString stringWithFormat:@"https://api.instagram.com/v1/users/%@/relationship",userIDStr]];
-    
-    
-    NSMutableURLRequest * request=[[NSMutableURLRequest alloc]initWithURL:postUrl cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:50];
-    [request setHTTPMethod:@"POST"];
-    NSString * body=[NSString stringWithFormat:@"access_token=%@&action=follow",accessToken];
-    
-    [request setHTTPBody:[body dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES]];
-    
-    [request addValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
-    
-    NSData * data=[NSURLConnection sendSynchronousRequest:request returningResponse:&urlResponse error:&error];
-    
-    if (data==nil) {
-        return;
-    }
-    id response=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];*/
+   
      NSString * userIDStr=[[[resultArr objectAtIndex:sender.tag]objectForKey:@"user"]objectForKey:@"id"];
-    id response=[HelperClassIboard followActions:userIDStr];
-    if ([[[response objectForKey:@"meta"]objectForKey:@"code"] isEqualToNumber:[NSNumber numberWithInt:200]]) {
-        [alreadyFollowingUser addObject:userIDStr];
-//        UIAlertView * alertView =[[UIAlertView alloc]initWithTitle:@"You are following this user" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-//        [alertView show];
-
-        [resultArr removeObjectAtIndex:sender.tag];
-        [detailTable reloadData];
-    }
-   // NSLog(@" response of follow %@",response);
+  
+      NSString *username=[[[resultArr objectAtIndex:sender.tag]objectForKey:@"user"]objectForKey:@"username"];
+    UIAlertController * alert=   [UIAlertController
+                                  alertControllerWithTitle:@"Info !!!"
+                                  message:[NSString stringWithFormat:@"Are you sure you want to follow  %@",username]
+                                  preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction* ok = [UIAlertAction
+                         actionWithTitle:@"Yes"
+                         style:UIAlertActionStyleDefault
+                         handler:^(UIAlertAction * action)
+                         {
+                             
+                            id response=[HelperClassIboard followActions:userIDStr];
+                             if ([[[response objectForKey:@"meta"]objectForKey:@"code"] isEqualToNumber:[NSNumber numberWithInt:200]]) {
+                                
+                                 [alreadyFollowingUser addObject:userIDStr];
+                                 [resultArr removeObjectAtIndex:sender.tag];
+                                 [detailTable reloadData];
+                                 
+                                 UIAlertView * alertView =[[UIAlertView alloc]initWithTitle:@"" message:[NSString stringWithFormat:@"Now you are following %@ ",username] delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
+                                 [alertView show];
+                             }
+                             
+                             
+                             else{
+                                 
+                                 UIAlertView * alertView =[[UIAlertView alloc]initWithTitle:@"" message:@"Something went wrong" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+                                 [alertView show];
+                                 
+                                 
+                                 
+                             }
+                             [alert dismissViewControllerAnimated:YES completion:nil];
+                             
+                         }];
+    UIAlertAction* cancel = [UIAlertAction
+                             actionWithTitle:@"No"
+                             style:UIAlertActionStyleDefault
+                             handler:^(UIAlertAction * action)
+                             {
+                                 [alert dismissViewControllerAnimated:YES completion:nil];
+                                 
+                             }];
+    
+    [alert addAction:ok];
+    [alert addAction:cancel];
+    
+    [self presentViewController:alert animated:YES completion:nil];
+ 
+    
+    
+    
+//    
+//    id response=[HelperClassIboard followActions:userIDStr];
+//    if ([[[response objectForKey:@"meta"]objectForKey:@"code"] isEqualToNumber:[NSNumber numberWithInt:200]]) {
+//        [alreadyFollowingUser addObject:userIDStr];
+//        [resultArr removeObjectAtIndex:sender.tag];
+//        [detailTable reloadData];
+//    }
+  
 }
 
 
@@ -490,62 +519,63 @@
 
 -(void)likeFeedAction:(UIButton *)sender{
     
-    NSError * error=nil;
-    NSURLResponse * urlResponse=nil;
-    NSURL * url;
-    NSString * access_token=[[NSUserDefaults standardUserDefaults]objectForKey:@"access_token"];
-    
-    
-    url=[NSURL  URLWithString:[NSString stringWithFormat: @"https://api.instagram.com/v1/media/%@/likes?",[[resultArr objectAtIndex:sender.tag]objectForKey:@"id"]]];
-    
-    NSMutableURLRequest * getRequest=[[NSMutableURLRequest alloc]initWithURL:url cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:50];
-    if ([[[resultArr objectAtIndex:sender.tag]objectForKey:@"user_has_liked"] isEqualToNumber:[NSNumber numberWithInt:1]]) {
-   // if ([[userLiked objectAtIndex:sender.tag] isEqualToNumber:[NSNumber numberWithInt:1]]) {
-        [getRequest setHTTPMethod:@"DELETE"];
-    }
-    else{
-        [getRequest setHTTPMethod:@"POST"];
-    }
-    
-    [getRequest addValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
-    NSString * body =[NSString stringWithFormat:@"access_token=%@",access_token];
-    [getRequest setHTTPBody:[body dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES]];
-    
-    NSData * data=[NSURLConnection sendSynchronousRequest:getRequest returningResponse:&urlResponse error:&error];
-    
-    if (data==nil) {
-        return;
-    }
-    id response=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];
-    if ([[[response objectForKey:@"meta"]objectForKey:@"code"] isEqualToNumber:[NSNumber numberWithInt:200]]) {
-        // [self loadFeeds];
-        NSLog(@"%@",[[[resultArr objectAtIndex:sender.tag]objectForKey:@"likes"]objectForKey:@"count"]);
-        int i =  [[likesCount objectAtIndex:[sender tag]]intValue];
-        i = i+1;
-        [likesCount replaceObjectAtIndex:sender.tag withObject:[NSNumber numberWithInt:i]];
-        [userLiked replaceObjectAtIndex:[sender tag] withObject:[NSNumber numberWithInt:1]];
-
-        [detailTable reloadData];
-    }
-    NSLog(@"Like  %@",response);
+//    NSError * error=nil;
+//    NSURLResponse * urlResponse=nil;
+//    NSURL * url;
+//    NSString * access_token=[[NSUserDefaults standardUserDefaults]objectForKey:@"access_token"];
+//    
+//    
+//    url=[NSURL  URLWithString:[NSString stringWithFormat: @"https://api.instagram.com/v1/media/%@/likes?",[[resultArr objectAtIndex:sender.tag]objectForKey:@"id"]]];
+//    
+//    NSMutableURLRequest * getRequest=[[NSMutableURLRequest alloc]initWithURL:url cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:50];
+//    if ([[[resultArr objectAtIndex:sender.tag]objectForKey:@"user_has_liked"] isEqualToNumber:[NSNumber numberWithInt:1]]) {
+//   // if ([[userLiked objectAtIndex:sender.tag] isEqualToNumber:[NSNumber numberWithInt:1]]) {
+//        [getRequest setHTTPMethod:@"DELETE"];
+//    }
+//    else{
+//        [getRequest setHTTPMethod:@"POST"];
+//    }
+//    
+//    [getRequest addValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
+//    NSString * body =[NSString stringWithFormat:@"access_token=%@",access_token];
+//    [getRequest setHTTPBody:[body dataUsingEncoding:NSUTF8StringEncoding allowLossyConversion:YES]];
+//    
+//    NSData * data=[NSURLConnection sendSynchronousRequest:getRequest returningResponse:&urlResponse error:&error];
+//    
+//    if (data==nil) {
+//        return;
+//    }
+//    id response=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];
+//    if ([[[response objectForKey:@"meta"]objectForKey:@"code"] isEqualToNumber:[NSNumber numberWithInt:200]]) {
+//        // [self loadFeeds];
+//        NSLog(@"%@",[[[resultArr objectAtIndex:sender.tag]objectForKey:@"likes"]objectForKey:@"count"]);
+//        int i =  [[likesCount objectAtIndex:[sender tag]]intValue];
+//        i = i+1;
+//        [likesCount replaceObjectAtIndex:sender.tag withObject:[NSNumber numberWithInt:i]];
+//        [userLiked replaceObjectAtIndex:[sender tag] withObject:[NSNumber numberWithInt:1]];
+//
+//        [detailTable reloadData];
+//    }
+//    else if ([response objectForKey:@"meta"])
+//    NSLog(@"Like  %@",response);
     
 }
 
 //Open comments page here
 -(void)opneCommentsPage:(UIButton*)sender{
-    int tag = (int)((UIButton *)(UIControl *)sender).tag;
-    
-    NSString * captionId=[[resultArr objectAtIndex:tag]objectForKey:@"id"];
-    
-    if (commentsVc) {
-        commentsVc=nil;
-    }
-    commentsVc=[[CommentsViewController alloc]initWithNibName:@"CommentsViewController" bundle:nil];
-    commentsVc.capId=captionId;
-    commentsVc.feedImage = image;
-    commentsVc.resultDict = [resultArr objectAtIndex:tag];
-    commentsVc.index = tag;
-    [self presentViewController:commentsVc animated:YES completion:nil];
+//    int tag = (int)((UIButton *)(UIControl *)sender).tag;
+//    
+//    NSString * captionId=[[resultArr objectAtIndex:tag]objectForKey:@"id"];
+//    
+//    if (commentsVc) {
+//        commentsVc=nil;
+//    }
+//    commentsVc=[[CommentsViewController alloc]initWithNibName:@"CommentsViewController" bundle:nil];
+//    commentsVc.capId=captionId;
+//    commentsVc.feedImage = image;
+//    commentsVc.resultDict = [resultArr objectAtIndex:tag];
+//    commentsVc.index = tag;
+//    [self presentViewController:commentsVc animated:YES completion:nil];
 }
 
 

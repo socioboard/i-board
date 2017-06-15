@@ -55,7 +55,7 @@
             noLable=nil;
         }
          noLable =[[UILabel alloc]initWithFrame:CGRectMake(20, windowSize.height/2+40, windowSize.width-40, 50)];
-        noLable.text =@"No followwers";
+        noLable.text =@"No followers";
         noLable.textAlignment =  NSTextAlignmentCenter;
         [self.view insertSubview:noLable aboveSubview:copyFollowerTbl];
         
@@ -75,7 +75,7 @@
     copyFollowerTbl.dataSource=self;
     [self.view addSubview:copyFollowerTbl];
     
-    UIView * headerView=[[UIView alloc]initWithFrame:CGRectMake(0, 0, windowSize.width, 100)];
+    UIView * headerView=[[UIView alloc]initWithFrame:CGRectMake(0,0, windowSize.width, 100)];
     headerView.backgroundColor=[UIColor colorWithRed:(CGFloat)50/255 green:(CGFloat)50/255 blue:(CGFloat)50/255 alpha:(CGFloat)1];
     copyFollowerTbl.tableHeaderView=headerView;
     
@@ -107,7 +107,7 @@
     [headerView addSubview:menuList];
     
     self.bannerView =[[GADBannerView alloc]initWithAdSize:kGADAdSizeBanner];
-    self.bannerView.frame =  CGRectMake(0, windowSize.height-105, windowSize.width, 50);
+   self.bannerView.frame =  CGRectMake((windowSize.width - self.bannerView.frame.size.width)/2, windowSize.height-105, self.bannerView.frame.size.width, 50);
     self.bannerView.adUnitID = adMobId_iboard;
     self.bannerView.rootViewController = self;
     self.bannerView.delegate = self;
@@ -116,7 +116,7 @@
    // request.testDevices = @[ kGADSimulatorID ];
     [self.bannerView loadRequest:request];
     self.bannerView.hidden = NO;
-  //  [self.view addSubview:self.bannerView];
+    [self.view addSubview:self.bannerView];
      
     }
      else{

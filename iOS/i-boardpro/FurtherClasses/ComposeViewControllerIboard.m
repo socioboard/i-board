@@ -88,7 +88,8 @@
      composeTextView=[[UITextView alloc]initWithFrame:CGRectMake(105, windowSize.height/2, windowSize.width-140, 100)];
     composeTextView.font=[UIFont systemFontOfSize:12];
     composeTextView.textColor=[UIColor blackColor];
-    composeTextView.text=@"Enter your caption here.";
+   
+//    composeTextView.text=@"Enter your caption here.";
     composeTextView.delegate=self;
     composeTextView.layer.borderWidth=0.7;
     composeTextView.layer.borderColor=[UIColor blackColor].CGColor;
@@ -132,7 +133,9 @@
        
     }
     self.datePicker=[[UIDatePicker alloc]initWithFrame:CGRectMake(0, windowSize.height/2+20, windowSize.width, windowSize.height/2-20)];
-    self.datePicker.frame=CGRectMake(0.0, windowSize.height-130,windowSize.width, 0);
+    self.datePicker.minimumDate = [NSDate date];
+    self.datePicker.date = [NSDate date];
+    self.datePicker.frame=CGRectMake(0, windowSize.height-130,windowSize.width,150);
     if ([sender tag]==2) {
         isDate=YES;
         [self creatBottomUI];
@@ -220,12 +223,18 @@
         [alertView show];
         return;
     }
+    else if ([composeTextView.text isEqualToString:@""]){
+        UIAlertView * alertView=[[UIAlertView alloc]initWithTitle:@"Please add any caption" message:nil delegate:nil cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
+        [alertView show];
+        return;
+        
+    }
     
     // Schedule the notification
     UILocalNotification* localNotification = [[UILocalNotification alloc] init];
     unixTime=(time_t) [dateFire timeIntervalSince1970];
     localNotification.fireDate = dateFire ;
-    localNotification.alertBody =@"i-board" ;
+    localNotification.alertBody =@"Time to post in instagram" ;
     localNotification.alertAction = @"Image is ready to post";
     localNotification.timeZone = [NSTimeZone defaultTimeZone];
     localNotification.applicationIconBadgeNumber = [[UIApplication sharedApplication] applicationIconBadgeNumber] + 1;
@@ -233,6 +242,8 @@
     NSString * unix_time=[NSString stringWithFormat:@"%ld",unixTime];
     NSString * access_token=[[NSUserDefaults standardUserDefaults]objectForKey:@"access_token"];
     NSString * composeText=composeTextView.text;
+    UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+    pasteboard.string = composeTextView.text;
     if (!composeText) {
         composeText=@"";
     }
@@ -253,22 +264,7 @@
 //create UI after getting notication
 -(void)firedNotification {
     
-    //    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
-    
-    CGRect rect = CGRectMake(0 ,0 ,120, 60);
-    NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://media?id=%@",[SingletonClassIboard shareSinglton].imageId]];
-    
-    if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
-        
-        self.dic = [UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
-        self.dic.delegate = self;
-        self.dic.UTI = @"com.instagram.photo";
-        //[self.dic setAnnotation:@{@"InstagramCaption" :[SingletonClassIboard shareSinglton].captionStr}];
-        self.dic=[UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
-         self.dic.annotation = [NSDictionary dictionaryWithObject:[SingletonClassIboard shareSinglton].captionStr forKey:@"InstagramCaption"];
-        [self.dic presentOpenInMenuFromRect:CGRectZero    inView:self.view animated: YES ];
-        
-    }
+   [[SingletonClassIboard shareSinglton]shareImageToInstagramFromController:self];
     
 }
 
@@ -417,11 +413,12 @@
                 data=[NSData dataWithBytes:sqlite3_column_blob(compiledStmt, 3) length:length];
                 
                 char * time=(char *) sqlite3_column_text(compiledStmt,4);
-                char * caption=(char*)sqlite3_column_text(compiledStmt,6);
-                
+                 char * photocaption = (char *) sqlite3_column_text(compiledStmt,6);
                 NSString *profilePic  = [NSString stringWithUTF8String:profilepic];
                 NSString *imageId  = [NSString stringWithUTF8String:imgId];
                 NSString *uTime  = [NSString stringWithUTF8String:time];
+                
+                 NSString *photocaptionstring = [NSString stringWithUTF8String:photocaption];
                 
                 NSMutableDictionary * temp=[[NSMutableDictionary alloc]init];
                 
@@ -431,6 +428,7 @@
                 
                 [temp setObject:uTime forKey:@"unixTime"];
                 
+                [temp setObject:photocaptionstring forKey:@"photocaption"];
                 
                 [[SingletonClassIboard shareSinglton].postData addObject:temp];
                 

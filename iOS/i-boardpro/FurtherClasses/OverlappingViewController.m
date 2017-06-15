@@ -164,7 +164,10 @@
     UIImageView * userImge =[[UIImageView alloc]initWithFrame:CGRectMake(5, 20, 60, 60)];
     userImge.layer.cornerRadius = userImge.frame.size.width/2;
     userImge.clipsToBounds = YES;
-    NSURL * url=[NSURL URLWithString:[SingletonClassIboard shareSinglton].user_pic];
+    
+    NSString *urlstring = [[NSUserDefaults standardUserDefaults]objectForKey:@"userprofile_picture"];
+    NSURL * url=[NSURL URLWithString:urlstring];
+//    NSURL * url=[NSURL URLWithString:[SingletonClassIboard shareSinglton].user_pic];
     [userImge sd_setImageWithURL:url];
     [userprofile addSubview:userImge];
     

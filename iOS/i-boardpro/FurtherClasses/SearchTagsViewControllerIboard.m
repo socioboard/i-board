@@ -40,15 +40,15 @@
     self.view.backgroundColor = [UIColor colorWithRed:(CGFloat)227/255 green:(CGFloat)227/255 blue:(CGFloat)227/255 alpha:1.0];
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(loadService) name:@"#Tags" object:nil];
     
-    self.bannerView =[[GADBannerView alloc]initWithAdSize:kGADAdSizeBanner];
-    self.bannerView.frame = CGRectMake(0, windowSize.height-105, windowSize.width, 50);
-    self.bannerView.adUnitID = adMobId_iboard;
-    self.bannerView.delegate = self;
-    self.bannerView.rootViewController = self;
-    GADRequest * request =[GADRequest request];
-    //request.testDevices = @[ kGADSimulatorID ];
-    [self.bannerView loadRequest:request];
-    //[self.view addSubview:self.bannerView];
+//    self.bannerView =[[GADBannerView alloc]initWithAdSize:kGADAdSizeBanner];
+//    self.bannerView.frame = CGRectMake(0, windowSize.height-105, windowSize.width, 50);
+//    self.bannerView.adUnitID = adMobId_iboard;
+//    self.bannerView.delegate = self;
+//    self.bannerView.rootViewController = self;
+//    GADRequest * request =[GADRequest request];
+//    //request.testDevices = @[ kGADSimulatorID ];
+//    [self.bannerView loadRequest:request];
+//    [self.view addSubview:self.bannerView];
     
 }
 
@@ -56,7 +56,7 @@
     [resultArr removeAllObjects];
     [activityIndicator startAnimating];
     dispatch_async(dispatch_get_global_queue(0, 0),^{
-       // [self searchHashTags];
+//       [self searchHashTags];
         dispatch_async(dispatch_get_main_queue(),^{
             [activityIndicator stopAnimating];
             [self createUI];
@@ -74,12 +74,21 @@
 -(void)createUI{
     
    // searchTable =[[UITableView alloc]initWithFrame:CGRectMake(0, 0,windowSize.width ,windowSize.height-105)];
-    searchTable =[[UITableView alloc]initWithFrame:CGRectMake(0, 0,windowSize.width ,windowSize.height-55)];
+    searchTable =[[UITableView alloc]initWithFrame:CGRectMake(0, 0,SCREEN_WIDTH ,SCREEN_HEIGHT-55)];
     searchTable.delegate = self;
     searchTable.dataSource = self;
     searchTable.showsVerticalScrollIndicator = NO;
     [self.view addSubview:searchTable];
-    
+    self.bannerView =[[GADBannerView alloc]initWithAdSize:kGADAdSizeBanner];
+    self.bannerView.frame =  CGRectMake((windowSize.width - self.bannerView.frame.size.width)/2, windowSize.height-105, self.bannerView.frame.size.width, 50);
+    self.bannerView.adUnitID = adMobId_iboard;
+    self.bannerView.delegate = self;
+    self.bannerView.rootViewController = self;
+    GADRequest * request =[GADRequest request];
+    //request.testDevices = @[ kGADSimulatorID ];
+    [self.bannerView loadRequest:request];
+    [self.view addSubview:self.bannerView];
+
     
     UIView * headerView=[[UIView alloc]initWithFrame:CGRectMake(0, 0, windowSize.width, 80)];
     headerView.backgroundColor=[UIColor colorWithRed:(CGFloat)50/255 green:(CGFloat)50/255 blue:(CGFloat)50/255 alpha:(CGFloat)1];
@@ -103,8 +112,9 @@
     [searchBtn setBackgroundImage:[UIImage imageNamed:@"iboard-search_btn.png"] forState:UIControlStateNormal];
     [searchBtn addTarget:self action:@selector(searchHashTags) forControlEvents:UIControlEventTouchUpInside];
     [headerView addSubview:searchBtn];
-    
-    searchTable.tableFooterView = [[UIView alloc]init];
+    UIView *tablefooterview = [[UIView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 30)];
+    tablefooterview.backgroundColor = [UIColor clearColor];
+    searchTable.tableFooterView =tablefooterview;
 }
 
 
@@ -167,6 +177,8 @@
 -(void)searchHashTags{
     
     [resultArr removeAllObjects];
+    [searchTable reloadData];
+
     
     NSError * error;
     NSURLResponse * urlResponse;
@@ -180,6 +192,8 @@
     
     NSData * data =[NSURLConnection sendSynchronousRequest:getRequest returningResponse:&urlResponse error:&error];
     if (!data) {
+        
+         [[[UIAlertView alloc]initWithTitle:@"Something went wrong" message:@"" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil] show];
         return;
     }
     
@@ -190,6 +204,11 @@
             [resultArr addObject:[dataArr objectAtIndex:i]];
         }
         [searchTable reloadData];
+    }
+    else{
+        
+        
+        [[[UIAlertView alloc]initWithTitle:@"Something went wrong" message:@"Make sure your search tag is not followed by '#' symbol" delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil] show];
     }
 
 }

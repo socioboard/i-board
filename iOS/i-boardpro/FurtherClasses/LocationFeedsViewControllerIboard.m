@@ -189,9 +189,9 @@
         cell = [[TableCustomCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         [cell.add_plusButton setBackgroundImage:[UIImage imageNamed:@"iboard-follow_btn.png"] forState:UIControlStateNormal];
         [cell.add_plusButton addTarget:self action:@selector(followActions:) forControlEvents:UIControlEventTouchUpInside];
-        [cell.commentBtn addTarget:self action:@selector(opneCommentsPage:) forControlEvents:UIControlEventTouchUpInside];
-        [cell.commentCnt addTarget:self action:@selector(opneCommentsPage:) forControlEvents:UIControlEventTouchUpInside];
-        [cell.likesBtn addTarget:self action:@selector(likeFeedAction:) forControlEvents:UIControlEventTouchUpInside];
+//        [cell.commentBtn addTarget:self action:@selector(opneCommentsPage:) forControlEvents:UIControlEventTouchUpInside];
+//        [cell.commentCnt addTarget:self action:@selector(opneCommentsPage:) forControlEvents:UIControlEventTouchUpInside];
+//        [cell.likesBtn addTarget:self action:@selector(likeFeedAction:) forControlEvents:UIControlEventTouchUpInside];
     }
     
     if (detailTable==tableView) {
@@ -386,15 +386,57 @@
 #pragma mark- follow action
 
 -(void)followActions:(UIButton *)sender{
-       NSString * userIDStr=[[[resultArr objectAtIndex:sender.tag]objectForKey:@"user"]objectForKey:@"id"];
-    id response=[HelperClassIboard followActions:userIDStr];
-    if ([[[response objectForKey:@"meta"]objectForKey:@"code"] isEqualToNumber:[NSNumber numberWithInt:200]]) {
-        [alreadyFollowingUser addObject:userIDStr];
-        
-        [resultArr removeObjectAtIndex:sender.tag];
-        [detailTable reloadData];
-    }
     
+    NSString * userIDStr=[[[resultArr objectAtIndex:sender.tag]objectForKey:@"user"]objectForKey:@"id"];
+    
+    NSString *username=[[[resultArr objectAtIndex:sender.tag]objectForKey:@"user"]objectForKey:@"username"];
+    UIAlertController * alert=   [UIAlertController
+                                  alertControllerWithTitle:@"Info !!!"
+                                  message:[NSString stringWithFormat:@"Are you sure you want to follow  %@",username]
+                                  preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction* ok = [UIAlertAction
+                         actionWithTitle:@"Yes"
+                         style:UIAlertActionStyleDefault
+                         handler:^(UIAlertAction * action)
+                         {
+                             
+                             id response=[HelperClassIboard followActions:userIDStr];
+                             if ([[[response objectForKey:@"meta"]objectForKey:@"code"] isEqualToNumber:[NSNumber numberWithInt:200]]) {
+                                 
+                                 [alreadyFollowingUser addObject:userIDStr];
+                                 [resultArr removeObjectAtIndex:sender.tag];
+                                 [detailTable reloadData];
+                                 
+                                 UIAlertView * alertView =[[UIAlertView alloc]initWithTitle:@"" message:[NSString stringWithFormat:@"Now you are following %@ ",username] delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
+                                 [alertView show];
+                             }
+                             
+                             
+                             else{
+                                 
+                                 UIAlertView * alertView =[[UIAlertView alloc]initWithTitle:@"" message:@"Something went wrong" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+                                 [alertView show];
+                                 
+                                 
+                                 
+                             }
+                             [alert dismissViewControllerAnimated:YES completion:nil];
+                             
+                         }];
+    UIAlertAction* cancel = [UIAlertAction
+                             actionWithTitle:@"No"
+                             style:UIAlertActionStyleDefault
+                             handler:^(UIAlertAction * action)
+                             {
+                                 [alert dismissViewControllerAnimated:YES completion:nil];
+                                 
+                             }];
+    
+    [alert addAction:ok];
+    [alert addAction:cancel];
+    
+    [self presentViewController:alert animated:YES completion:nil];
 }
 
 @end

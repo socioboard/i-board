@@ -109,7 +109,7 @@
     [self.view addSubview:commentsTbl];
     
     self.bannerView =[[GADBannerView alloc]initWithAdSize:kGADAdSizeBanner];
-    self.bannerView.frame =  CGRectMake(0, windowSize.height-50, windowSize.width, 50);
+    self.bannerView.frame =  CGRectMake((windowSize.width - self.bannerView.frame.size.width)/2, windowSize.height-105, self.bannerView.frame.size.width, 50);
     self.bannerView.adUnitID = adMobId_iboard;
     self.bannerView.rootViewController = self;
     self.bannerView.delegate = self;
@@ -118,7 +118,7 @@
    // request.testDevices = @[ kGADSimulatorID ];
     [self.bannerView loadRequest:request];
     self.bannerView.hidden = NO;
-   // [self.view addSubview:self.bannerView];
+    [self.view addSubview:self.bannerView];
 
    // }
 }
@@ -318,22 +318,21 @@
 
 -(void)firedNotification {
     
+    [[SingletonClassIboard shareSinglton]shareImageToInstagramFromController:self];
   //  [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
-    
-    CGRect rect = CGRectMake(0 ,0 ,120, 60);
-    NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://media?id=%@",[SingletonClassIboard shareSinglton].imageId]];
-    
-    if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
-        
-        self.dic = [UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
-        self.dic.delegate = self;
-        self.dic.UTI = @"com.instagram.photo";
-        self.dic=[UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
-         self.dic.annotation = [NSDictionary dictionaryWithObject:[SingletonClassIboard shareSinglton].captionStr forKey:@"InstagramCaption"];
-        [self.dic presentOpenInMenuFromRect: CGRectZero    inView:self.view animated: YES ];
-        
-        
-    }
+//    
+//    CGRect rect = CGRectMake(0 ,0 ,120, 60);
+//    NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://media?id=%@",[SingletonClassIboard shareSinglton].imageId]];
+//    
+//    if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
+//        
+//        self.dic = [UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
+//        self.dic.delegate = self;
+//        self.dic.UTI = @"com.instagram.photo";
+//        self.dic=[UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
+//         self.dic.annotation = [NSDictionary dictionaryWithObject:[SingletonClassIboard shareSinglton].captionStr forKey:@"InstagramCaption"];
+//        [self.dic presentOpenInMenuFromRect: CGRectZero    inView:self.view animated: YES ];
+//    }
     
 }
 

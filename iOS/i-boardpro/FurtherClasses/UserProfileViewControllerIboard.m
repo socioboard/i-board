@@ -14,6 +14,8 @@
     UIActivityIndicatorView  * activityView;
     UILabel * noInternetConnnection;
     UIView * popUpview;
+    int currentindexpath;
+    UIImageView * imageView;
 }
 @end
 
@@ -152,8 +154,9 @@ else{
     loggedInImge.layer.borderColor=[UIColor whiteColor].CGColor;
     loggedInImge.layer.borderWidth=1.5;
     
-    
-    NSURL * url1=[NSURL URLWithString:[SingletonClassIboard shareSinglton].user_pic];
+    NSString *urlstring = [[NSUserDefaults standardUserDefaults]objectForKey:@"userprofile_picture"];
+    NSURL * url1=[NSURL URLWithString:urlstring];
+//    NSURL * url1=[NSURL URLWithString:[SingletonClassIboard shareSinglton].user_pic];
      NSData * imageData1=[NSData dataWithContentsOfURL:url1];
     
     loggedInImge.image=[UIImage imageWithData:imageData1];
@@ -163,68 +166,61 @@ else{
     //-------------------
     NSString * mediaStr=[self abbreviateNumber:[mediaCountStr intValue]];
     mediaCountLbl=[[UILabel alloc]init];
-    mediaCountLbl.frame=CGRectMake(30, 170, 40, 10);
+    mediaCountLbl.frame=CGRectMake(30, 170, 60, 15);
     mediaCountLbl.text=mediaStr;
-    mediaCountLbl.font=[UIFont boldSystemFontOfSize:10];
+    mediaCountLbl.font=[UIFont boldSystemFontOfSize:11];
     mediaCountLbl.textAlignment=NSTextAlignmentCenter;
     mediaCountLbl.textColor=[UIColor colorWithRed:(CGFloat)235/255 green:(CGFloat)235/255 blue:(CGFloat)235/255 alpha:(CGFloat)1];
     [self.view addSubview:mediaCountLbl];
     
-     NSString * followsStr=[self abbreviateNumber:[followsCountStr intValue]];
+    
+    NSString * followingStr=[self abbreviateNumber:[followingCountStr intValue]];
     followsCountLbl=[[UILabel alloc]init];
-    followsCountLbl.frame=CGRectMake(windowSize.width/2-30, 170, 60, 10);
-    followsCountLbl.text=followsStr;
+    followsCountLbl.frame=CGRectMake(windowSize.width/2-30, 170, 60, 15);
+    followsCountLbl.text=followingStr;
     followsCountLbl.textAlignment=NSTextAlignmentCenter;
-    followsCountLbl.font=[UIFont boldSystemFontOfSize:10];
+    followsCountLbl.font=[UIFont boldSystemFontOfSize:11];
     followsCountLbl.textColor=[UIColor colorWithRed:(CGFloat)235/255 green:(CGFloat)235/255 blue:(CGFloat)235/255 alpha:(CGFloat)1];
     [self.view addSubview:followsCountLbl];
     
-    NSString * followingStr=[self abbreviateNumber:[followingCountStr intValue]];
+    NSString * followsStr=[self abbreviateNumber:[followsCountStr intValue]];
     followingCountLbl=[[UILabel alloc]init];
-    followingCountLbl.frame=CGRectMake(windowSize.width-80, 170, 40, 10);
-    followingCountLbl.text=followingStr;
+    followingCountLbl.frame=CGRectMake(windowSize.width-80, 170, 60, 15);
+    followingCountLbl.text=followsStr;
     followingCountLbl.textAlignment=NSTextAlignmentCenter;
-    followingCountLbl.font=[UIFont boldSystemFontOfSize:10];
+    followingCountLbl.font=[UIFont boldSystemFontOfSize:11];
     followingCountLbl.textColor=[UIColor colorWithRed:(CGFloat)235/255 green:(CGFloat)235/255 blue:(CGFloat)235/255 alpha:(CGFloat)1];
     [self.view addSubview:followingCountLbl];
 
     
     
     UILabel * mediaCount=[[UILabel alloc]init];
-    mediaCount.frame=CGRectMake(40, 180, 40, 10);
+    mediaCount.frame=CGRectMake(42, 180, 40, 15);
     mediaCount.text=@"Media";
-    mediaCount.font=[UIFont boldSystemFontOfSize:10];
+    mediaCount.font=[UIFont boldSystemFontOfSize:12];
     mediaCount.textColor=[UIColor colorWithRed:(CGFloat)235/255 green:(CGFloat)235/255 blue:(CGFloat)235/255 alpha:(CGFloat)1];
     [self.view addSubview:mediaCount];
     
     UILabel * Follower=[[UILabel alloc]init];
-    Follower.frame=CGRectMake(windowSize.width/2-20, 180, 80, 10);
+    Follower.frame=CGRectMake(windowSize.width/2-22, 180, 80, 15);
     Follower.text=@"Followers";
-    Follower.font=[UIFont boldSystemFontOfSize:10];
+    Follower.font=[UIFont boldSystemFontOfSize:12];
     Follower.textColor=[UIColor colorWithRed:(CGFloat)235/255 green:(CGFloat)235/255 blue:(CGFloat)235/255 alpha:(CGFloat)1];
     [self.view addSubview:Follower];
     
     UILabel * following=[[UILabel alloc]init];
-    following.frame=CGRectMake(windowSize.width-80, 180, 80, 10);
+    following.frame=CGRectMake(windowSize.width-80, 180, 80, 15);
     following.text=@"Following";
-    following.font=[UIFont boldSystemFontOfSize:10];
+    following.font=[UIFont boldSystemFontOfSize:12];
     following.textColor=[UIColor colorWithRed:(CGFloat)235/255 green:(CGFloat)235/255 blue:(CGFloat)235/255 alpha:(CGFloat)1];
     [self.view addSubview:following];
-    
-    [self createCollectionView];
-    
-    
-}
-// creat CollectionView to show images
--(void)createCollectionView{
-    
+   
     UICollectionViewFlowLayout *flowLayOut= [[UICollectionViewFlowLayout alloc] init];
-    flowLayOut.minimumInteritemSpacing = (CGFloat)2.0;
-    flowLayOut.minimumLineSpacing = (CGFloat)2.0;
-    flowLayOut.sectionInset = UIEdgeInsetsMake(10, 10, 10, 10);
+    flowLayOut.minimumInteritemSpacing = 2.0;
+    flowLayOut.minimumLineSpacing= 2.0;
+    flowLayOut.itemSize = CGSizeMake(SCREEN_WIDTH/4-4, SCREEN_WIDTH/4-4);
     
-    
-    self.mainCollectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, windowSize.height/2, windowSize.width, windowSize.height/2) collectionViewLayout:flowLayOut];
+    self.mainCollectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, following.frame.origin.y+following.frame.size.height+20, windowSize.width, SCREEN_HEIGHT-(_mainCollectionView.frame.origin.y+_mainCollectionView.frame.size.height-50)) collectionViewLayout:flowLayOut];
     
     
     self.automaticallyAdjustsScrollViewInsets = NO;
@@ -237,7 +233,7 @@ else{
     self.mainCollectionView.showsVerticalScrollIndicator=NO;
     
     [self.view addSubview:self.mainCollectionView];
-
+   
 }
 
 
@@ -262,32 +258,23 @@ else{
 }
 
 
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
-{
-    
-    return CGSizeMake(73, 73);
-}
-
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout referenceSizeForHeaderInSection:(NSInteger)section{
-    
-    
-    CGSize size = CGSizeMake(self.view.frame.size.width, 25);
-    return size;
-    
-}
-
 -(void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath{
     
-    NSURL * url=[NSURL URLWithString:[imageUrl objectAtIndex:indexPath.row]];
-    [self createPopUp:url];
+//    NSURL * url=[NSURL URLWithString:[imageUrl objectAtIndex:indexPath.row]];
+//    [self createPopUp:url];
+    currentindexpath = (int)indexPath.row;
+    [self createpopup:currentindexpath];
 }
 
--(void)createPopUp:(NSURL*)url{
+
+- (void)createpopup:(int)indexpath{
+    
+    NSURL * url=[NSURL URLWithString:[imageUrl objectAtIndex:indexpath]];
     popUpview =[[UIView alloc]initWithFrame:CGRectMake(0, 0, windowSize.width, windowSize.height)];
     popUpview.backgroundColor = [UIColor blackColor];
     [self.view insertSubview:popUpview   aboveSubview:self.mainCollectionView];
     
-    UIImageView * imageView =[[UIImageView alloc]initWithFrame:CGRectMake(10, 40, popUpview.frame.size.width-20, popUpview.frame.size.height-100)];
+    imageView =[[UIImageView alloc]initWithFrame:CGRectMake(10, 40, popUpview.frame.size.width-20, popUpview.frame.size.height-100)];
     [imageView sd_setImageWithURL:url];
     [popUpview addSubview:imageView];
     imageView.userInteractionEnabled = YES;
@@ -304,14 +291,113 @@ else{
     tpGesture.numberOfTapsRequired = 1 ;
     [imageView addGestureRecognizer:tpGesture];
     
-    UISwipeGestureRecognizer * swipe =[[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(swipeGesture:)];
-    swipe.direction = UISwipeGestureRecognizerDirectionDown;
-    [imageView addGestureRecognizer:swipe];
+    UISwipeGestureRecognizer * swipeleft =[[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(swipeGestureleft:)];
+    swipeleft.direction = UISwipeGestureRecognizerDirectionLeft;
+    [imageView addGestureRecognizer:swipeleft];
+    
+    UISwipeGestureRecognizer * swiperight =[[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(swipeGestureright:)];
+    swiperight.direction = UISwipeGestureRecognizerDirectionRight;
+    [imageView addGestureRecognizer:swiperight];
+
+  
+    
 }
+-(void)createPopUp:(NSURL*)url{
+    
+    popUpview =[[UIView alloc]initWithFrame:CGRectMake(0, 0, windowSize.width, windowSize.height)];
+    popUpview.backgroundColor = [UIColor blackColor];
+    [self.view insertSubview:popUpview   aboveSubview:self.mainCollectionView];
+    
+     UIImageView * imageView =[[UIImageView alloc]initWithFrame:CGRectMake(10, 40, popUpview.frame.size.width-20, popUpview.frame.size.height-100)];
+    [imageView sd_setImageWithURL:url];
+    [popUpview addSubview:imageView];
+    imageView.userInteractionEnabled = YES;
+    
+    [UIView animateWithDuration:0.5 animations:^{
+        popUpview.transform = CGAffineTransformScale(CGAffineTransformIdentity, 1.1, 1.1);
+    } completion:^(BOOL finished) {
+        popUpview.transform = CGAffineTransformIdentity;
+        
+        
+    }];
+    
+    UITapGestureRecognizer * tpGesture =[[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(topGetsuteMthod:)];
+    tpGesture.numberOfTapsRequired = 1 ;
+    [imageView addGestureRecognizer:tpGesture];
+    
+//    UISwipeGestureRecognizer * swipe =[[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(swipeGesture:)];
+//    swipe.direction = UISwipeGestureRecognizerDirectionDown;
+//    [imageView addGestureRecognizer:swipe];
+    
+    UISwipeGestureRecognizer * swipeleft =[[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(swipeGestureleft:)];
+    swipeleft.direction = UISwipeGestureRecognizerDirectionLeft;
+    [imageView addGestureRecognizer:swipeleft];
+    
+    UISwipeGestureRecognizer * swiperight =[[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(swipeGestureright:)];
+    swiperight.direction = UISwipeGestureRecognizerDirectionRight;
+    [imageView addGestureRecognizer:swiperight];
+}
+
+
+- (void)swipeGestureleft:(UISwipeGestureRecognizer *)swipeleft{
+    if(currentindexpath < imageUrl.count){
+         currentindexpath=currentindexpath+1;
+    }
+    else{
+        return;
+    }
+    if(currentindexpath<imageUrl.count){
+        NSURL * url=[NSURL URLWithString:[imageUrl objectAtIndex:currentindexpath]];
+        [imageView sd_setImageWithURL:url];
+        [popUpview addSubview:imageView];
+        imageView.userInteractionEnabled = YES;
+    }
+   
+    
+    
+    
+}
+
+- (void)swipeGestureright:(UISwipeGestureRecognizer *)swiperight{
+    if(currentindexpath==0){
+        return;
+    }
+    else{
+          currentindexpath=currentindexpath-1;
+    }
+  
+    if(currentindexpath>=0){
+        
+        
+        NSURL * url=[NSURL URLWithString:[imageUrl objectAtIndex:currentindexpath]];
+        [imageView sd_setImageWithURL:url];
+        [popUpview addSubview:imageView];
+        imageView.userInteractionEnabled = YES;
+    }
+    
+    
+//    
+//    
+//    [UIView animateWithDuration:0.5 animations:^{
+//        popUpview.frame = CGRectMake(windowSize.width, 0, windowSize.width, windowSize.height);
+//    } completion:^(BOOL finished) {
+//        [popUpview removeFromSuperview];
+//        popUpview = nil;
+//    }];
+    
+}
+
 
 -(void)topGetsuteMthod:(UITapGestureRecognizer *)tap{
     
+    [UIView animateWithDuration:0.5 animations:^{
+        popUpview.frame = CGRectMake(0, windowSize.height+50, windowSize.width, windowSize.height);
+    } completion:^(BOOL finished) {
+        [popUpview removeFromSuperview];
+        popUpview = nil;
+    }];
 }
+
 
 -(void)swipeGesture:(UISwipeGestureRecognizer*) swipe{
     [UIView animateWithDuration:0.5 animations:^{
@@ -406,21 +492,21 @@ else{
 
 -(void)firedNotification {
     
-   // [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
+ [[SingletonClassIboard shareSinglton]shareImageToInstagramFromController:self];
     
-    CGRect rect = CGRectMake(0 ,0 ,120, 60);
-    NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://media?id=%@",[SingletonClassIboard shareSinglton].imageId]];
-    
-    if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
-        
-        self.dic = [UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
-        self.dic.delegate = self;
-        self.dic.UTI = @"com.instagram.photo";
-        self.dic=[UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
-         self.dic.annotation = [NSDictionary dictionaryWithObject:[SingletonClassIboard shareSinglton].captionStr forKey:@"InstagramCaption"];
-        [self.dic presentOpenInMenuFromRect: CGRectZero    inView:self.view animated: YES ];
-        
-    }
+//    CGRect rect = CGRectMake(0 ,0 ,120, 60);
+//    NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://media?id=%@",[SingletonClassIboard shareSinglton].imageId]];
+//    
+//    if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
+//        
+//        self.dic = [UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
+//        self.dic.delegate = self;
+//        self.dic.UTI = @"com.instagram.photo";
+//        self.dic=[UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
+//         self.dic.annotation = [NSDictionary dictionaryWithObject:[SingletonClassIboard shareSinglton].captionStr forKey:@"InstagramCaption"];
+//        [self.dic presentOpenInMenuFromRect: CGRectZero    inView:self.view animated: YES ];
+//        
+//    }
     
 }
 
@@ -480,15 +566,16 @@ else{
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+#pragma mark- delegate methods of bannerview
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (void)adViewDidReceiveAd:(GADBannerView *)bannerView{
+    
+    NSLog(@"Ad received");
 }
-*/
+- (void)adView:(GADBannerView *)bannerView didFailToReceiveAdWithError:(GADRequestError *)error{
+    
+    NSLog(@"Failed to receive");
+}
+
 
 @end

@@ -108,7 +108,7 @@
     
     
     FeedViewControllerIboard * feed =[[FeedViewControllerIboard alloc]initWithNibName:@"FeedViewControllerIboard" bundle:nil];
-    feed.title=@"Feeds";
+    feed.title=@"My feeds";
     
     
     FansViewControllerIboard * fans=[[FansViewControllerIboard alloc]initWithNibName:@"FansViewControllerIboard" bundle:nil];
@@ -117,9 +117,9 @@
     MutualFriendsViewControllerrIboard * mutualVc=[[MutualFriendsViewControllerrIboard alloc]init];
     mutualVc.title=@"Mutual ";
 
-    
-    PhotosViewControllerIboard * photoVC=[[PhotosViewControllerIboard alloc]initWithNibName:@"PhotosViewControllerIboard" bundle:nil];
-    photoVC.title=@"Photo Bucket";
+//    
+//    PhotosViewControllerIboard * photoVC=[[PhotosViewControllerIboard alloc]initWithNibName:@"PhotosViewControllerIboard" bundle:nil];
+//    photoVC.title=@"Photo Bucket";
     
     
     
@@ -129,8 +129,8 @@
     ScheduleViewControllerIboard * scheduleVC=[[ScheduleViewControllerIboard alloc]initWithNibName:@"ScheduleViewControllerIboard" bundle:nil];
     scheduleVC.title=@"Photo Que";
     
-    deatilsOfSearchInstaViewControllerIboard   * copyFollowVC=[[deatilsOfSearchInstaViewControllerIboard alloc]init];
-    copyFollowVC.title=@"Copy follows/followed-by";
+//    deatilsOfSearchInstaViewControllerIboard   * copyFollowVC=[[deatilsOfSearchInstaViewControllerIboard alloc]init];
+//    copyFollowVC.title=@"Copy follows/followed-by";
     
     LocationSearchViewControllerIboard * locationVC = [[LocationSearchViewControllerIboard alloc]init];
     locationVC.title = @"Nearby feeds";
@@ -143,7 +143,7 @@
     
     CustomMenuViewControllerIboard *customMenuView =[[CustomMenuViewControllerIboard alloc] init];
     customMenuView.numberOfSections = 1;
-    customMenuView.viewControllers = @[followNavi,follow,followedby,fans,mutualVc,photoVC,nonFollowVC,scheduleVC,copyFollowVC,searchHashTagVC,locationVC];
+    customMenuView.viewControllers = @[followNavi,follow,followedby,fans,mutualVc,nonFollowVC,scheduleVC,searchHashTagVC,locationVC];
     
     return customMenuView;
 }

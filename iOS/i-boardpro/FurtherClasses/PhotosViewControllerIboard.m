@@ -294,22 +294,23 @@
 
 
 -(void)firedNotification {
+    [[SingletonClassIboard shareSinglton]shareImageToInstagramFromController:self];
     
    // [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
     
-    CGRect rect = CGRectMake(0 ,0 ,120, 60);
-    NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://media?id=%@",[SingletonClassIboard shareSinglton].imageId]];
-    
-    if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
-        
-        self.dic = [UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
-        self.dic.delegate = self;
-        self.dic.UTI = @"com.instagram.photo";
-        self.dic=[UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
-         self.dic.annotation = [NSDictionary dictionaryWithObject:[SingletonClassIboard shareSinglton].captionStr forKey:@"InstagramCaption"];
-        [self.dic presentOpenInMenuFromRect: CGRectZero    inView:self.view animated: YES ];
-        
-    }
+//    CGRect rect = CGRectMake(0 ,0 ,120, 60);
+//    NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://media?id=%@",[SingletonClassIboard shareSinglton].imageId]];
+//    
+//    if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
+//        
+//        self.dic = [UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
+//        self.dic.delegate = self;
+//        self.dic.UTI = @"com.instagram.photo";
+//        self.dic=[UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
+//         self.dic.annotation = [NSDictionary dictionaryWithObject:[SingletonClassIboard shareSinglton].captionStr forKey:@"InstagramCaption"];
+//        [self.dic presentOpenInMenuFromRect: CGRectZero    inView:self.view animated: YES ];
+//        
+//    }
     
 }
 

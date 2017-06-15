@@ -93,10 +93,11 @@
     topLabel.font=[UIFont boldSystemFontOfSize:12];
     [footerView addSubview:topLabel];
     
-    UILabel * bottomLabel=[[UILabel alloc]initWithFrame:CGRectMake(windowSize.width/2-60, 40, (windowSize.width-(windowSize.width/2-60)), 30)];
+    UILabel * bottomLabel=[[UILabel alloc]initWithFrame:CGRectMake(10, 40, SCREEN_WIDTH-40, 30)];
     bottomLabel.text=@"Queue your photos and we will remind you to post them at the best time.";
+    bottomLabel.textAlignment = NSTextAlignmentCenter;
     bottomLabel.textColor=[UIColor blackColor];
-    bottomLabel.font=[UIFont systemFontOfSize:10];
+    bottomLabel.font=[UIFont systemFontOfSize:11];
     bottomLabel.numberOfLines=0;
     bottomLabel.lineBreakMode=NSLineBreakByWordWrapping;
     [footerView addSubview:bottomLabel];
@@ -114,7 +115,10 @@
     }
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    return 80;
+
+    return [ScheduleCellIboard messageSize:[[[SingletonClassIboard shareSinglton].postData objectAtIndex:indexPath.row]objectForKey:@"photocaption"]].size.height+60;
+    
+//    return 80;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -136,10 +140,22 @@
     [formatter setLocale:[NSLocale currentLocale]];
     [formatter setDateFormat:@"dd-MM-yyyy HH:mm:ss"];
     NSString *dateString = [formatter stringFromDate:date];
-    
+    NSString *photocaption = [timeDict objectForKey:@"photocaption"];
+    cell.photocaptionLabel.text = photocaption;
     cell.topLabel.text=dateString;
+//    [cell.photocaptionLabel sizeToFit];
     
+//    CGSize maximumLabelSize = CGSizeMake(296, FLT_MAX);
+//    
+//    CGSize expectedLabelSize = [photocaption sizeWithFont:cell.photocaptionLabel.font constrainedToSize:maximumLabelSize lineBreakMode:cell.photocaptionLabel.lineBreakMode];
+//    
+//    //adjust the label the the new height.
+//    CGRect newFrame = cell.photocaptionLabel.frame;
+//    newFrame.size.height = expectedLabelSize.height;
+//    cell.photocaptionLabel.frame = newFrame;
+//    CGSize maximumlabelSize = CGSizeMake(296, FLT_MAX);
     return cell;
+
 }
 
 // add photo button
@@ -206,21 +222,24 @@
 
 -(void)firedNotification {
     
-   // [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
-    
-    CGRect rect = CGRectMake(0 ,0 ,120, 60);
-    NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://media?id=%@",[SingletonClassIboard shareSinglton].imageId]];
-    
-    if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
-        
-        self.dic = [UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
-        self.dic.delegate = self;
-        self.dic.UTI = @"com.instagram.photo";
-        self.dic=[UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
-        [self.dic setAnnotation:[NSDictionary dictionaryWithObject:[SingletonClassIboard shareSinglton].captionStr forKey:@"InstagramCaption"]];
-            [self.dic presentOpenInMenuFromRect: CGRectZero    inView:self.view animated: YES ];
-        
-    }
+ 
+    [[SingletonClassIboard shareSinglton]shareImageToInstagramFromController:self];
+//    CGRect rect = CGRectMake(0 ,0 ,120, 60);
+//    NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://media?id=%@",[SingletonClassIboard shareSinglton].imageId]];
+////      NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://app"]];
+//    if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
+//        
+//        self.dic = [UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
+//        self.dic.delegate = self;
+//        self.dic.UTI = @"com.instagram.exclusivegram";
+//        self.dic=[UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
+//        [self.dic setAnnotation:[NSDictionary dictionaryWithObject:[SingletonClassIboard shareSinglton].captionStr forKey:@"InstagramCaption"]];
+//            [self.dic presentOpenInMenuFromRect: CGRectZero    inView:self.view animated: YES ];
+//        
+//    }
+//    else{
+//        [[[UIAlertView alloc]initWithTitle:@"Alert !!!" message:@"Instagram is not present in your device" delegate:nil cancelButtonTitle:@"OK"otherButtonTitles:nil, nil]show ];
+//           }
     
 }
 
@@ -260,18 +279,19 @@
                 data=[NSData dataWithBytes:sqlite3_column_blob(compiledStmt, 3) length:length];
                 
                 char * time=(char *) sqlite3_column_text(compiledStmt,4);
+                char * photocaption = (char *) sqlite3_column_text(compiledStmt,6);
                 
                 NSString *profilePic  = [NSString stringWithUTF8String:profilepic];
                 NSString *imageId  = [NSString stringWithUTF8String:imgId];
                 NSString *uTime  = [NSString stringWithUTF8String:time];
-                
+                NSString *photocaptionstring = [NSString stringWithUTF8String:photocaption];
                 NSMutableDictionary * temp=[[NSMutableDictionary alloc]init];
                 
                 [temp setObject:profilePic forKey:@"profilePic"];
-                
                 [temp setObject:data forKey:@"image"];
-                
                 [temp setObject:uTime forKey:@"unixTime"];
+                [temp setObject:photocaptionstring forKey:@"photocaption"];
+                
                 
                 [[SingletonClassIboard shareSinglton].postData addObject:temp];
                 

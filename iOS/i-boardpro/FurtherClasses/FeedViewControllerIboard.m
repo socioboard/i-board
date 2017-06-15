@@ -24,6 +24,8 @@
     UICollectionView * maincollection;
     UIImage * image;
    
+
+   
 }
 @end
 
@@ -102,7 +104,7 @@
     [[NSNotificationCenter defaultCenter]postNotificationName:@"reachability" object:nil];
     if ([SingletonClassIboard shareSinglton].isActivenetworkConnection==YES) {
         
-        dispatch_async(dispatch_get_global_queue(0, 0),^{
+        dispatch_async(dispatch_get_main_queue(),^{
             [self loadFeeds];
             if([SingletonClassIboard shareSinglton].feedPic.count == 0)
             {
@@ -179,35 +181,34 @@
     flowlayout.minimumInteritemSpacing = 2.0;
     flowlayout.minimumLineSpacing= 2.0;
    // flowlayout.sectionInset = UIEdgeInsetsMake(10, 10, 10, 10);
-    flowlayout.sectionInset = UIEdgeInsetsMake(10, 5, 10, 5);
+//    flowlayout.sectionInset = UIEdgeInsetsMake(10, 5, 10, 5);
     int height = windowSize.height;
-    switch (height) {
-        case 480:flowlayout.itemSize = CGSizeMake(73, 73);
-            break;
-        case 568 : flowlayout.itemSize = CGSizeMake(73, 73);
-            break;
-        case 667 : flowlayout.itemSize = CGSizeMake(83, 83);
-            break;
-        case 736 : flowlayout.itemSize = CGSizeMake(73, 73);
-            break;
-        default:
-            break;
-    }
-    
+//    flowlayout.itemSize = CGSizeMake(73, 73);
+       flowlayout.itemSize = CGSizeMake(SCREEN_WIDTH/4-4, SCREEN_WIDTH/4-4);
     
     if (maincollection) {
         [maincollection removeFromSuperview];
         maincollection=nil;
     }
     
-    maincollection =[[UICollectionView alloc]initWithFrame:CGRectMake(0, 0, windowSize.width, windowSize.height-55) collectionViewLayout:flowlayout];
+    maincollection =[[UICollectionView alloc]initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT-55) collectionViewLayout:flowlayout];
     maincollection.delegate = self;
     maincollection.dataSource = self;
     [self.view addSubview:maincollection];
     maincollection.backgroundColor=[UIColor whiteColor];
-    
+    maincollection.showsVerticalScrollIndicator=NO;
     [maincollection registerClass:[CustomCell class] forCellWithReuseIdentifier:@"collectionCell"];
+    self.bannerView =[[GADBannerView alloc]initWithAdSize:kGADAdSizeBanner];
+    self.bannerView.frame =  CGRectMake((windowSize.width - self.bannerView.frame.size.width)/2, windowSize.height-105, self.bannerView.frame.size.width, 50);
+    self.bannerView.adUnitID = adMobId_iboard;
+    self.bannerView.rootViewController = self;
+    self.bannerView.delegate = self;
     
+    GADRequest *request = [GADRequest request];
+    //  request.testDevices = @[ kGADSimulatorID ];
+    [self.bannerView loadRequest:request];
+    self.bannerView.hidden = NO;
+    [self.view addSubview:self.bannerView];
 
     
     
@@ -265,9 +266,9 @@
         cell = [[TableCustomCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
        
 
-        [cell.commentBtn addTarget:self action:@selector(opneCommentsPage:) forControlEvents:UIControlEventTouchUpInside];
-        [cell.commentCnt addTarget:self action:@selector(opneCommentsPage:) forControlEvents:UIControlEventTouchUpInside];
-        [cell.likesBtn addTarget:self action:@selector(likeFeedAction:) forControlEvents:UIControlEventTouchUpInside];
+//        [cell.commentBtn addTarget:self action:@selector(opneCommentsPage:) forControlEvents:UIControlEventTouchUpInside];
+//        [cell.commentCnt addTarget:self action:@selector(opneCommentsPage:) forControlEvents:UIControlEventTouchUpInside];
+//        [cell.likesBtn addTarget:self action:@selector(likeFeedAction:) forControlEvents:UIControlEventTouchUpInside];
     }
     cell.commentBtn.tag  = indexPath.section;
     cell.commentCnt.tag = indexPath.section;
@@ -464,31 +465,6 @@
 // Api call for showing user home feeds
 
 -(void)loadFeeds{
-
-   
-    
-    /*NSError * error=nil;
-    NSURLResponse * urlResponse=nil;
-    NSURL * url;
-    NSString * access_token=[[NSUserDefaults standardUserDefaults]objectForKey:@"access_token"];
-    if (pagination) {
-        url =  [NSURL URLWithString:pagination];
-    }
-    else{
-    
-     url=[NSURL  URLWithString:[NSString stringWithFormat: @"https://api.instagram.com/v1/users/self/feed?access_token=%@",access_token]];
-    }
-    NSMutableURLRequest * getRequest=[[NSMutableURLRequest alloc]initWithURL:url cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:50];
-    [getRequest setHTTPMethod:@"GET"];
-    [getRequest addValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
-    
-    NSData * data=[NSURLConnection sendSynchronousRequest:getRequest returningResponse:&urlResponse error:&error];
-    
-    if (data==nil) {
-        return;
-    }
-    id response=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];
-    NSLog(@"Feeds  %@",response);*/
     
   id response =  [HelperClassIboard loadFeeds:pagination];
     
@@ -591,23 +567,23 @@
 
 -(void)firedNotification {
     
-    //[[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
+   [[SingletonClassIboard shareSinglton]shareImageToInstagramFromController:self];
     
-    CGRect rect = CGRectMake(0 ,0 ,120, 60);
-    NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://media?id=%@",[SingletonClassIboard shareSinglton].imageId]];
-    
-    if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
-        
-        self.dic = [UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
-        self.dic.delegate = self;
-        self.dic.UTI = @"com.instagram.photo";
-        self.dic=[UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
-         self.dic.annotation = [NSDictionary dictionaryWithObject:[SingletonClassIboard shareSinglton].captionStr forKey:@"InstagramCaption"];
-        [self.dic presentOpenInMenuFromRect: CGRectZero    inView:self.view animated: YES ];
-  
-        //[self.dic presentPreviewAnimated:YES];
-        
-    }
+//    CGRect rect = CGRectMake(0 ,0 ,120, 60);
+//    NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://media?id=%@",[SingletonClassIboard shareSinglton].imageId]];
+//    if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
+//        
+//        self.dic = [UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
+//        self.dic.delegate = self;
+//        self.dic.UTI = @"com.instagram.exclusivegram";
+//        self.dic=[UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
+//        [self.dic setAnnotation:[NSDictionary dictionaryWithObject:[SingletonClassIboard shareSinglton].captionStr forKey:@"InstagramCaption"]];
+//        [self.dic presentOpenInMenuFromRect: CGRectZero    inView:self.view animated: YES ];
+//        
+//    }
+//    else{
+//        [[[UIAlertView alloc]initWithTitle:@"Alert !!!" message:@"Instagram is not present in your device" delegate:nil cancelButtonTitle:@"OK"otherButtonTitles:nil, nil]show ];
+//    }
     
 }
 

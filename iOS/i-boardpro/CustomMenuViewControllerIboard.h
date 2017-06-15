@@ -28,6 +28,7 @@
 }
 
 
+@property(nonatomic,strong)NSString * removeuseraccessToken;
 
 @property (nonatomic, assign) BOOL isSignIn;
 

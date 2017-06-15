@@ -143,29 +143,29 @@
             
            
             self.profileImg=[[UIImageView alloc]init];
-            self.profileImg.frame=CGRectMake(5, 5, 30, 30);
+            self.profileImg.frame=CGRectMake(0, 5, 30, 30);
             self.profileImg.layer.cornerRadius=self.profileImg.frame.size.width/2;
             self.profileImg.clipsToBounds=YES;
             [self.contentView addSubview:self.profileImg];
             
             self.menuImages=[[UIImageView alloc]init];
-            self.menuImages.frame=CGRectMake(5, 10, 20, 20);
+            self.menuImages.frame=CGRectMake(5, 10, 25, 25);
             self.menuImages.clipsToBounds=YES;
             [self.contentView addSubview:self.menuImages];
 
             
             self.cellTitle=[[UILabel alloc]init];
             self.cellTitle.textColor=[UIColor blackColor];
-            self.cellTitle.frame=CGRectMake(40, 0, 100, 40);
+            self.cellTitle.frame=CGRectMake(35, 0, 102, 40);
             [self.contentView addSubview:self.cellTitle];
             
             self.cellMenuTitle=[[UILabel alloc]init];
             self.cellMenuTitle.textColor=[UIColor blackColor];
-            self.cellMenuTitle.frame=CGRectMake(40, 0, 100, 40);
+            self.cellMenuTitle.frame=CGRectMake(40, 0, 120, 40);
             [self.contentView addSubview:self.cellMenuTitle];
             
             self.settingButton=[[UIButton alloc]init];
-            self.settingButton.frame=CGRectMake(140,5,20, 20);
+            self.settingButton.frame=CGRectMake(138,10,20, 20);
             [self.settingButton setBackgroundImage:[UIImage imageNamed:@"iboard-setting.png"] forState:UIControlStateNormal];
             [self.contentView addSubview:self.settingButton];
 

@@ -22,7 +22,7 @@
     }
     else{
         
-        url=[NSURL  URLWithString:[NSString stringWithFormat: @"https://api.instagram.com/v1/users/self/feed?access_token=%@",access_token]];
+        url=[NSURL  URLWithString:[NSString stringWithFormat: @"https://api.instagram.com/v1/users/self/media/recent/?access_token=%@",access_token]];
     }
     NSMutableURLRequest * getRequest=[[NSMutableURLRequest alloc]initWithURL:url cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:50];
     [getRequest setHTTPMethod:@"GET"];

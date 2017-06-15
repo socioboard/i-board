@@ -6,13 +6,14 @@
 #import "UserProfileViewControllerIboard.h"
 #import "UIImageView+WebCache.h"
 #import "HelperClassIboard.h"
-
+#import "TWMessageBarManager.h"
 @interface FollwViewControllerIboard ()
 {
     UserProfileViewControllerIboard * userProfile;
     UIActivityIndicatorView * activityIndicator,* loadActivityView;
     UILabel * noInternetConnnection;
     CGSize winsowSize;
+    id response;
 }
 @end
 
@@ -71,17 +72,17 @@
     [[NSNotificationCenter defaultCenter]postNotificationName:@"reachability" object:nil];
     if ([SingletonClassIboard shareSinglton].isActivenetworkConnection==YES) {
 
-        self.bannerView =[[GADBannerView alloc]initWithAdSize:kGADAdSizeBanner];
-        self.bannerView.frame =  CGRectMake(0, winsowSize.height-105, winsowSize.width, 50);
-        self.bannerView.adUnitID = adMobId_iboard;
-        self.bannerView.rootViewController = self;
-        self.bannerView.delegate = self;
-        
-        GADRequest *request = [GADRequest request];
-      //  request.testDevices = @[ kGADSimulatorID ];
-        [self.bannerView loadRequest:request];
-        self.bannerView.hidden = NO;
-      //  [self.view addSubview:self.bannerView];
+//        self.bannerView =[[GADBannerView alloc]initWithAdSize:kGADAdSizeBanner];
+//        self.bannerView.frame =  CGRectMake(0, winsowSize.height-105, winsowSize.width, 50);
+//        self.bannerView.adUnitID = adMobId_iboard;
+//        self.bannerView.rootViewController = self;
+//        self.bannerView.delegate = self;
+//        
+//        GADRequest *request = [GADRequest request];
+//      //  request.testDevices = @[ kGADSimulatorID ];
+//        [self.bannerView loadRequest:request];
+//        self.bannerView.hidden = NO;
+//        [self.view addSubview:self.bannerView];
         
     dispatch_async(dispatch_get_global_queue(0, 0),^{
         pagination = nil;
@@ -114,6 +115,17 @@
                 followTableView.backgroundColor=[UIColor whiteColor];
                 followTableView.showsVerticalScrollIndicator = NO;
                 [self.view addSubview:followTableView];
+                self.bannerView =[[GADBannerView alloc]initWithAdSize:kGADAdSizeBanner];
+                self.bannerView.frame =  CGRectMake((winsowSize.width - self.bannerView.frame.size.width)/2, winsowSize.height-105, self.bannerView.frame.size.width, 50);
+                self.bannerView.adUnitID = adMobId_iboard;
+                self.bannerView.rootViewController = self;
+                self.bannerView.delegate = self;
+                
+                GADRequest *request = [GADRequest request];
+                //  request.testDevices = @[ kGADSimulatorID ];
+                [self.bannerView loadRequest:request];
+                self.bannerView.hidden = NO;
+                [self.view addSubview:self.bannerView];
                 UIView * view=[[UIView alloc]initWithFrame:CGRectMake(0, 0, winsowSize.width, 40)];
                 view.backgroundColor=[UIColor clearColor];
                 followTableView.tableFooterView=view;
@@ -193,18 +205,15 @@
     userProfile.userId=[usreId objectAtIndex:indexPath.row];
     [self presentViewController:userProfile animated:YES completion:nil];*/
 }
--(NSInteger) numberOfSectionsInTableView:(UITableView *)tableView
-{
-    
+-(NSInteger) numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
--(NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
- 
+
+-(NSInteger) tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return [SingletonClassIboard shareSinglton].full_name.count;
 }
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     return 80;
 }
 
@@ -253,12 +262,10 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 [loadActivityView stopAnimating];
                 [followTableView setContentInset:(UIEdgeInsetsMake(0, 0, -50, 0))];
-                
             });
             self.isAddMoreJokes = YES;
         }
     }
-    
 }
 
 
@@ -267,47 +274,70 @@
 
 // call unfollow api here
 -(void)unfollowAction:(UIButton *)sender{
-       /*NSString * accessToken=[[NSUserDefaults standardUserDefaults]objectForKey:@"access_token"];
-    NSError * error=nil;
-    NSURLResponse * urlResponse=nil;
+   
     
+    NSInteger tag = ((UIButton *)(UIControl *)sender).tag;
+    NSString *username = [[SingletonClassIboard shareSinglton].full_name objectAtIndex:tag];
+    NSLog(@"unfollow username is %@",username);
     NSString * userIDStr=[usreId  objectAtIndex:tag];
     
-    NSURL * postUrl=[NSURL URLWithString:[NSString stringWithFormat:@"https://api.instagram.com/v1/users/%@/relationship",userIDStr]];
-   
-  
+//    UIAlertController * alert=   [UIAlertController
+//                                  alertControllerWithTitle:@"Alert !!!"
+//                                  message:[NSString stringWithFormat:@"Are you sure you want to unfollow  %@",username]
+//                                  preferredStyle:UIAlertControllerStyleAlert];
+//    
+//    UIAlertAction* ok = [UIAlertAction
+//                         actionWithTitle:@"Yes"
+//                         style:UIAlertActionStyleDefault
+//                         handler:^(UIAlertAction * action)
+//                         {
     
-    NSMutableURLRequest * request=[[NSMutableURLRequest alloc]initWithURL:postUrl cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:50];
-    [request setHTTPMethod:@"POST"];
-    NSString * body=[NSString stringWithFormat:@"access_token=%@&action=unfollow",accessToken];
+                               response=[HelperClassIboard unfollowAction:userIDStr];
+                            
+                             if ([[[response objectForKey:@"meta"]objectForKey:@"code"] isEqualToNumber:[NSNumber numberWithInt:200]]) {
+                                                                
+                                 [[SingletonClassIboard shareSinglton].follower removeAllObjects];
+                                 [[SingletonClassIboard shareSinglton].full_name removeAllObjects];
+                                 [[SingletonClassIboard shareSinglton].profile_picture removeAllObjects];
+                                 [usreId removeAllObjects];
+                                 [self loadAllFollowers];
+                                 [followTableView reloadData];
+                                 [[TWMessageBarManager sharedInstance] showMessageWithTitle:@"i-boardpro"
+                                                                                description:[NSString stringWithFormat:@"You just unfollowed %@ ",username]
+                                                                                       type:TWMessageBarMessageTypeInfo];
+                             }
+                             else{
+                                 
+                                 UIAlertView * alertView =[[UIAlertView alloc]initWithTitle:@"" message:@"Something went wrong" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+                                 [alertView show];
+                                 
+                                 
+                                 
+                             }
+//
+//                              [alert dismissViewControllerAnimated:YES completion:nil];
+//                             
+//                             
+//                         }];
+//    UIAlertAction* cancel = [UIAlertAction
+//                             actionWithTitle:@"No"
+//                             style:UIAlertActionStyleDefault
+//                             handler:^(UIAlertAction * action)
+//                             {
+//                                 [alert dismissViewControllerAnimated:YES completion:nil];
+//                                 
+//                             }];
+//    
+//    [alert addAction:ok];
+//    [alert addAction:cancel];
+//    
+//    [self presentViewController:alert animated:YES completion:nil];
     
-    [request setHTTPBody:[body dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES]];
     
-    [request addValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
-    
-    NSData * data=[NSURLConnection sendSynchronousRequest:request returningResponse:&urlResponse error:&error];
-    
-    if (data==nil) {
-        return;
-    }
-    id response=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];*/
-    NSInteger tag = ((UIButton *)(UIControl *)sender).tag;
-
-     NSString * userIDStr=[usreId  objectAtIndex:tag];
-    id response=[HelperClassIboard unfollowAction:userIDStr];
+//    id response=[HelperClassIboard unfollowAction:userIDStr];
     
     NSLog(@"response of sollowing %@", response);
-    if ([[[response objectForKey:@"meta"]objectForKey:@"code"] isEqualToNumber:[NSNumber numberWithInt:200]]) {
-//        UIAlertView * alertView =[[UIAlertView alloc]initWithTitle:@"You are unfollowing this user" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-//        [alertView show];
-    }
     
-    [[SingletonClassIboard shareSinglton].follower removeAllObjects];
-        [[SingletonClassIboard shareSinglton].full_name removeAllObjects];
-        [[SingletonClassIboard shareSinglton].profile_picture removeAllObjects];
-        [usreId removeAllObjects];
-    [self loadAllFollowers];
-    [followTableView reloadData];
     
 }
 
@@ -373,24 +403,24 @@
 
 
 -(void)firedNotification {
+    [[SingletonClassIboard shareSinglton]shareImageToInstagramFromController:self];
     
-   // [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
     
-    CGRect rect = CGRectMake(0 ,0 ,120, 60);
-    NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://media?id=%@",[SingletonClassIboard shareSinglton].imageId]];
-    
-    if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
-        
-        self.dic = [UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
-        self.dic.delegate = self;
-        self.dic.UTI = @"com.instagram.photo";
-        self.dic=[UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
-         self.dic.annotation = [NSDictionary dictionaryWithObject:[SingletonClassIboard shareSinglton].captionStr forKey:@"InstagramCaption"];
-        [self.dic presentOpenInMenuFromRect: CGRectZero    inView:self.view animated: YES ];
-        
-        
-    }
-    
+//    CGRect rect = CGRectMake(0 ,0 ,120, 60);
+//    NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://media?id=%@",[SingletonClassIboard shareSinglton].imageId]];
+//    
+//    if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
+//        
+//        self.dic = [UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
+//        self.dic.delegate = self;
+//        self.dic.UTI = @"com.instagram.photo";
+//        self.dic=[UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
+//         self.dic.annotation = [NSDictionary dictionaryWithObject:[SingletonClassIboard shareSinglton].captionStr forKey:@"InstagramCaption"];
+//        [self.dic presentOpenInMenuFromRect: CGRectZero    inView:self.view animated: YES ];
+//        
+//        
+//    }
+//    
 }
 
 #pragma mark-
@@ -417,11 +447,6 @@
     
     NSLog(@"Ad received");
 }
-
-
-
-/// Tells the delegate that an ad request failed. The failure is normally due to network
-/// connectivity or ad availablility (i.e., no fill).
 - (void)adView:(GADBannerView *)bannerView didFailToReceiveAdWithError:(GADRequestError *)error{
     
     NSLog(@"Failed to receive");

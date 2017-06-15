@@ -6,6 +6,7 @@
 #import "UserProfileViewControllerIboard.h"
 #import "UIImageView+WebCache.h"
 #import "HelperClassIboard.h"
+#import "TWMessageBarManager.h"
 
 @interface FansViewControllerIboard ()
 {
@@ -18,6 +19,18 @@
 @end
 
 @implementation FansViewControllerIboard
+-(void)viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:YES];
+    [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
+}
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:YES];
+    
+    [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(firedNotification) name:@"firedNotification" object:nil];
+    
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -48,17 +61,17 @@
     [[NSNotificationCenter defaultCenter]postNotificationName:@"reachability" object:nil];
     if ([SingletonClassIboard shareSinglton].isActivenetworkConnection==YES) {
     
-        self.bannerView =[[GADBannerView alloc]initWithAdSize:kGADAdSizeBanner];
-        self.bannerView.frame =  CGRectMake(0, windowSize.height-105, windowSize.width, 50);
-        self.bannerView.adUnitID = adMobId_iboard;
-        self.bannerView.rootViewController = self;
-        self.bannerView.delegate = self;
-        
-        GADRequest *request = [GADRequest request];
-       // request.testDevices = @[ kGADSimulatorID ];
-        [self.bannerView loadRequest:request];
-        self.bannerView.hidden = NO;
-       // [self.view addSubview:self.bannerView];
+//        self.bannerView =[[GADBannerView alloc]initWithAdSize:kGADAdSizeBanner];
+//        self.bannerView.frame =  CGRectMake(0, windowSize.height-105, windowSize.width, 50);
+//        self.bannerView.adUnitID = adMobId_iboard;
+//        self.bannerView.rootViewController = self;
+//        self.bannerView.delegate = self;
+//        
+//        GADRequest *request = [GADRequest request];
+//       // request.testDevices = @[ kGADSimulatorID ];
+//        [self.bannerView loadRequest:request];
+//        self.bannerView.hidden = NO;
+//        [self.view addSubview:self.bannerView];
         
     dispatch_async(dispatch_get_global_queue(0, 0),^{
         [self compareTogetFans];
@@ -88,7 +101,7 @@
 -(void)creatTableForFans{
     if (   mutaulfrnds.count<1) {
         UILabel * label=[[UILabel alloc]init];
-        label.frame=CGRectMake(40, 150, windowSize.width-60, 50);
+        label.frame=CGRectMake(40, 150, SCREEN_WIDTH-80, 50);
         label.text=@"There is no fans";
         label.font=[UIFont boldSystemFontOfSize:15];
         label.lineBreakMode=NSLineBreakByWordWrapping;
@@ -100,9 +113,21 @@
     //fansTable=[[UITableView alloc]initWithFrame:CGRectMake(0, 0, windowSize.width,windowSize.height-105)];
         fansTable=[[UITableView alloc]initWithFrame:CGRectMake(0, 0, windowSize.width,windowSize.height-55)];
     
-    fansTable.delegate=self;
-    fansTable.dataSource=self;
-    [self.view addSubview:fansTable];
+          fansTable.delegate=self;
+          fansTable.dataSource=self;
+           [self.view addSubview:fansTable];
+        
+        self.bannerView =[[GADBannerView alloc]initWithAdSize:kGADAdSizeBanner];
+       self.bannerView.frame =  CGRectMake((windowSize.width - self.bannerView.frame.size.width)/2, windowSize.height-105, self.bannerView.frame.size.width, 50);
+        self.bannerView.adUnitID = adMobId_iboard;
+        self.bannerView.rootViewController = self;
+        self.bannerView.delegate = self;
+        
+        GADRequest *request = [GADRequest request];
+        // request.testDevices = @[ kGADSimulatorID ];
+        [self.bannerView loadRequest:request];
+        self.bannerView.hidden = NO;
+        [self.view addSubview:self.bannerView];
         
         UIView * view=[[UIView alloc]initWithFrame:CGRectMake(0, 0, windowSize.width, 40)];
         view.backgroundColor=[UIColor clearColor];
@@ -142,7 +167,8 @@
     NSDictionary * dict =[mutaulfrnds objectAtIndex:indexPath.row];
     
     [cell.userImage sd_setImageWithURL:[dict objectForKey:@"profile_picture"]];
-    cell.userNameDesc.text=[dict objectForKey:@"username"];    return cell;
+    cell.userNameDesc.text=[dict objectForKey:@"username"];
+    return cell;
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -172,7 +198,9 @@
     return 80;
 }
 
-
+-(void)firedNotification {
+    [[SingletonClassIboard shareSinglton]shareImageToInstagramFromController:self];
+}
 
 
 #pragma mark- get all fans from here
@@ -237,28 +265,6 @@
 #pragma  mark-  load Followers
 -(void)loadAllFollowers{
     
-//    [[SingletonClassIboard shareSinglton].follower removeAllObjects];
-//    [[SingletonClassIboard shareSinglton].full_name removeAllObjects];
-//    [[SingletonClassIboard shareSinglton].profile_picture removeAllObjects];
-//    [userId removeAllObjects];
- /*   NSURLResponse * urlResponse;
-    NSError * error;
-    
-    
-    NSString * accessToken=[[ NSUserDefaults standardUserDefaults]                                                                                                                                               valueForKey:@"access_token"];
-    NSURL * getUrl=   [NSURL URLWithString:[NSString stringWithFormat:@"https://api.instagram.com/v1/users/self/follows?access_token=%@",accessToken]];
-    NSMutableURLRequest * request=[[NSMutableURLRequest alloc]initWithURL:getUrl cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:50];
-    
-    [request setHTTPMethod:@"GET"];
-    [request addValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
-    
-    
-    NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&urlResponse error:&error];
-    
-    if (data==nil) {
-        return;
-    }
-    NSDictionary *dictResponse = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:nil];*/
     id dictResponse=[HelperClassIboard loadAllFollowers:nil];
     if ([[[dictResponse objectForKey:@"meta"]objectForKey:@"code"] isEqualToNumber:[NSNumber numberWithInt:200]]) {
 
@@ -279,45 +285,82 @@
 
 -(void)followActions:(UIButton *)sender{
     int tag = (int)((UIButton *)(UIControl *)sender).tag;
-  /*  NSString * accessToken=[[NSUserDefaults standardUserDefaults]objectForKey:@"access_token"];
-    NSError * error=nil;
-    NSURLResponse * urlResponse=nil;
-//    NSLog(@"USER id = %@",userId);
-//    NSString * userIDStr=[userId  objectAtIndex:tag];
-     NSString * userIDStr=[[mutaulfrnds  objectAtIndex:tag]objectForKey:@"id"];
-    NSURL * postUrl=[NSURL URLWithString:[NSString stringWithFormat:@"https://api.instagram.com/v1/users/%@/relationship",userIDStr]];
+    
+      NSString *username = [[mutaulfrnds  objectAtIndex:tag]objectForKey:@"username"];
+      NSString * userIDStr=[[mutaulfrnds  objectAtIndex:tag]objectForKey:@"id"];
+    
+//    UIAlertController * alert=   [UIAlertController
+//                                  alertControllerWithTitle:@"Info !!!"
+//                                  message:[NSString stringWithFormat:@"Are you sure you want to follow  %@",username]
+//                                  preferredStyle:UIAlertControllerStyleAlert];
+//    
+//    UIAlertAction* ok = [UIAlertAction
+//                         actionWithTitle:@"Yes"
+//                         style:UIAlertActionStyleDefault
+//                         handler:^(UIAlertAction * action)
+//                         {
+    
+                             id response =[HelperClassIboard followActions:userIDStr];
+                             if ([[[response objectForKey:@"meta"]objectForKey:@"code"] isEqualToNumber:[NSNumber numberWithInt:200]]) {
+                                 [[SingletonClassIboard shareSinglton].follower removeAllObjects];
+                                 [[SingletonClassIboard shareSinglton].full_name removeAllObjects];
+                                 [[SingletonClassIboard shareSinglton].profile_picture removeAllObjects];
+                                 [userId removeAllObjects];
+                                 [self compareTogetFans];
+                                 [fansTable reloadData];
+                                 [[TWMessageBarManager sharedInstance] showMessageWithTitle:@"i-boardpro"
+                                                                                description:[NSString stringWithFormat:@"Now you are following %@ ",username]
+                                                                                       type:TWMessageBarMessageTypeInfo];
+
+//                                 UIAlertView * alertView =[[UIAlertView alloc]initWithTitle:@"" message:[NSString stringWithFormat:@"Now you are following %@ ",username] delegate:nil cancelButtonTitle:@"Ok" otherButtonTitles:nil, nil];
+//                                 [alertView show];
+                             }
+                             
+                             
+                             else{
+                                 
+                                 UIAlertView * alertView =[[UIAlertView alloc]initWithTitle:@"" message:@"Something went wrong" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+                                 [alertView show];
+                                 
+                                 
+                                 
+                             }
+//                             [alert dismissViewControllerAnimated:YES completion:nil];
+//                             
+//                        }];
+//    UIAlertAction* cancel = [UIAlertAction
+//                             actionWithTitle:@"No"
+//                             style:UIAlertActionStyleDefault
+//                             handler:^(UIAlertAction * action)
+//                             {
+//                                 [alert dismissViewControllerAnimated:YES completion:nil];
+//                                 
+//                             }];
+//    
+//    [alert addAction:ok];
+//    [alert addAction:cancel];
+//    
+//    [self presentViewController:alert animated:YES completion:nil];
+
     
     
     
-    NSMutableURLRequest * request=[[NSMutableURLRequest alloc]initWithURL:postUrl cachePolicy:NSURLRequestReloadIgnoringCacheData timeoutInterval:50];
-    [request setHTTPMethod:@"POST"];
-    NSString * body=[NSString stringWithFormat:@"access_token=%@&action=follow",accessToken];
     
-    [request setHTTPBody:[body dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES]];
     
-    [request addValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
-    
-    NSData * data=[NSURLConnection sendSynchronousRequest:request returningResponse:&urlResponse error:&error];
-    
-    if (data==nil) {
-        return;
-    }
-    id response=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];*/
-  //  NSLog(@" response of follow %@",response);
-     NSString * userIDStr=[[mutaulfrnds  objectAtIndex:tag]objectForKey:@"id"];
-    id response =[HelperClassIboard followActions:userIDStr];
-    if ([[[response objectForKey:@"meta"]objectForKey:@"code"] isEqualToNumber:[NSNumber numberWithInt:200]]) {
-//        UIAlertView * alertView =[[UIAlertView alloc]initWithTitle:@"You are following this user" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-//        [alertView show];
-    }
-    
-    [[SingletonClassIboard shareSinglton].follower removeAllObjects];
-    [[SingletonClassIboard shareSinglton].full_name removeAllObjects];
-    [[SingletonClassIboard shareSinglton].profile_picture removeAllObjects];
-    [userId removeAllObjects];
-    [self compareTogetFans];
-    [fansTable reloadData];
-    
+//    
+//    id response =[HelperClassIboard followActions:userIDStr];
+//    if ([[[response objectForKey:@"meta"]objectForKey:@"code"] isEqualToNumber:[NSNumber numberWithInt:200]]) {
+////        UIAlertView * alertView =[[UIAlertView alloc]initWithTitle:@"You are following this user" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+////        [alertView show];
+//    }
+//    
+//    [[SingletonClassIboard shareSinglton].follower removeAllObjects];
+//    [[SingletonClassIboard shareSinglton].full_name removeAllObjects];
+//    [[SingletonClassIboard shareSinglton].profile_picture removeAllObjects];
+//    [userId removeAllObjects];
+//    [self compareTogetFans];
+//    [fansTable reloadData];
+//    
 }
 
 

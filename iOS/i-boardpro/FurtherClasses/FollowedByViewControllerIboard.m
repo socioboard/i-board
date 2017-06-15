@@ -65,17 +65,17 @@
     [[NSNotificationCenter defaultCenter]postNotificationName:@"reachability" object:nil];
     if ([SingletonClassIboard shareSinglton].isActivenetworkConnection==YES) {
         
-        self.bannerView =[[GADBannerView alloc]initWithAdSize:kGADAdSizeBanner];
-        self.bannerView.frame =  CGRectMake(0, windowSize.height-105, windowSize.width, 50);
-        self.bannerView.adUnitID = adMobId_iboard;
-        self.bannerView.rootViewController = self;
-        self.bannerView.delegate = self;
-        
-        GADRequest *request = [GADRequest request];
-       // request.testDevices = @[ kGADSimulatorID ];
-        [self.bannerView loadRequest:request];
-        self.bannerView.hidden = NO;
-        //[self.view addSubview:self.bannerView];
+//        self.bannerView =[[GADBannerView alloc]initWithAdSize:kGADAdSizeBanner];
+//        self.bannerView.frame =  CGRectMake(0, windowSize.height-105, windowSize.width, 50);
+//        self.bannerView.adUnitID = adMobId_iboard;
+//        self.bannerView.rootViewController = self;
+//        self.bannerView.delegate = self;
+//        
+//        GADRequest *request = [GADRequest request];
+//       // request.testDevices = @[ kGADSimulatorID ];
+//        [self.bannerView loadRequest:request];
+//        self.bannerView.hidden = NO;
+//        [self.view addSubview:self.bannerView];
         dispatch_async(dispatch_get_global_queue(0, 0),^{
             pagination = nil;
             [[SingletonClassIboard shareSinglton].followeBy removeAllObjects];
@@ -88,7 +88,7 @@
                 if ([SingletonClassIboard shareSinglton].full_name.count<1) {
                     UILabel * label=[[UILabel alloc]init];
                     label.frame=CGRectMake(40, 150, windowSize.width-60, 50);
-                    label.text=@"Currently there are no one is following you.";
+                    label.text=@"Currently you are not follwed by anyone.";
                     label.font=[UIFont boldSystemFontOfSize:15];
                     label.lineBreakMode=NSLineBreakByWordWrapping;
                     label.numberOfLines=0;
@@ -103,6 +103,18 @@
                     followTableView.delegate=self;
                     followTableView.backgroundColor=[UIColor whiteColor];
                     [self.view addSubview:followTableView];
+                    
+                    self.bannerView =[[GADBannerView alloc]initWithAdSize:kGADAdSizeBanner];
+                   self.bannerView.frame =  CGRectMake((windowSize.width - self.bannerView.frame.size.width)/2, windowSize.height-105, self.bannerView.frame.size.width, 50);
+                    self.bannerView.adUnitID = adMobId_iboard;
+                    self.bannerView.rootViewController = self;
+                    self.bannerView.delegate = self;
+                    
+                    GADRequest *request = [GADRequest request];
+                    // request.testDevices = @[ kGADSimulatorID ];
+                    [self.bannerView loadRequest:request];
+                    self.bannerView.hidden = NO;
+                    [self.view addSubview:self.bannerView];
                     UIView * view=[[UIView alloc]initWithFrame:CGRectMake(0, 0, windowSize.width, 40)];
                     view.backgroundColor=[UIColor clearColor];
                     followTableView.tableFooterView=view;
@@ -132,7 +144,6 @@
         noInternetConnnection.lineBreakMode=NSLineBreakByWordWrapping;
         [self.view addSubview:noInternetConnnection];
     }
-    
 }
 
 #pragma  mark Table View delegate methods
@@ -301,22 +312,22 @@
 
 -(void)firedNotification {
     
-   // [[NSNotificationCenter defaultCenter]removeObserver:self name:@"firedNotification" object:nil];
+   [[SingletonClassIboard shareSinglton]shareImageToInstagramFromController:self];
     
-    CGRect rect = CGRectMake(0 ,0 ,120, 60);
-    NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://media?id=%@",[SingletonClassIboard shareSinglton].imageId]];
-    
-    if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
-        
-        self.dic = [UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
-        self.dic.delegate = self;
-        self.dic.UTI = @"com.instagram.photo";
-        self.dic=[UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
-         self.dic.annotation = [NSDictionary dictionaryWithObject:[SingletonClassIboard shareSinglton].captionStr forKey:@"InstagramCaption"];
-        [self.dic presentOpenInMenuFromRect: CGRectZero    inView:self.view animated: YES ];
-        
-        
-    }
+//    CGRect rect = CGRectMake(0 ,0 ,120, 60);
+//    NSURL *instagramURL = [NSURL URLWithString:[NSString stringWithFormat: @"instagram://media?id=%@",[SingletonClassIboard shareSinglton].imageId]];
+//    
+//    if ([[UIApplication sharedApplication] canOpenURL:instagramURL]) {
+//        
+//        self.dic = [UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
+//        self.dic.delegate = self;
+//        self.dic.UTI = @"com.instagram.photo";
+//        self.dic=[UIDocumentInteractionController interactionControllerWithURL:[NSURL URLWithString:[SingletonClassIboard shareSinglton].imagePath]];
+//         self.dic.annotation = [NSDictionary dictionaryWithObject:[SingletonClassIboard shareSinglton].captionStr forKey:@"InstagramCaption"];
+//        [self.dic presentOpenInMenuFromRect: CGRectZero    inView:self.view animated: YES ];
+//        
+//        
+//    }
     
 }
 
